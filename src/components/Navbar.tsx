@@ -95,22 +95,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* Zone 3: Primary Action + Luxury Dark Theme Switcher */}
+        {/* Zone 3: Primary Actions */}
         <div className="hidden sm:flex items-center gap-3 shrink-0">
-          {/* Luxury Theme Switcher Button */}
-          <button
-            onClick={toggleTheme}
-            aria-label={isDark ? 'Switch to light edition' : 'Switch to luxury dark edition'}
-            title={isDark ? 'Switch to light edition' : 'Switch to luxury dark edition'}
-            className="p-2 rounded-lg text-[#475467] dark:text-amber-300 hover:text-[#101828] dark:hover:text-amber-200 hover:bg-black/5 dark:hover:bg-white/10 transition-colors border border-transparent dark:border-amber-400/20 cursor-pointer"
-          >
-            {isDark ? (
-              <Sun className="w-4 h-4 text-amber-300 animate-in fade-in zoom-in-75 duration-200" />
-            ) : (
-              <Moon className="w-4 h-4 text-slate-700 animate-in fade-in zoom-in-75 duration-200" />
-            )}
-          </button>
-
           <button
             onClick={onOpenAssessment}
             className="text-xs font-semibold text-[#101828] dark:text-slate-200 hover:text-blue-900 dark:hover:text-blue-400 px-3 py-2 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
@@ -126,26 +112,31 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         </div>
 
-        {/* Mobile Hamburger & Controls */}
-        <div className="flex xl:hidden items-center gap-2">
-          {/* Mobile Theme Toggle */}
+        {/* Zone 4: Theme Toggle + Mobile Menu Controls (Single Theme Toggle) */}
+        <div className="flex items-center gap-2 shrink-0">
+          {/* Single Theme Toggle */}
           <button
             onClick={toggleTheme}
-            aria-label="Toggle theme"
-            className="p-2 rounded-md text-[#101828] dark:text-amber-300 hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer"
+            aria-label={isDark ? 'Switch to light edition' : 'Switch to luxury dark edition'}
+            title={isDark ? 'Switch to light edition' : 'Switch to luxury dark edition'}
+            className="p-2 rounded-lg text-[#475467] dark:text-amber-300 hover:text-[#101828] dark:hover:text-amber-200 hover:bg-black/5 dark:hover:bg-white/10 transition-colors border border-transparent dark:border-amber-400/20 cursor-pointer"
           >
-            {isDark ? <Sun className="w-5 h-5 text-amber-300" /> : <Moon className="w-5 h-5 text-slate-700" />}
+            {isDark ? (
+              <Sun className="w-4 h-4 text-amber-300 animate-in fade-in zoom-in-75 duration-200" />
+            ) : (
+              <Moon className="w-4 h-4 text-slate-700 animate-in fade-in zoom-in-75 duration-200" />
+            )}
           </button>
 
           <button
             onClick={onOpenBuyModal}
-            className="sm:hidden px-3 py-1.5 text-xs font-semibold text-white bg-[#101828] dark:bg-white dark:text-[#070B14] rounded-md whitespace-nowrap"
+            className="sm:hidden px-3 py-1.5 text-xs font-semibold text-white bg-[#101828] dark:bg-white dark:text-[#070B14] rounded-md whitespace-nowrap cursor-pointer"
           >
             Get Book
           </button>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-[#101828] dark:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded-md transition-colors cursor-pointer"
+            className="xl:hidden p-2 text-[#101828] dark:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded-md transition-colors cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
