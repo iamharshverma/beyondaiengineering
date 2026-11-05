@@ -1,11 +1,18 @@
 User-agent: *
 Allow: /
 
-# Disallow critical system routes, admin areas, and internal endpoints
+# Disallow admin areas
 Disallow: /admin
 Disallow: /admin/
+Disallow: /system-admin/
+
+# Disallow temporary system routes and internal APIs
 Disallow: /api/
 Disallow: /_internal/
+Disallow: /tmp/
+Disallow: /temp/
+Disallow: /staging/
+Disallow: /preview/
 Disallow: /private/
 Disallow: /*.json$
 
