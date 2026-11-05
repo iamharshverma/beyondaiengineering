@@ -1,0 +1,109 @@
+export type PageId =
+  | 'home'
+  | 'book'
+  | 'frameworks'
+  | 'resources'
+  | 'toolkit'
+  | 'students'
+  | 'manifesto'
+  | 'author'
+  | 'speaking'
+  | 'press'
+  | 'ideas'
+  | 'stories'
+  | 'buy'
+  | 'assessment';
+
+export interface Chapter {
+  number: number;
+  part: string;
+  partTitle: string;
+  title: string;
+  subtitle: string;
+  summary: string;
+  keyTakeaway: string;
+  sampleExcerpt: string;
+  readTime: string;
+}
+
+export interface Framework {
+  id: string;
+  title: string;
+  subtitle: string;
+  category: 'core' | 'execution' | 'mindset' | 'governance' | 'authority';
+  caoPhase: 'Creator' | 'Architect' | 'Orchestrator' | 'All';
+  definition: string;
+  whyItMatters: string;
+  diagramDescription: string;
+  realWorldApplication: string;
+  tryItYourself: string;
+  relatedChapter: string;
+}
+
+export interface ToolkitItem {
+  id: string;
+  name: string;
+  category:
+    | 'Learn'
+    | 'Build'
+    | 'AI Coding'
+    | 'Agents'
+    | 'Evaluation'
+    | 'Observability'
+    | 'Security'
+    | 'Research'
+    | 'Open Source'
+    | 'Productivity'
+    | 'Career';
+  whatItDoes: string;
+  bestFor: string;
+  pricing: 'Free' | 'Freemium' | 'Open Source' | 'Paid';
+  whyItMatters: string;
+  lastReviewed: string;
+  linkUrl: string;
+}
+
+export interface LabResource {
+  id: string;
+  title: string;
+  category: 'ASSESS' | 'BUILD' | 'LEAD' | 'GROW' | 'EXECUTE';
+  description: string;
+  artifactProduced: string;
+  estimatedTime: string;
+  templateType: 'canvas' | 'checklist' | 'planner' | 'audit';
+  defaultFields?: Record<string, string>;
+}
+
+export interface Article {
+  id: string;
+  title: string;
+  subtitle: string;
+  topic: string;
+  readTime: string;
+  publishDate: string;
+  leadParagraph: string;
+  content: string[];
+  keyQuote: string;
+}
+
+export interface ReaderStory {
+  id: string;
+  authorName: string;
+  role: string;
+  company: string;
+  transformationLabel: 'Creator → Architect' | 'Student → AI Engineer' | 'Engineer → Technical Leader' | 'Builder → Orchestrator';
+  startingPoint: string;
+  whatChanged: string;
+  whatIBuilt: string;
+  whatHappened: string;
+}
+
+export interface AssessmentQuestion {
+  id: number;
+  scenario: string;
+  options: {
+    text: string;
+    stage: 'creator' | 'architect' | 'orchestrator';
+    explanation: string;
+  }[];
+}
