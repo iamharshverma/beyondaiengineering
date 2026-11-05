@@ -1,24 +1,29 @@
 import React, { useState } from 'react';
 import { PageId } from '../types';
-import { BOOK_DETAILS, BOOK_PARTS, CHAPTERS, ENDORSEMENTS } from '../data/bookData';
-import { ArrowRight, BookOpen, CheckCircle, FileText, ArrowDown } from 'lucide-react';
+import { BOOK_DETAILS, BOOK_PARTS, CHAPTERS, SPECIAL_SECTIONS, ALL_INFOGRAPHICS, ENDORSEMENTS } from '../data/bookData';
+import { ArrowRight, BookOpen, CheckCircle, Maximize2, ShieldCheck, FlaskConical, Sparkles, Layers, Download, CheckSquare } from 'lucide-react';
 
 interface BookViewProps {
   onNavigate: (page: PageId) => void;
   onOpenBuyModal: () => void;
   onOpenSample: (chapterNum?: number) => void;
+  onOpenInfographicModal?: (infographicId?: string) => void;
 }
 
 export const BookView: React.FC<BookViewProps> = ({
   onNavigate,
   onOpenBuyModal,
   onOpenSample,
+  onOpenInfographicModal,
 }) => {
   const [activePartFilter, setActivePartFilter] = useState<string>('ALL');
+  const [selectedSpecialTab, setSelectedSpecialTab] = useState<string>('intro');
 
   const filteredChapters = activePartFilter === 'ALL'
     ? CHAPTERS
     : CHAPTERS.filter((c) => c.part === activePartFilter);
+
+  const activeSpecialSection = SPECIAL_SECTIONS.find((s) => s.id === selectedSpecialTab) || SPECIAL_SECTIONS[0];
 
   return (
     <div className="space-y-0">
@@ -38,10 +43,12 @@ export const BookView: React.FC<BookViewProps> = ({
           </p>
 
           <p className="text-base text-[#475467] max-w-2xl mx-auto leading-relaxed">
-            By <strong className="text-[#101828]">Harsh Verma</strong> — Principal AI Software Engineer at <strong>Palo Alto Networks</strong>, Stanford Distinguished Scholar, Fellow of RSA, IFGICT & BCS, and IEEE Senior Member.
+            By <strong className="text-[#101828]">Harsh Verma</strong> — Principal AI Software Engineer at <strong>Palo Alto Networks</strong>, Stanford Distinguished Scholar, Fellow of RSA & BCS, and IEEE Senior Member.
           </p>
-          <div className="text-xs text-[#475467]">
-            Official Portfolio Reference: <a href="https://www.harshverma.me/page-books#book1" target="_blank" rel="noopener noreferrer" className="text-blue-900 font-semibold underline">harshverma.me/page-books#book1 ↗</a>
+          <div className="text-xs text-[#475467] flex flex-wrap items-center justify-center gap-3">
+            <span>Official Author Catalog: <a href={BOOK_DETAILS.authorBooksUrl} target="_blank" rel="noopener noreferrer" className="text-blue-900 font-semibold underline">harshverma.me/page-books#book1 ↗</a></span>
+            <span>·</span>
+            <span>Contact: <a href={`mailto:${BOOK_DETAILS.contactEmail}`} className="text-blue-900 font-semibold underline">{BOOK_DETAILS.contactEmail}</a></span>
           </div>
 
           <div className="pt-4 flex flex-wrap justify-center items-center gap-4">
@@ -59,6 +66,15 @@ export const BookView: React.FC<BookViewProps> = ({
               <BookOpen className="w-4 h-4 text-blue-900" />
               <span>Read Chapter 1 Sample</span>
             </button>
+            {onOpenInfographicModal && (
+              <button
+                onClick={() => onOpenInfographicModal('infographic-intro')}
+                className="px-6 py-3.5 text-sm font-semibold text-blue-900 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors cursor-pointer inline-flex items-center gap-2"
+              >
+                <Layers className="w-4 h-4 text-blue-800" />
+                <span>Explore 15 Infographics</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -78,7 +94,7 @@ export const BookView: React.FC<BookViewProps> = ({
                 "I write the code."
               </div>
               <p className="text-xs text-[#475467] leading-relaxed">
-                Measured by keystrokes, syntax speed, and closing tickets. Highly vulnerable to AI code automation.
+                Measured by keystrokes, syntax speed, and closing tickets. Highly vulnerable to rapid AI automation and model advancements.
               </p>
             </div>
 
@@ -91,14 +107,112 @@ export const BookView: React.FC<BookViewProps> = ({
                 "I determine what should exist, design the system, orchestrate intelligence, and own the outcome."
               </div>
               <p className="text-xs text-[#475467] leading-relaxed">
-                Operating with systems judgment, authority boundaries, and verified organizational trust.
+                Operating with systems judgment, authority boundaries, deterministic evals, and verified organizational trust.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 3. THE BOOK JOURNEY: PARTS I – IV & CHAPTER PREVIEWS */}
+      {/* 3. VISUAL INFOGRAPHIC EXPLORER SHOWCASE */}
+      <section className="py-20 bg-[#FAF9F5] border-b border-[#101828]/[0.08]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-blue-900 font-bold mb-2">
+                <Layers className="w-4 h-4" />
+                <span>Visual Blueprint Architecture</span>
+              </div>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#101828] tracking-tight">
+                15 High-Resolution Book Infographics
+              </h2>
+              <p className="text-sm sm:text-base text-[#475467] mt-1 max-w-2xl">
+                Every chapter and special section includes a comprehensive, publication-grade visual summary mapping real-world case studies, frameworks, and weekly labs.
+              </p>
+            </div>
+
+            {onOpenInfographicModal && (
+              <button
+                onClick={() => onOpenInfographicModal('infographic-intro')}
+                className="px-4 py-2.5 bg-[#101828] text-white text-xs font-semibold rounded-md hover:bg-blue-950 transition-colors flex items-center gap-2 shrink-0 cursor-pointer shadow-xs"
+              >
+                <Maximize2 className="w-3.5 h-3.5" />
+                <span>Launch Interactive Infographic Viewer</span>
+              </button>
+            )}
+          </div>
+
+          {/* Infographics Horizontal Scroll Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            {ALL_INFOGRAPHICS.slice(0, 10).map((info) => (
+              <div
+                key={info.id}
+                onClick={() => onOpenInfographicModal && onOpenInfographicModal(info.id)}
+                className="group bg-white rounded-xl border border-[#101828]/10 overflow-hidden shadow-2xs hover:shadow-md hover:border-blue-900/60 transition-all cursor-pointer flex flex-col"
+              >
+                <div className="relative aspect-3/4 overflow-hidden bg-slate-900">
+                  <img
+                    src={info.imageUrl}
+                    alt={info.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2">
+                    <span className="px-2.5 py-1.5 bg-black/80 text-white rounded text-[11px] font-medium backdrop-blur-xs flex items-center gap-1.5">
+                      <Maximize2 className="w-3 h-3 text-blue-400" />
+                      <span>Inspect</span>
+                    </span>
+                  </div>
+                  <span className="absolute top-2 left-2 text-[9px] font-mono font-bold bg-black/70 text-white px-1.5 py-0.5 rounded backdrop-blur-xs">
+                    {info.category}
+                  </span>
+                </div>
+                <div className="p-3 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h4 className="font-serif text-xs font-bold text-[#101828] line-clamp-2 leading-tight">
+                      {info.title}
+                    </h4>
+                  </div>
+                  <span className="text-[10px] text-blue-900 font-medium font-mono mt-2 block">
+                    Click to Zoom →
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Special Sections Strip */}
+          <div className="mt-6 pt-6 border-t border-[#101828]/10 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {ALL_INFOGRAPHICS.slice(10, 15).map((info) => (
+              <div
+                key={info.id}
+                onClick={() => onOpenInfographicModal && onOpenInfographicModal(info.id)}
+                className="group p-4 bg-white rounded-xl border border-[#101828]/10 hover:border-blue-900 transition-all cursor-pointer flex items-center gap-4 shadow-2xs"
+              >
+                <div className="w-16 h-20 shrink-0 bg-slate-900 rounded overflow-hidden">
+                  <img
+                    src={info.imageUrl}
+                    alt={info.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                  />
+                </div>
+                <div className="space-y-1 overflow-hidden">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-blue-900 font-bold block truncate">
+                    {info.category}
+                  </span>
+                  <h4 className="font-serif text-xs font-bold text-[#101828] truncate">
+                    {info.title}
+                  </h4>
+                  <p className="text-[11px] text-[#475467] line-clamp-2 leading-snug">
+                    {info.subtitle}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. CHAPTERS & EDITORIAL TABLE OF CONTENTS */}
       <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="text-xs uppercase tracking-widest text-[#475467] font-mono block mb-2">
@@ -108,7 +222,7 @@ export const BookView: React.FC<BookViewProps> = ({
             The Architectural Journey
           </h2>
           <p className="text-base text-[#475467]">
-            Structured into four progressive parts designed to reshape your career altitude.
+            Structured into four progressive parts designed to reshape your career altitude from syntax generation to autonomous intelligence leadership.
           </p>
 
           {/* Part Filter Tabs */}
@@ -130,77 +244,267 @@ export const BookView: React.FC<BookViewProps> = ({
         </div>
 
         {/* Chapters Editorial Layout */}
-        <div className="space-y-6 max-w-4xl mx-auto">
+        <div className="space-y-8 max-w-5xl mx-auto">
           {filteredChapters.map((chapter) => (
             <div
               key={chapter.number}
-              className="bg-white border border-[#101828]/10 rounded-xl p-6 sm:p-8 hover:border-blue-900 transition-all shadow-2xs text-left"
+              className="bg-white border border-[#101828]/10 rounded-2xl p-6 sm:p-8 hover:border-blue-900/60 transition-all shadow-2xs text-left grid grid-cols-1 md:grid-cols-12 gap-6 items-start"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-                <div className="flex items-center gap-2">
+              {/* Left Column: Text & Case Studies */}
+              <div className="md:col-span-8 space-y-4">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="font-mono text-xs font-semibold text-blue-900 bg-blue-50 px-2 py-0.5 rounded">
                     Chapter {chapter.number}
                   </span>
                   <span className="text-xs text-[#475467] font-mono">
                     {chapter.part} · {chapter.partTitle}
                   </span>
+                  <span className="text-xs text-[#98A2B3] font-mono ml-auto">
+                    {chapter.readTime}
+                  </span>
                 </div>
-                <span className="text-xs text-[#98A2B3] font-mono">{chapter.readTime}</span>
-              </div>
 
-              <h3 className="font-serif text-2xl font-bold text-[#101828] mb-1">
-                {chapter.title}
-              </h3>
-              <div className="text-sm font-sans text-blue-950 font-medium mb-3">
-                {chapter.subtitle}
-              </div>
+                <div>
+                  <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#101828]">
+                    {chapter.title}
+                  </h3>
+                  <div className="text-xs sm:text-sm font-sans text-blue-950 font-medium italic mt-0.5">
+                    {chapter.subtitle}
+                  </div>
+                </div>
 
-              <p className="text-xs sm:text-sm text-[#475467] leading-relaxed mb-4">
-                {chapter.summary}
-              </p>
-
-              <div className="bg-[#FAF9F5] p-3.5 rounded-lg border border-[#101828]/[0.06] mb-4">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-[#475467] block mb-1">
-                  Core Invariant
-                </span>
-                <p className="font-serif italic text-xs sm:text-sm text-[#101828]">
-                  "{chapter.keyTakeaway}"
+                <p className="text-xs sm:text-sm text-[#475467] leading-relaxed">
+                  {chapter.summary}
                 </p>
+
+                {/* Core Invariant Callout */}
+                <div className="bg-[#FAF9F5] p-3.5 rounded-lg border border-[#101828]/[0.06]">
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-[#475467] block mb-1">
+                    Core Invariant
+                  </span>
+                  <p className="font-serif italic text-xs sm:text-sm text-[#101828]">
+                    "{chapter.keyTakeaway}"
+                  </p>
+                </div>
+
+                {/* Case Studies Badges */}
+                {chapter.caseStudies && chapter.caseStudies.length > 0 && (
+                  <div className="pt-1">
+                    <span className="text-[11px] font-mono uppercase text-[#475467] block mb-1.5">
+                      Case Studies in This Chapter:
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {chapter.caseStudies.map((cs, idx) => (
+                        <div
+                          key={idx}
+                          className="px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-md text-xs text-[#101828] font-medium flex items-center gap-1.5"
+                        >
+                          <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                          <span>{cs.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex flex-wrap items-center gap-4 pt-3 border-t border-[#101828]/[0.06]">
+                  <button
+                    onClick={() => onOpenSample(chapter.number)}
+                    className="text-xs font-semibold text-blue-900 hover:text-blue-700 transition-colors flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <BookOpen className="w-3.5 h-3.5" />
+                    <span>Read Chapter {chapter.number} Excerpt</span>
+                  </button>
+                  {onOpenInfographicModal && (
+                    <button
+                      onClick={() => onOpenInfographicModal(`infographic-ch${chapter.number}`)}
+                      className="text-xs font-medium text-slate-700 hover:text-blue-900 transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <Maximize2 className="w-3.5 h-3.5 text-blue-600" />
+                      <span>Zoom Chapter Infographic</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={onOpenBuyModal}
+                    className="text-xs text-[#475467] hover:text-[#101828] cursor-pointer ml-auto"
+                  >
+                    Order Book →
+                  </button>
+                </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-[#101828]/[0.06]">
-                <button
-                  onClick={() => onOpenSample(chapter.number)}
-                  className="text-xs font-semibold text-blue-900 hover:text-blue-700 transition-colors flex items-center gap-1.5 cursor-pointer"
+              {/* Right Column: Infographic Preview Card */}
+              {chapter.infographicUrl && (
+                <div
+                  onClick={() => onOpenInfographicModal && onOpenInfographicModal(`infographic-ch${chapter.number}`)}
+                  className="md:col-span-4 group relative bg-slate-900 rounded-xl overflow-hidden border border-[#101828]/15 shadow-sm cursor-pointer aspect-3/4 flex items-center justify-center"
                 >
-                  <BookOpen className="w-3.5 h-3.5" />
-                  <span>Read Chapter {chapter.number} Excerpt</span>
-                </button>
-                <button
-                  onClick={onOpenBuyModal}
-                  className="text-xs text-[#475467] hover:text-[#101828] cursor-pointer"
-                >
-                  Order Book →
-                </button>
-              </div>
+                  <img
+                    src={chapter.infographicUrl}
+                    alt={`Chapter ${chapter.number} Infographic`}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="px-3 py-1.5 bg-black/80 text-white rounded text-xs font-medium backdrop-blur-xs flex items-center gap-1.5 shadow-md">
+                      <Maximize2 className="w-3.5 h-3.5 text-blue-400" />
+                      <span>Inspect Full Infographic</span>
+                    </span>
+                  </div>
+                  <span className="absolute bottom-2 right-2 text-[10px] font-mono bg-black/80 text-white px-2 py-0.5 rounded backdrop-blur-xs">
+                    Ch {chapter.number} Infographic
+                  </span>
+                </div>
+              )}
             </div>
           ))}
         </div>
       </section>
 
-      {/* 4. BOOK SPECS & FORMATS BANNER */}
+      {/* 5. SPECIAL SECTIONS & ACTION BLUEPRINTS */}
+      <section className="py-20 bg-white border-t border-[#101828]/[0.08]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="text-xs uppercase tracking-widest font-mono text-blue-900 font-semibold block mb-1">
+              Frameworks & Blueprints
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#101828]">
+              Special Sections & Master Blueprints
+            </h2>
+          </div>
+
+          {/* Tabs for Special Sections */}
+          <div className="flex flex-wrap justify-center gap-2 mb-8">
+            {SPECIAL_SECTIONS.map((sec) => (
+              <button
+                key={sec.id}
+                onClick={() => setSelectedSpecialTab(sec.id)}
+                className={`px-4 py-2 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                  selectedSpecialTab === sec.id
+                    ? 'bg-[#101828] text-white shadow-xs'
+                    : 'bg-[#FAFAF7] border border-[#101828]/10 text-[#475467] hover:text-[#101828]'
+                }`}
+              >
+                {sec.title.split(':')[0]}
+              </button>
+            ))}
+          </div>
+
+          {/* Active Special Section Card */}
+          <div className="bg-[#FAFAF7] rounded-2xl border border-[#101828]/10 p-6 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center shadow-xs">
+            <div className="lg:col-span-7 space-y-4">
+              <span className="text-xs font-mono uppercase tracking-widest text-blue-900 font-bold bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded">
+                {activeSpecialSection.badge}
+              </span>
+              <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#101828]">
+                {activeSpecialSection.title}
+              </h3>
+              <p className="text-xs sm:text-sm text-blue-950 font-sans italic">
+                {activeSpecialSection.subtitle}
+              </p>
+              <p className="text-xs sm:text-sm text-[#475467] leading-relaxed">
+                {activeSpecialSection.summary}
+              </p>
+
+              {/* Key Takeaway */}
+              <div className="p-3.5 bg-white rounded-xl border border-[#101828]/10">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-[#475467] block mb-1">
+                  Guiding Philosophy
+                </span>
+                <p className="font-serif italic text-xs sm:text-sm text-[#101828]">
+                  "{activeSpecialSection.keyTakeaway}"
+                </p>
+              </div>
+
+              {/* Featured People (for Five Routes) */}
+              {activeSpecialSection.featuredPeople && (
+                <div className="space-y-2 pt-2">
+                  <span className="text-xs font-mono uppercase tracking-wider text-[#475467] block">
+                    Featured Route Archetypes:
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {activeSpecialSection.featuredPeople.map((p, idx) => (
+                      <div key={idx} className="p-2.5 bg-white rounded-lg border border-[#101828]/10 text-xs">
+                        <strong className="text-[#101828] block">{p.name}</strong>
+                        <span className="text-[11px] text-[#475467]">{p.role}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Action Steps (for 30/60/90 Day Plan) */}
+              {activeSpecialSection.actionSteps && (
+                <div className="space-y-2 pt-2">
+                  <span className="text-xs font-mono uppercase tracking-wider text-[#475467] block">
+                    Execution Milestones:
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {activeSpecialSection.actionSteps.map((step, idx) => (
+                      <div key={idx} className="p-2.5 bg-white rounded-lg border border-[#101828]/10 text-xs">
+                        <strong className="text-blue-900 block font-mono text-[11px]">{step.period}</strong>
+                        <span className="text-[#101828] font-medium block">{step.title}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="pt-2">
+                {onOpenInfographicModal && (
+                  <button
+                    onClick={() => {
+                      const found = ALL_INFOGRAPHICS.find((i) => i.imageUrl === activeSpecialSection.infographicUrl);
+                      onOpenInfographicModal(found ? found.id : 'infographic-intro');
+                    }}
+                    className="px-4 py-2 bg-[#101828] text-white text-xs font-semibold rounded-md hover:bg-blue-950 transition-colors inline-flex items-center gap-2 cursor-pointer"
+                  >
+                    <Maximize2 className="w-3.5 h-3.5" />
+                    <span>Zoom This High-Resolution Infographic</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Infographic Thumbnail */}
+            <div
+              onClick={() => {
+                const found = ALL_INFOGRAPHICS.find((i) => i.imageUrl === activeSpecialSection.infographicUrl);
+                if (onOpenInfographicModal) {
+                  onOpenInfographicModal(found ? found.id : 'infographic-intro');
+                }
+              }}
+              className="lg:col-span-5 group relative bg-slate-900 rounded-xl overflow-hidden border border-[#101828]/15 shadow-md cursor-pointer aspect-3/4 flex items-center justify-center"
+            >
+              <img
+                src={activeSpecialSection.infographicUrl}
+                alt={activeSpecialSection.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span className="px-3.5 py-2 bg-black/80 text-white rounded text-xs font-medium backdrop-blur-xs flex items-center gap-2 shadow-md">
+                  <Maximize2 className="w-4 h-4 text-blue-400" />
+                  <span>Inspect Blueprint</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. BOOK SPECS & FORMATS BANNER */}
       <section className="py-20 bg-[#FAF9F5] border-t border-[#101828]/[0.08]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div className="p-4 bg-white rounded-xl border border-[#101828]/10">
               <span className="text-xs font-mono uppercase text-[#475467] block mb-1">Length</span>
               <strong className="font-serif text-2xl font-bold text-[#101828]">{BOOK_DETAILS.pageCount}</strong>
-              <span className="block text-[11px] text-[#475467] mt-1">11 Core Chapters</span>
+              <span className="block text-[11px] text-[#475467] mt-1">11 Core Chapters + 15 Infographics</span>
             </div>
             <div className="p-4 bg-white rounded-xl border border-[#101828]/10">
               <span className="text-xs font-mono uppercase text-[#475467] block mb-1">Author</span>
               <strong className="font-serif text-2xl font-bold text-[#101828]">Harsh Verma</strong>
-              <span className="block text-[11px] text-[#475467] mt-1">Principal AI Engineer</span>
+              <span className="block text-[11px] text-[#475467] mt-1">Palo Alto Networks · Stanford Scholar</span>
             </div>
             <div className="p-4 bg-white rounded-xl border border-[#101828]/10">
               <span className="text-xs font-mono uppercase text-[#475467] block mb-1">Formats</span>

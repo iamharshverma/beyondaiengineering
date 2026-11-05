@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { PageId, LabResource } from '../types';
 import { LAB_RESOURCES } from '../data/resourcesData';
-import { ArrowRight, FileText, CheckCircle, Wrench, Clock, Download, ExternalLink } from 'lucide-react';
+import { ArrowRight, FileText, CheckCircle, Wrench, Clock, Download, ExternalLink, Maximize2, Layers } from 'lucide-react';
 
 interface ResourcesViewProps {
   onNavigate: (page: PageId) => void;
   onOpenCanvas: (resource: LabResource) => void;
   onOpenAssessment: () => void;
+  onOpenInfographicModal?: (infographicId?: string) => void;
 }
 
 export const ResourcesView: React.FC<ResourcesViewProps> = ({
   onNavigate,
   onOpenCanvas,
   onOpenAssessment,
+  onOpenInfographicModal,
 }) => {
   const [activeCategory, setActiveCategory] = useState<string>('ALL');
 
@@ -134,6 +136,60 @@ export const ResourcesView: React.FC<ResourcesViewProps> = ({
             </div>
           ))}
         </div>
+
+        {/* 30/60/90 DAY ACTION PLAN INFOGRAPHIC SPOTLIGHT */}
+        <div className="mt-16 bg-[#FAF9F5] p-8 sm:p-10 rounded-2xl border border-[#101828]/10 flex flex-col lg:flex-row items-center justify-between gap-8">
+          <div className="space-y-4 max-w-xl">
+            <span className="text-xs font-mono uppercase tracking-widest text-blue-900 font-bold bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded inline-block">
+              Featured Lab Blueprint
+            </span>
+            <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#101828]">
+              Your 30 / 60 / 90 Day Transition Plan
+            </h3>
+            <p className="text-xs sm:text-sm text-[#475467] leading-relaxed">
+              Transform from linear execution developer to strategic system curator across a structured 3-month sprint: Days 1–30 (Audit & Mindset), Days 31–60 (Prototyping & Boundaries), Days 61–90 (Public Proof & Leadership).
+            </p>
+            <div className="pt-2 flex flex-wrap items-center gap-3">
+              {onOpenInfographicModal && (
+                <button
+                  onClick={() => onOpenInfographicModal('infographic-plan')}
+                  className="px-4 py-2 bg-[#101828] text-white text-xs font-semibold rounded-md hover:bg-blue-950 transition-colors cursor-pointer inline-flex items-center gap-1.5 shadow-xs"
+                >
+                  <Maximize2 className="w-3.5 h-3.5" />
+                  <span>Inspect Full Infographic Blueprint</span>
+                </button>
+              )}
+              <button
+                onClick={() => {
+                  const planCanvas = LAB_RESOURCES.find((r) => r.id === '30-60-90-plan') || LAB_RESOURCES[0];
+                  onOpenCanvas(planCanvas);
+                }}
+                className="px-4 py-2 bg-white border border-[#101828]/20 text-[#101828] text-xs font-semibold rounded-md hover:bg-black/5 transition-colors cursor-pointer inline-flex items-center gap-1.5"
+              >
+                <FileText className="w-3.5 h-3.5 text-blue-900" />
+                <span>Launch Interactive Worksheet</span>
+              </button>
+            </div>
+          </div>
+
+          <div
+            onClick={() => onOpenInfographicModal && onOpenInfographicModal('infographic-plan')}
+            className="w-full lg:w-72 aspect-3/4 rounded-xl overflow-hidden bg-slate-900 border border-[#101828]/15 shadow-md shrink-0 cursor-pointer group relative"
+          >
+            <img
+              src="/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_16_PM-4_1a969073.png"
+              alt="Action Plan: Your 30/60/90 Day Plan Infographic"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span className="px-3 py-1.5 bg-black/80 text-white rounded text-xs font-medium backdrop-blur-xs flex items-center gap-1.5 shadow-md">
+                <Maximize2 className="w-3.5 h-3.5 text-blue-400" />
+                <span>Zoom Infographic</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
       </section>
     </div>
   );

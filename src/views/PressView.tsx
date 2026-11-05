@@ -60,7 +60,7 @@ export const PressView: React.FC<PressViewProps> = ({ onNavigate }) => {
             Resources for journalists, podcast hosts, conference organizers, and reviewers.
           </p>
           <p className="text-xs sm:text-sm text-[#475467]">
-            Media Inquiries: <a href="mailto:press@beyondaiengineering.com" className="font-semibold text-blue-900 underline">press@beyondaiengineering.com</a>
+            Media Inquiries: <a href="mailto:connect@beyondaiengineering.com" className="font-semibold text-blue-900 underline">connect@beyondaiengineering.com</a>
           </p>
         </div>
       </section>

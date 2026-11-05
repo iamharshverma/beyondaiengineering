@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { PageId } from '../types';
-import { GraduationCap, ArrowRight, CheckCircle2, Shield, Cpu, Users, FileText, Download } from 'lucide-react';
+import { GraduationCap, ArrowRight, CheckCircle2, Shield, Cpu, Users, FileText, Download, Maximize2, Layers } from 'lucide-react';
 
 interface StudentsViewProps {
   onNavigate: (page: PageId) => void;
   onOpenAssessment: () => void;
+  onOpenInfographicModal?: (infographicId?: string) => void;
 }
 
 export const StudentsView: React.FC<StudentsViewProps> = ({
   onNavigate,
   onOpenAssessment,
+  onOpenInfographicModal,
 }) => {
   const [downloadedRoadmap, setDownloadedRoadmap] = useState(false);
 
@@ -185,6 +187,99 @@ Explore full chapters & lab at https://beyondaiengineering.com/students`;
             </div>
           </div>
 
+        </div>
+
+        {/* STUDENT VISUAL BLUEPRINTS & INFOGRAPHICS */}
+        <div className="mb-16 bg-[#FAF9F5] p-8 sm:p-10 rounded-2xl border border-[#101828]/10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-blue-900 font-bold mb-1">
+                <Layers className="w-4 h-4" />
+                <span>Companion Visual Blueprints</span>
+              </div>
+              <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#101828]">
+                Early-Career Visual Frameworks
+              </h3>
+              <p className="text-xs sm:text-sm text-[#475467] mt-1 max-w-xl">
+                Extracted directly from Chapter 11 and Special Section IV of Beyond AI Engineering.
+              </p>
+            </div>
+            {onOpenInfographicModal && (
+              <button
+                onClick={() => onOpenInfographicModal('infographic-ch11')}
+                className="px-4 py-2 bg-[#101828] text-white text-xs font-semibold rounded-md hover:bg-blue-950 transition-colors cursor-pointer inline-flex items-center gap-1.5 self-start md:self-auto"
+              >
+                <Maximize2 className="w-3.5 h-3.5" />
+                <span>Open Full Infographic Viewer</span>
+              </button>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Card 1: Chapter 11 Infographic */}
+            <div
+              onClick={() => onOpenInfographicModal && onOpenInfographicModal('infographic-ch11')}
+              className="bg-white p-6 rounded-xl border border-[#101828]/10 shadow-2xs hover:border-blue-900 transition-all cursor-pointer group flex flex-col sm:flex-row gap-6 items-center"
+            >
+              <div className="w-full sm:w-36 aspect-3/4 rounded-lg overflow-hidden bg-slate-900 shrink-0 relative">
+                <img
+                  src="/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_15_PM-2_f273f746.png"
+                  alt="Chapter 11 Infographic: Guide for Students and Early-Career Engineers"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                />
+                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Maximize2 className="w-4 h-4 text-white" />
+                </div>
+              </div>
+              <div className="space-y-2 flex-1">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-blue-900 font-bold bg-blue-50 px-2 py-0.5 rounded">
+                  Chapter 11 Blueprint
+                </span>
+                <h4 className="font-serif font-bold text-lg text-[#101828] group-hover:text-blue-900 transition-colors">
+                  Starting Out: 3 Projects Not 10
+                </h4>
+                <p className="text-xs text-[#475467] leading-relaxed">
+                  How to build verifiable public proof of work, high-conversion cold outreach templates, and bypass generic algorithm tests.
+                </p>
+                <div className="pt-2 text-xs font-semibold text-blue-900 flex items-center gap-1">
+                  <span>Inspect Full Infographic</span>
+                  <span>→</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 2: Five Routes to Broader Impact */}
+            <div
+              onClick={() => onOpenInfographicModal && onOpenInfographicModal('infographic-routes')}
+              className="bg-white p-6 rounded-xl border border-[#101828]/10 shadow-2xs hover:border-blue-900 transition-all cursor-pointer group flex flex-col sm:flex-row gap-6 items-center"
+            >
+              <div className="w-full sm:w-36 aspect-3/4 rounded-lg overflow-hidden bg-slate-900 shrink-0 relative">
+                <img
+                  src="/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_15_PM-3_2f0faec4.png"
+                  alt="Special Section: Five Routes to Broader Impact"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                />
+                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Maximize2 className="w-4 h-4 text-white" />
+                </div>
+              </div>
+              <div className="space-y-2 flex-1">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-purple-900 font-bold bg-purple-50 px-2 py-0.5 rounded">
+                  Special Section
+                </span>
+                <h4 className="font-serif font-bold text-lg text-[#101828] group-hover:text-purple-900 transition-colors">
+                  Five Routes to Broader Impact
+                </h4>
+                <p className="text-xs text-[#475467] leading-relaxed">
+                  Learn from Shawn Wang, Kelsey Hightower, Reshma Saujani, Fei-Fei Li, and Jeremy Howard how to build outsized influence.
+                </p>
+                <div className="pt-2 text-xs font-semibold text-purple-900 flex items-center gap-1">
+                  <span>Inspect Full Infographic</span>
+                  <span>→</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* 4 Callout Action Blocks */}

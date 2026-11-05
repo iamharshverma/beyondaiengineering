@@ -24,6 +24,7 @@ interface HomeViewProps {
   onOpenBuyModal: () => void;
   onOpenAssessment: () => void;
   onOpenSample: () => void;
+  onOpenInfographicModal?: (infographicId?: string) => void;
 }
 
 export const HomeView: React.FC<HomeViewProps> = ({
@@ -31,6 +32,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
   onOpenBuyModal,
   onOpenAssessment,
   onOpenSample,
+  onOpenInfographicModal,
 }) => {
   const [emailInput, setEmailInput] = useState('');
   const [emailSubmitted, setEmailSubmitted] = useState(false);
@@ -208,8 +210,107 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </section>
 
+      {/* 4.5. 15 CHAPTER INFOGRAPHICS & VISUAL BLUEPRINTS */}
+      <section className="py-20 bg-[#FAF9F5] border-b border-[#101828]/[0.08]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div>
+              <span className="text-xs uppercase tracking-widest text-blue-900 font-mono block mb-2 font-bold">
+                Publication-Grade Visual Guides
+              </span>
+              <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#101828] tracking-tight">
+                15 Infographics. 11 Chapters. 0 Fluff.
+              </h2>
+              <p className="text-sm sm:text-base text-[#475467] mt-2 max-w-2xl leading-relaxed">
+                Every chapter includes a full-page blueprint mapping real-world case studies (Simon Willison, Knight Capital, swyx, Zillow Offers, Duolingo, Waymo), actionable weekly experiments, and a 4-point curator's checklist.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0">
+              {onOpenInfographicModal && (
+                <button
+                  onClick={() => onOpenInfographicModal('infographic-intro')}
+                  className="px-4 py-2.5 bg-[#101828] text-white text-xs font-semibold rounded-md hover:bg-blue-950 transition-colors cursor-pointer shadow-xs"
+                >
+                  Explore All 15 Infographics →
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                id: 'infographic-intro',
+                tag: 'Orientation',
+                title: 'From Creator to Curator',
+                sub: 'The C.A.O. Framework & Learning Focus',
+                img: '/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_04_PM-1_cab3095f.png',
+              },
+              {
+                id: 'infographic-ch1',
+                tag: 'Chapter 1',
+                title: 'The New Age of Engineering',
+                sub: 'Simon Willison & Knight Capital',
+                img: '/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_04_PM-2_73d3bcaa.png',
+              },
+              {
+                id: 'infographic-ch2',
+                tag: 'Chapter 2',
+                title: 'From HOW to WHAT',
+                sub: 'swyx & Zillow Offers Case Studies',
+                img: '/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-3_0750658f.png',
+              },
+              {
+                id: 'infographic-ch7',
+                tag: 'Chapter 7',
+                title: 'From Stagnation to Innovation',
+                sub: 'Anti-LeetCode Manifesto & Career Path',
+                img: '/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_07_PM-8_c9db1dc2.png',
+              },
+            ].map((card) => (
+              <div
+                key={card.id}
+                onClick={() => onOpenInfographicModal && onOpenInfographicModal(card.id)}
+                className="group bg-white rounded-xl border border-[#101828]/10 overflow-hidden shadow-2xs hover:shadow-md hover:border-blue-900 transition-all cursor-pointer flex flex-col"
+              >
+                <div className="relative aspect-3/4 overflow-hidden bg-slate-900">
+                  <img
+                    src={card.img}
+                    alt={card.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2">
+                    <span className="px-3 py-1.5 bg-black/80 text-white rounded text-xs font-medium backdrop-blur-xs">
+                      Click to Zoom & Inspect
+                    </span>
+                  </div>
+                  <span className="absolute top-2 left-2 text-[10px] font-mono font-bold bg-black/75 text-white px-2 py-0.5 rounded backdrop-blur-xs">
+                    {card.tag}
+                  </span>
+                </div>
+                <div className="p-4 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h4 className="font-serif text-sm font-bold text-[#101828] leading-tight mb-1">
+                      {card.title}
+                    </h4>
+                    <p className="text-[11px] text-[#475467] font-sans">
+                      {card.sub}
+                    </p>
+                  </div>
+                  <div className="pt-3 text-[11px] font-semibold text-blue-900 group-hover:underline flex items-center gap-1">
+                    <span>Inspect Infographic</span>
+                    <span>→</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* 5. WHAT READERS WILL BUILD (EVIDENCE ARTIFACTS) */}
-      <section className="py-24 bg-[#FAF9F5]">
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-16">

@@ -27,6 +27,7 @@ import { LabCanvasModal } from './components/LabCanvasModal';
 import { SpeakingInquiryModal } from './components/SpeakingInquiryModal';
 import { ArticleModal } from './components/ArticleModal';
 import { BuyModal } from './components/BuyModal';
+import { InfographicModal } from './components/InfographicModal';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageId>('home');
@@ -39,6 +40,7 @@ export default function App() {
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
   const [isSpeakingModalOpen, setIsSpeakingModalOpen] = useState(false);
   const [speakingTopic, setSpeakingTopic] = useState<string>('The Engineer After Code');
+  const [activeInfographicId, setActiveInfographicId] = useState<string | null>(null);
 
   // Sync with browser hash on initial load
   useEffect(() => {
@@ -84,6 +86,10 @@ export default function App() {
     setIsSpeakingModalOpen(true);
   };
 
+  const handleOpenInfographic = (id: string = 'infographic-intro') => {
+    setActiveInfographicId(id);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFAF7] text-[#101828] selection:bg-blue-100 selection:text-blue-900">
       {/* 1. Header / Navbar following Top Bar Contract */}
@@ -102,6 +108,7 @@ export default function App() {
             onOpenBuyModal={() => setIsBuyModalOpen(true)}
             onOpenAssessment={() => setIsAssessmentOpen(true)}
             onOpenSample={() => handleOpenSample(1)}
+            onOpenInfographicModal={handleOpenInfographic}
           />
         )}
 
@@ -110,6 +117,7 @@ export default function App() {
             onNavigate={handleNavigate}
             onOpenBuyModal={() => setIsBuyModalOpen(true)}
             onOpenSample={handleOpenSample}
+            onOpenInfographicModal={handleOpenInfographic}
           />
         )}
 
@@ -125,6 +133,7 @@ export default function App() {
             onNavigate={handleNavigate}
             onOpenCanvas={(resource) => setActiveCanvasResource(resource)}
             onOpenAssessment={() => setIsAssessmentOpen(true)}
+            onOpenInfographicModal={handleOpenInfographic}
           />
         )}
 
@@ -136,6 +145,7 @@ export default function App() {
           <StudentsView
             onNavigate={handleNavigate}
             onOpenAssessment={() => setIsAssessmentOpen(true)}
+            onOpenInfographicModal={handleOpenInfographic}
           />
         )}
 
@@ -209,6 +219,15 @@ export default function App() {
         isOpen={sampleChapterNumber !== null}
         initialChapterNumber={sampleChapterNumber || 1}
         onClose={() => setSampleChapterNumber(null)}
+        onOpenBuyModal={() => setIsBuyModalOpen(true)}
+        onOpenInfographicModal={handleOpenInfographic}
+      />
+
+      {/* High-Resolution Infographic Zoom & Navigation Modal */}
+      <InfographicModal
+        isOpen={activeInfographicId !== null}
+        initialInfographicId={activeInfographicId || 'infographic-intro'}
+        onClose={() => setActiveInfographicId(null)}
         onOpenBuyModal={() => setIsBuyModalOpen(true)}
       />
 

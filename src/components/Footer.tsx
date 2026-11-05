@@ -190,11 +190,15 @@ export const Footer: React.FC<FooterProps> = ({
             Creator. Architect. Orchestrator.
           </div>
           <div className="flex items-center gap-4">
-            <button onClick={() => handleNavigate('press')} className="hover:text-white transition-colors">
+            <a href="mailto:connect@beyondaiengineering.com" className="hover:text-white transition-colors text-blue-300">
+              connect@beyondaiengineering.com
+            </a>
+            <span>·</span>
+            <button onClick={() => handleNavigate('press')} className="hover:text-white transition-colors cursor-pointer">
               Media Inquiries
             </button>
             <span>·</span>
-            <button onClick={() => handleNavigate('manifesto')} className="hover:text-white transition-colors">
+            <button onClick={() => handleNavigate('manifesto')} className="hover:text-white transition-colors cursor-pointer">
               The Manifesto
             </button>
             <span>·</span>

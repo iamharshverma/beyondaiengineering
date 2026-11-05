@@ -14,6 +14,12 @@ export type PageId =
   | 'buy'
   | 'assessment';
 
+export interface CaseStudyItem {
+  name: string;
+  subtitle?: string;
+  description: string;
+}
+
 export interface Chapter {
   number: number;
   part: string;
@@ -24,6 +30,26 @@ export interface Chapter {
   keyTakeaway: string;
   sampleExcerpt: string;
   readTime: string;
+  infographicUrl?: string;
+  infographicFallback?: string;
+  caseStudies?: CaseStudyItem[];
+  labTryThisWeek?: string;
+  curatorChecklist?: string[];
+  keyConcepts?: string[];
+  whatIsChanging?: string[];
+}
+
+export interface SpecialInfographicSection {
+  id: string;
+  badge: string;
+  title: string;
+  subtitle: string;
+  infographicUrl: string;
+  infographicFallback: string;
+  summary: string;
+  keyTakeaway: string;
+  featuredPeople?: { name: string; role: string; contribution: string }[];
+  actionSteps?: { period: string; title: string; tasks: string[] }[];
 }
 
 export interface Framework {
