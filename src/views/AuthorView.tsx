@@ -16,7 +16,12 @@ export const AuthorView: React.FC<AuthorViewProps> = ({
 }) => {
   const credibilityBlocks = [
     { title: 'Principal AI Engineer', desc: 'Palo Alto Networks · Enterprise agentic systems & autonomous cyber defense' },
-    { title: 'Stanford Scholar', desc: 'Stanford Graduate School of Business (LEAD Distinguished Scholar)' },
+    {
+      title: 'Keynote Speaker',
+      desc: 'Global Tech Summits & Executive AI Briefings · Keynotes on Autonomous Agents, Systems Curation & The Trust Economy',
+      highlight: true,
+      action: onOpenSpeakingModal,
+    },
     { title: 'Fellow & IEEE Senior', desc: 'Fellow of RSA, IFGICT & BCS · IEEE Senior Member · Forbes Tech Council' },
     { title: 'Silicon Valley Advisor', desc: 'Mentor & Evaluator at Berkeley SkyDeck, Techstars & Mayfield AI Garage' },
   ];
@@ -86,12 +91,12 @@ export const AuthorView: React.FC<AuthorViewProps> = ({
             </h1>
 
             <h2 className="font-serif text-xl sm:text-2xl text-blue-950 italic">
-              Principal AI Engineer · Author · AI & Cybersecurity Leader
+              Principal AI Engineer · Author · Keynote Speaker · AI & Cybersecurity Leader
             </h2>
 
             <div className="space-y-4 text-base text-[#475467] leading-relaxed font-sans">
               <p className="font-medium text-[#101828] text-lg">
-                Harsh Verma is a Silicon Valley-based Principal AI Software Engineer at <strong>Palo Alto Networks</strong>, researcher, and author whose work sits at the frontier of autonomous agent ecosystems, AI security governance, and enterprise distributed systems.
+                Harsh Verma is a Silicon Valley-based Principal AI Software Engineer at <strong>Palo Alto Networks</strong>, researcher, author, and keynote speaker whose work sits at the frontier of autonomous agent ecosystems, AI security governance, and enterprise distributed systems.
               </p>
               <p>
                 Recognized as a <strong>Stanford Distinguished Scholar</strong> by the Stanford Graduate School of Business, an official member of the <strong>Forbes Technology Council</strong>, a <strong>Fellow of the RSA, IFGICT, and BCS</strong>, and an <strong>IEEE Senior Member</strong>, Harsh actively mentors and evaluates startup founders across leading accelerators including <strong>Berkeley SkyDeck</strong>, <strong>Techstars</strong>, and the <strong>Mayfield Fund AI Garage</strong>.
@@ -154,7 +159,7 @@ export const AuthorView: React.FC<AuthorViewProps> = ({
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="font-serif font-bold text-lg text-[#101828]">Harsh Verma</div>
-                      <div className="text-xs text-[#475467]">Principal AI Software Engineer · Author</div>
+                      <div className="text-xs text-[#475467]">Principal AI Software Engineer · Author · Keynote Speaker</div>
                     </div>
                     <span className="text-[10px] font-mono uppercase tracking-wider text-blue-900 bg-blue-50 px-2 py-1 rounded font-semibold">
                       Silicon Valley
@@ -162,7 +167,13 @@ export const AuthorView: React.FC<AuthorViewProps> = ({
                   </div>
                   <div className="mt-2 pt-2 border-t border-[#101828]/[0.06] flex items-center justify-between text-[11px] text-[#475467]">
                     <span>Palo Alto Networks</span>
-                    <span>Stanford LEAD Scholar</span>
+                    <span
+                      onClick={onOpenSpeakingModal}
+                      className="font-semibold text-blue-900 bg-blue-50 hover:bg-blue-100 px-2 py-0.5 rounded transition-colors cursor-pointer"
+                      title="Invite Harsh to speak"
+                    >
+                      Keynote Speaker
+                    </span>
                   </div>
                 </div>
               </div>
@@ -176,13 +187,34 @@ export const AuthorView: React.FC<AuthorViewProps> = ({
       <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08]">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {credibilityBlocks.map((block) => (
-            <div key={block.title} className="bg-white p-6 rounded-xl border border-[#101828]/10 shadow-2xs text-left">
-              <div className="font-serif text-xl sm:text-2xl font-bold text-[#101828] mb-1.5">
-                {block.title}
+            <div
+              key={block.title}
+              onClick={block.action}
+              className={`p-6 rounded-xl border text-left transition-all ${
+                block.highlight
+                  ? 'bg-blue-50/70 border-blue-300 hover:border-blue-900 shadow-xs cursor-pointer group'
+                  : 'bg-white border-[#101828]/10 shadow-2xs'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <div className={`font-serif text-xl sm:text-2xl font-bold ${block.highlight ? 'text-blue-950 group-hover:text-blue-900' : 'text-[#101828]'}`}>
+                  {block.title}
+                </div>
+                {block.highlight && (
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-blue-900 font-bold bg-blue-100 px-2 py-0.5 rounded">
+                    Global Speaker
+                  </span>
+                )}
               </div>
               <p className="text-xs text-[#475467] leading-relaxed font-sans">
                 {block.desc}
               </p>
+              {block.action && (
+                <div className="mt-3 pt-2 border-t border-blue-200 text-xs font-semibold text-blue-900 flex items-center gap-1 group-hover:underline">
+                  <span>Invite Harsh to Speak</span>
+                  <span>→</span>
+                </div>
+              )}
             </div>
           ))}
         </div>
