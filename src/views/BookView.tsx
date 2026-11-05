@@ -481,6 +481,61 @@ export const BookView: React.FC<BookViewProps> = ({
         </div>
       </section>
 
+      {/* 5.5. TEAM & UNIVERSITY BULK ORDERS + ONLINE SAMPLE READING ROOM */}
+      <section className="py-16 bg-white dark:bg-[#070B14] border-t border-[#101828]/[0.08] dark:border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Sample Reading Room */}
+            <div className="p-8 rounded-2xl bg-[#FAFAF7] dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 flex flex-col justify-between">
+              <div className="space-y-3">
+                <span className="text-xs font-mono uppercase tracking-wider text-blue-900 dark:text-blue-400 font-semibold block">
+                  Free Online Reading Room
+                </span>
+                <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white">
+                  Read the Preface, Intro & Chapter 1
+                </h3>
+                <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed">
+                  Experience the full unabridged excerpt from <em>Beyond AI Engineering</em> directly in your browser or download the text study package.
+                </p>
+              </div>
+              <div className="pt-6">
+                <button
+                  onClick={() => onNavigate('sample')}
+                  className="px-5 py-2.5 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors cursor-pointer flex items-center gap-1.5"
+                >
+                  <span>Open Sample Reading Room</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Teams & University Adoption */}
+            <div className="p-8 rounded-2xl bg-linear-to-br from-[#101828] to-slate-900 text-white border border-slate-800 flex flex-col justify-between">
+              <div className="space-y-3">
+                <span className="text-xs font-mono uppercase tracking-wider text-amber-300 font-semibold block">
+                  Organization & Academic Licensing
+                </span>
+                <h3 className="font-serif text-2xl font-bold">
+                  Bring the C.A.O. Operating System to Your Engineering Org
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  Bulk order pricing, companion executive discussion guides, and virtual keynote briefings with author Harsh Verma for teams of 25 to 500+.
+                </p>
+              </div>
+              <div className="pt-6">
+                <button
+                  onClick={() => onNavigate('teams')}
+                  className="px-5 py-2.5 text-xs font-semibold bg-white text-[#101828] rounded-md hover:bg-slate-100 transition-colors cursor-pointer flex items-center gap-1.5"
+                >
+                  <span>Request Team Licensing Details</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 6. BOOK SPECS & FORMATS BANNER */}
       <section className="py-20 bg-[#FAF9F5] dark:bg-[#0A101D] border-t border-[#101828]/[0.08] dark:border-white/10 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

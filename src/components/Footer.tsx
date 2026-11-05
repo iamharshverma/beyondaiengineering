@@ -63,8 +63,23 @@ export const Footer: React.FC<FooterProps> = ({
                   </button>
                 </li>
                 <li>
-                  <button onClick={() => handleNavigate('frameworks')} className="hover:text-white transition-colors cursor-pointer">
+                  <button onClick={() => handleNavigate('sample')} className="hover:text-white transition-colors cursor-pointer text-blue-300">
+                    Read a Sample Excerpt
+                  </button>
+                </li>
+                <li>
+                  <button onClick={() => handleNavigate('teams')} className="hover:text-white transition-colors cursor-pointer text-amber-300">
+                    Teams & Bulk Orders
+                  </button>
+                </li>
+                <li>
+                  <button onClick={() => handleNavigate('cao-framework')} className="hover:text-white transition-colors cursor-pointer">
                     C.A.O. Framework
+                  </button>
+                </li>
+                <li>
+                  <button onClick={() => handleNavigate('frameworks')} className="hover:text-white transition-colors cursor-pointer">
+                    10 Proprietary Frameworks
                   </button>
                 </li>
                 <li>

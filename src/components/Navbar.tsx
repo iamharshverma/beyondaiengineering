@@ -40,16 +40,17 @@ export const Navbar: React.FC<NavbarProps> = ({
     }
   };
 
-  const navLinks: { label: string; page: PageId }[] = [
-    { label: 'The Book', page: 'book' },
-    { label: 'C.A.O. Framework', page: 'frameworks' },
-    { label: 'Lab & Resources', page: 'resources' },
-    { label: 'Toolkit', page: 'toolkit' },
-    { label: 'Students', page: 'students' },
-    { label: 'Manifesto', page: 'manifesto' },
-    { label: 'Author', page: 'author' },
-    { label: 'Speaking', page: 'speaking' },
-    { label: 'Ideas', page: 'ideas' },
+  const navLinks: { label: string; page: PageId; path: string }[] = [
+    { label: 'The Book', page: 'book', path: '/book' },
+    { label: 'C.A.O. Framework', page: 'cao-framework', path: '/cao-framework' },
+    { label: 'Frameworks', page: 'frameworks', path: '/frameworks' },
+    { label: 'Lab & Resources', page: 'resources', path: '/resources' },
+    { label: 'Toolkit', page: 'toolkit', path: '/toolkit' },
+    { label: 'Students', page: 'students', path: '/students' },
+    { label: 'Manifesto', page: 'manifesto', path: '/manifesto' },
+    { label: 'Author', page: 'author', path: '/author' },
+    { label: 'Speaking', page: 'speaking', path: '/speaking' },
+    { label: 'Ideas', page: 'ideas', path: '/ideas' },
   ];
 
   const handleLinkClick = (page: PageId) => {

@@ -3,12 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Beyond AI Engineering | From Creator to Curator — Harsh Verma</title>
-    <meta name="description" content="AI can increasingly write the code. Your advantage is deciding what deserves to be built. Beyond AI Engineering by Harsh Verma is the career operating system for engineers in the age of AI agents." />
+    <title>Beyond AI Engineering | Harsh Verma</title>
+    <meta name="description" content="Beyond AI Engineering by Harsh Verma explores how engineers can move from Creator to Architect to Orchestrator in the age of AI agents, building careers around judgment, systems thinking, orchestration, and trust." />
     
-    <!-- Theme Initializer (prevents flash of white/dark) -->
+    <!-- Theme & SPA Route Initializer -->
     <script>
       (function() {
+        // 1. Theme Hydration
         try {
           var saved = localStorage.getItem('beyond-theme');
           var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -16,6 +17,15 @@
             document.documentElement.classList.add('dark');
           } else {
             document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+
+        // 2. GitHub Pages SPA URL Hydration (?p=/cao-framework -> /cao-framework)
+        try {
+          var params = new URLSearchParams(window.location.search);
+          var redirectPath = params.get('p');
+          if (redirectPath) {
+            window.history.replaceState(null, null, redirectPath);
           }
         } catch (e) {}
       })();
@@ -27,53 +37,88 @@
 
     <!-- OpenGraph Metadata -->
     <meta property="og:type" content="book" />
-    <meta property="og:title" content="Beyond AI Engineering | From Creator to Curator — Harsh Verma" />
-    <meta property="og:description" content="AI can increasingly write the code. Your advantage moves to judgment. Discover the Creator-Architect-Orchestrator (C.A.O.) framework and engineering career operating system." />
+    <meta property="og:title" content="Beyond AI Engineering | Harsh Verma" />
+    <meta property="og:description" content="Beyond AI Engineering by Harsh Verma explores how engineers can move from Creator to Architect to Orchestrator in the age of AI agents, building careers around judgment, systems thinking, orchestration, and trust." />
     <meta property="og:site_name" content="Beyond AI Engineering" />
-    <meta property="og:image" content="/assets/images/book_hardcover_mockup_1793842329740.jpg" />
+    <meta property="og:image" content="https://www.beyondaiengineering.com/assets/images/book_hardcover_mockup_1793842329740.jpg" />
     
     <!-- Twitter Metadata -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Beyond AI Engineering | Harsh Verma" />
     <meta name="twitter:description" content="The career operating system for engineers navigating the age of AI agents. Move from Creator to Architect to Orchestrator." />
-    <meta name="twitter:image" content="/assets/images/book_hardcover_mockup_1793842329740.jpg" />
+    <meta name="twitter:image" content="https://www.beyondaiengineering.com/assets/images/book_hardcover_mockup_1793842329740.jpg" />
 
     <!-- Google Fonts: Newsreader (Editorial Serif), Plus Jakarta Sans (Modern Sans-serif), JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
-    <!-- Schema.org Structured Data -->
-    <script type="application/ld+json">
+    <!-- Schema.org Structured Data: Connected Entity Graph -->
+    <script id="beyond-schema-graph" type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@graph": [
         {
-          "@type": "Book",
-          "@id": "https://www.beyondaiengineering.com/#book",
-          "name": "Beyond AI Engineering: From Creator to Curator",
-          "headline": "Build Your Authority and Lead the AI Agent Revolution",
-          "author": {
-            "@type": "Person",
-            "name": "Harsh Verma",
-            "jobTitle": "Principal AI Engineer",
-            "url": "https://www.harshverma.me"
-          },
-          "description": "Beyond AI Engineering is a practical career operating system for engineers navigating the age of AI agents. It helps engineers move from producing code to exercising judgment, designing systems, orchestrating AI and humans, and building trusted evidence of their value.",
-          "inLanguage": "en",
-          "genre": ["Technology", "Artificial Intelligence", "Career & Professional Development", "Computer Science"],
+          "@type": "WebSite",
+          "@id": "https://www.beyondaiengineering.com/#website",
+          "url": "https://www.beyondaiengineering.com/",
+          "name": "Beyond AI Engineering",
+          "alternateName": "Beyond AI Engineering by Harsh Verma",
+          "description": "A practical career operating system for engineers navigating the age of AI agents.",
           "publisher": {
-            "@type": "Organization",
-            "name": "Beyond AI Engineering Publishing"
+            "@id": "https://www.beyondaiengineering.com/author#harsh-verma"
           }
         },
         {
+          "@type": "Book",
+          "@id": "https://www.beyondaiengineering.com/book#book",
+          "url": "https://www.beyondaiengineering.com/book",
+          "name": "Beyond AI Engineering",
+          "alternateName": "Beyond AI Engineering: From Creator to Curator",
+          "headline": "Build Your Authority and Lead the AI Agent Revolution",
+          "author": {
+            "@id": "https://www.beyondaiengineering.com/author#harsh-verma"
+          },
+          "image": "https://www.beyondaiengineering.com/assets/images/book_hardcover_mockup_1793842329740.jpg",
+          "inLanguage": "en-US",
+          "description": "A practical career operating system for engineers navigating the age of AI agents. Move from Creator to Architect to Orchestrator.",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Beyond AI Engineering Publishing",
+            "url": "https://www.beyondaiengineering.com"
+          },
+          "genre": ["Technology", "Artificial Intelligence", "Career & Professional Development", "Computer Science"],
+          "about": [
+            { "@type": "Thing", "name": "Artificial Intelligence Engineering" },
+            { "@type": "Thing", "name": "Autonomous Agents" },
+            { "@type": "Thing", "name": "The Trust Economy" },
+            { "@type": "Thing", "name": "Creator Architect Orchestrator Framework" }
+          ]
+        },
+        {
           "@type": "Person",
-          "@id": "https://www.harshverma.me/#author",
+          "@id": "https://www.beyondaiengineering.com/author#harsh-verma",
           "name": "Harsh Verma",
+          "url": "https://www.beyondaiengineering.com/author",
           "jobTitle": "Principal AI Engineer, Author & Cybersecurity Leader",
-          "knowsAbout": ["Artificial Intelligence", "Autonomous Agents", "Cybersecurity", "Distributed Systems", "Engineering Leadership"],
-          "url": "https://www.harshverma.me"
+          "description": "Harsh Verma is the author of Beyond AI Engineering and an AI and cybersecurity engineering leader focused on agentic AI, autonomous systems, and enterprise architecture.",
+          "image": [
+            "https://www.beyondaiengineering.com/assets/aistudio/harsh_verma_87a0217e.jpg"
+          ],
+          "sameAs": [
+            "https://www.harshverma.me/",
+            "https://www.harshverma.me/page-about",
+            "https://www.linkedin.com/in/harshverma59/"
+          ],
+          "worksFor": {
+            "@type": "Organization",
+            "name": "Palo Alto Networks"
+          },
+          "memberOf": [
+            { "@type": "Organization", "name": "British Computer Society (Fellow of BCS)" },
+            { "@type": "Organization", "name": "IEEE (Senior Member)" },
+            { "@type": "Organization", "name": "Forbes Technology Council" }
+          ]
         }
       ]
     }

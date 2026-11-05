@@ -85,6 +85,29 @@ export const FrameworksView: React.FC<FrameworksViewProps> = ({
 
       {/* 2. FRAMEWORKS ACCORDION / EXPANDABLE LIST */}
       <section className="py-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Featured Canonical Callout: C.A.O. Framework */}
+        <div className="mb-10 p-6 sm:p-8 rounded-2xl bg-linear-to-r from-blue-900 via-[#101828] to-slate-900 text-white shadow-lg border border-blue-500/20 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="space-y-2 max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 text-xs font-mono font-semibold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5 text-blue-300" />
+              <span>Foundational Operating System</span>
+            </div>
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight">
+              The C.A.O. Framework: Creator · Architect · Orchestrator
+            </h2>
+            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+              Explore the dedicated deep-dive into the book’s defining three-phase model, complete with stage analysis, overlap topology, diagnostic console, and academic citation formats.
+            </p>
+          </div>
+          <button
+            onClick={() => onNavigate('cao-framework')}
+            className="px-5 py-2.5 text-xs font-semibold bg-white text-[#101828] rounded-md hover:bg-blue-50 transition-colors shadow whitespace-nowrap cursor-pointer flex items-center gap-1.5 shrink-0"
+          >
+            <span>Explore C.A.O. Deep Dive</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
         <div className="space-y-6">
           {filteredFrameworks.map((fw) => {
             const isExpanded = expandedFrameworkId === fw.id;
@@ -182,17 +205,26 @@ export const FrameworksView: React.FC<FrameworksViewProps> = ({
                     </div>
 
                     {/* Footer Actions */}
-                    <div className="pt-2 flex items-center justify-between text-xs border-t border-[#101828]/[0.08] dark:border-white/10">
+                    <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs border-t border-[#101828]/[0.08] dark:border-white/10">
                       <span className="font-mono text-[#475467] dark:text-slate-400">
                         Read full chapter analysis in: <strong className="text-[#101828] dark:text-white">{fw.relatedChapter}</strong>
                       </span>
-                      <button
-                        onClick={() => handleShareFramework(fw)}
-                        className="text-blue-900 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
-                      >
-                        <Share2 className="w-3.5 h-3.5" />
-                        <span>{copiedId === fw.id ? 'Copied Framework!' : 'Share Framework'}</span>
-                      </button>
+                      <div className="flex items-center gap-4">
+                        <button
+                          onClick={() => onNavigate(fw.id === 'cao-framework' ? 'cao-framework' : (`/frameworks/${fw.id}` as PageId))}
+                          className="text-blue-900 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
+                        >
+                          <span>Deep Dive & Citation</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleShareFramework(fw)}
+                          className="text-[#475467] dark:text-slate-400 hover:text-blue-900 dark:hover:text-blue-300 font-medium flex items-center gap-1 cursor-pointer"
+                        >
+                          <Share2 className="w-3.5 h-3.5" />
+                          <span>{copiedId === fw.id ? 'Copied Framework!' : 'Share'}</span>
+                        </button>
+                      </div>
                     </div>
 
                   </div>

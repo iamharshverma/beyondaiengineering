@@ -2,6 +2,8 @@ export type PageId =
   | 'home'
   | 'book'
   | 'frameworks'
+  | 'cao-framework'
+  | 'framework-detail'
   | 'resources'
   | 'toolkit'
   | 'students'
@@ -10,8 +12,11 @@ export type PageId =
   | 'speaking'
   | 'press'
   | 'ideas'
+  | 'article-detail'
   | 'stories'
   | 'buy'
+  | 'sample'
+  | 'teams'
   | 'assessment';
 
 export interface CaseStudyItem {

@@ -125,7 +125,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </button>
 
               <button
-                onClick={() => onNavigate('frameworks')}
+                onClick={() => onNavigate('cao-framework')}
                 className="px-6 py-3.5 text-sm font-semibold text-[#101828] dark:text-slate-200 bg-white dark:bg-[#0D1527] border border-[#101828]/20 dark:border-white/20 rounded-md hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
               >
                 Explore the C.A.O. Framework
