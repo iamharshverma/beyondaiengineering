@@ -92,25 +92,25 @@ export const HomeView: React.FC<HomeViewProps> = ({
           {/* Left Column: Editorial Headline & Messaging */}
           <div className="lg:col-span-7 space-y-6 text-left">
             <div className="inline-flex items-center gap-2">
-              <span className="text-xs uppercase tracking-widest font-mono text-blue-900 font-semibold">
+              <span className="text-xs uppercase tracking-widest font-mono text-blue-900 dark:text-blue-400 font-semibold">
                 BEYOND AI ENGINEERING
               </span>
-              <span className="text-slate-300">·</span>
-              <span className="text-xs text-[#475467] font-sans">
+              <span className="text-slate-300 dark:text-slate-600">·</span>
+              <span className="text-xs text-[#475467] dark:text-slate-400 font-sans">
                 By Harsh Verma
               </span>
             </div>
 
-            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#101828] leading-[1.08] text-balance">
+            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#101828] dark:text-white leading-[1.08] text-balance">
               The Engineer After Code
             </h1>
 
-            <p className="font-serif text-xl sm:text-2xl text-[#101828] font-normal leading-relaxed text-balance">
+            <p className="font-serif text-xl sm:text-2xl text-[#101828] dark:text-slate-100 font-normal leading-relaxed text-balance">
               AI can increasingly write the implementation. <br className="hidden sm:block" />
-              <strong className="font-semibold text-blue-950">Your advantage moves to judgment.</strong>
+              <strong className="font-semibold text-blue-950 dark:text-blue-400">Your advantage moves to judgment.</strong>
             </p>
 
-            <p className="text-base sm:text-lg text-[#475467] max-w-xl leading-relaxed">
+            <p className="text-base sm:text-lg text-[#475467] dark:text-slate-300 max-w-xl leading-relaxed">
               Learn how to move from Creator to Architect to Orchestrator—and build a career around systems thinking, AI orchestration, responsibility, professional authority, and trust.
             </p>
 
@@ -118,7 +118,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <div className="pt-2 flex flex-wrap items-center gap-4">
               <button
                 onClick={onOpenBuyModal}
-                className="px-6 py-3.5 text-sm font-semibold tracking-wide text-white bg-[#101828] rounded-md hover:bg-blue-950 transition-all shadow-sm hover:shadow flex items-center gap-2 cursor-pointer"
+                className="px-6 py-3.5 text-sm font-semibold tracking-wide text-white bg-[#101828] dark:bg-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-all shadow-sm hover:shadow flex items-center gap-2 cursor-pointer"
               >
                 <span>Get the Book</span>
                 <ArrowRight className="w-4 h-4" />
@@ -126,17 +126,17 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
               <button
                 onClick={() => onNavigate('frameworks')}
-                className="px-6 py-3.5 text-sm font-semibold text-[#101828] bg-white border border-[#101828]/20 rounded-md hover:bg-black/5 transition-colors cursor-pointer"
+                className="px-6 py-3.5 text-sm font-semibold text-[#101828] dark:text-slate-200 bg-white dark:bg-[#0D1527] border border-[#101828]/20 dark:border-white/20 rounded-md hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
               >
                 Explore the C.A.O. Framework
               </button>
             </div>
 
             {/* Author Credibility Ribbon */}
-            <div className="pt-6 border-t border-[#101828]/10 text-xs text-[#475467] flex items-center gap-2">
+            <div className="pt-6 border-t border-[#101828]/10 dark:border-white/10 text-xs text-[#475467] dark:text-slate-400 flex items-center gap-2">
               <span>By</span>
-              <strong className="text-[#101828] font-medium">Harsh Verma</strong>
-              <span>— Principal AI Engineer, Author, AI & Cybersecurity Leader</span>
+              <strong className="text-[#101828] dark:text-white font-medium">Harsh Verma</strong>
+              <span>— Principal AI Engineer, Keynote Speaker, AI & Cybersecurity Leader</span>
             </div>
           </div>
 
@@ -158,17 +158,17 @@ export const HomeView: React.FC<HomeViewProps> = ({
       <CAOInteractiveFramework onOpenAssessment={onOpenAssessment} />
 
       {/* 4. WHO THIS BOOK IS FOR */}
-      <section className="py-24 bg-white border-b border-[#101828]/[0.08]">
+      <section className="py-24 bg-white dark:bg-[#070B14] border-b border-[#101828]/[0.08] dark:border-white/10 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs uppercase tracking-widest text-[#475467] font-mono block mb-2">
+            <span className="text-xs uppercase tracking-widest text-[#475467] dark:text-slate-400 font-mono block mb-2">
               Audience & Operating Horizons
             </span>
-            <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#101828] tracking-tight mb-4">
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#101828] dark:text-white tracking-tight mb-4">
               Who This Book Is For
             </h2>
-            <p className="text-base text-[#475467]">
+            <p className="text-base text-[#475467] dark:text-slate-300">
               Four distinct paths navigating one shared paradigm shift.
             </p>
           </div>
@@ -179,19 +179,19 @@ export const HomeView: React.FC<HomeViewProps> = ({
               return (
                 <div
                   key={card.title}
-                  className="bg-[#FAFAF7] border border-[#101828]/10 p-6 rounded-xl hover:border-[#101828]/30 transition-all flex flex-col justify-between"
+                  className="bg-[#FAFAF7] dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 p-6 rounded-xl hover:border-[#101828]/30 dark:hover:border-blue-500/40 transition-all flex flex-col justify-between"
                 >
                   <div>
-                    <div className="w-10 h-10 rounded-lg bg-white border border-[#101828]/10 flex items-center justify-center text-[#101828] mb-4">
+                    <div className="w-10 h-10 rounded-lg bg-white dark:bg-[#131D33] border border-[#101828]/10 dark:border-white/10 flex items-center justify-center text-[#101828] dark:text-blue-400 mb-4">
                       <Icon className="w-5 h-5" />
                     </div>
-                    <div className="text-[11px] font-mono uppercase tracking-wider text-blue-900 font-semibold mb-1">
+                    <div className="text-[11px] font-mono uppercase tracking-wider text-blue-900 dark:text-blue-400 font-semibold mb-1">
                       {card.role}
                     </div>
-                    <h3 className="font-serif text-xl font-bold text-[#101828] mb-3">
+                    <h3 className="font-serif text-xl font-bold text-[#101828] dark:text-white mb-3">
                       {card.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-[#475467] leading-relaxed">
+                    <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed">
                       {card.description}
                     </p>
                   </div>
@@ -201,8 +201,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </div>
 
           {/* Unifying Question Callout */}
-          <div className="text-center max-w-2xl mx-auto py-8 px-6 bg-[#FAF9F5] border border-[#101828]/10 rounded-xl">
-            <blockquote className="font-serif text-lg sm:text-xl font-medium text-[#101828] italic">
+          <div className="text-center max-w-2xl mx-auto py-8 px-6 bg-[#FAF9F5] dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-xl">
+            <blockquote className="font-serif text-lg sm:text-xl font-medium text-[#101828] dark:text-slate-100 italic">
               "Different starting points. One larger question: What kind of engineer will you become because AI exists?"
             </blockquote>
           </div>
@@ -211,17 +211,17 @@ export const HomeView: React.FC<HomeViewProps> = ({
       </section>
 
       {/* 4.5. 15 CHAPTER INFOGRAPHICS & VISUAL BLUEPRINTS */}
-      <section className="py-20 bg-[#FAF9F5] border-b border-[#101828]/[0.08]">
+      <section className="py-20 bg-[#FAF9F5] dark:bg-[#0A101D] border-b border-[#101828]/[0.08] dark:border-white/10 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
-              <span className="text-xs uppercase tracking-widest text-blue-900 font-mono block mb-2 font-bold">
+              <span className="text-xs uppercase tracking-widest text-blue-900 dark:text-blue-400 font-mono block mb-2 font-bold">
                 Publication-Grade Visual Guides
               </span>
-              <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#101828] tracking-tight">
+              <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#101828] dark:text-white tracking-tight">
                 15 Infographics. 11 Chapters. 0 Fluff.
               </h2>
-              <p className="text-sm sm:text-base text-[#475467] mt-2 max-w-2xl leading-relaxed">
+              <p className="text-sm sm:text-base text-[#475467] dark:text-slate-300 mt-2 max-w-2xl leading-relaxed">
                 Every chapter includes a full-page blueprint mapping real-world case studies (Simon Willison, Knight Capital, swyx, Zillow Offers, Duolingo, Waymo), actionable weekly experiments, and a 4-point curator's checklist.
               </p>
             </div>
@@ -230,7 +230,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               {onOpenInfographicModal && (
                 <button
                   onClick={() => onOpenInfographicModal('infographic-intro')}
-                  className="px-4 py-2.5 bg-[#101828] text-white text-xs font-semibold rounded-md hover:bg-blue-950 transition-colors cursor-pointer shadow-xs"
+                  className="px-4 py-2.5 bg-[#101828] dark:bg-white text-white dark:text-[#070B14] text-xs font-semibold rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors cursor-pointer shadow-xs"
                 >
                   Explore All 15 Infographics →
                 </button>
@@ -272,33 +272,39 @@ export const HomeView: React.FC<HomeViewProps> = ({
               <div
                 key={card.id}
                 onClick={() => onOpenInfographicModal && onOpenInfographicModal(card.id)}
-                className="group bg-white rounded-xl border border-[#101828]/10 overflow-hidden shadow-2xs hover:shadow-md hover:border-blue-900 transition-all cursor-pointer flex flex-col"
+                className="group bg-white dark:bg-[#0D1527] rounded-xl border border-[#101828]/10 dark:border-white/10 overflow-hidden shadow-2xs hover:shadow-lg hover:border-blue-900/60 dark:hover:border-blue-400/60 transition-all cursor-pointer flex flex-col"
               >
                 <div className="relative aspect-3/4 overflow-hidden bg-slate-900">
                   <img
                     src={card.img}
                     alt={card.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      if (!target.src.includes('public/assets')) {
+                        target.src = `/public${card.img}`;
+                      }
+                    }}
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-2">
                     <span className="px-3 py-1.5 bg-black/80 text-white rounded text-xs font-medium backdrop-blur-xs">
                       Click to Zoom & Inspect
                     </span>
                   </div>
-                  <span className="absolute top-2 left-2 text-[10px] font-mono font-bold bg-black/75 text-white px-2 py-0.5 rounded backdrop-blur-xs">
+                  <span className="absolute top-2 left-2 text-[10px] font-mono font-bold bg-black/80 text-white px-2 py-0.5 rounded backdrop-blur-xs">
                     {card.tag}
                   </span>
                 </div>
                 <div className="p-4 flex-1 flex flex-col justify-between">
                   <div>
-                    <h4 className="font-serif text-sm font-bold text-[#101828] leading-tight mb-1">
+                    <h4 className="font-serif text-sm font-bold text-[#101828] dark:text-white leading-tight mb-1">
                       {card.title}
                     </h4>
-                    <p className="text-[11px] text-[#475467] font-sans">
+                    <p className="text-[11px] text-[#475467] dark:text-slate-300 font-sans">
                       {card.sub}
                     </p>
                   </div>
-                  <div className="pt-3 text-[11px] font-semibold text-blue-900 group-hover:underline flex items-center gap-1">
+                  <div className="pt-3 text-[11px] font-semibold text-blue-900 dark:text-blue-400 group-hover:underline flex items-center gap-1">
                     <span>Inspect Infographic</span>
                     <span>→</span>
                   </div>
@@ -310,17 +316,17 @@ export const HomeView: React.FC<HomeViewProps> = ({
       </section>
 
       {/* 5. WHAT READERS WILL BUILD (EVIDENCE ARTIFACTS) */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-white dark:bg-[#070B14] transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs uppercase tracking-widest text-[#475467] font-mono block mb-2">
+            <span className="text-xs uppercase tracking-widest text-[#475467] dark:text-slate-400 font-mono block mb-2">
               Verifiable Outputs
             </span>
-            <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#101828] tracking-tight mb-4">
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold text-[#101828] dark:text-white tracking-tight mb-4">
               Don't Just Read the Book. Build Evidence.
             </h2>
-            <p className="text-base text-[#475467]">
+            <p className="text-base text-[#475467] dark:text-slate-300">
               Every chapter produces a tangible artifact for your career portfolio and professional authority.
             </p>
           </div>
@@ -332,17 +338,17 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 <div
                   key={artifact.name}
                   onClick={() => onNavigate('resources')}
-                  className="bg-white border border-[#101828]/10 p-6 rounded-xl hover:border-blue-900 transition-all cursor-pointer group shadow-2xs"
+                  className="bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 p-6 rounded-xl hover:border-blue-900 dark:hover:border-blue-400 transition-all cursor-pointer group shadow-2xs"
                 >
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 rounded-md bg-[#FAFAF7] text-blue-950 flex items-center justify-center shrink-0 group-hover:bg-blue-50">
+                    <div className="w-8 h-8 rounded-md bg-[#FAFAF7] dark:bg-[#131D33] text-blue-950 dark:text-blue-300 flex items-center justify-center shrink-0 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/40">
                       <Icon className="w-4 h-4" />
                     </div>
-                    <h3 className="font-serif text-lg font-bold text-[#101828] group-hover:text-blue-900 transition-colors">
+                    <h3 className="font-serif text-lg font-bold text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">
                       {artifact.name}
                     </h3>
                   </div>
-                  <p className="text-xs text-[#475467] pl-11">
+                  <p className="text-xs text-[#475467] dark:text-slate-300 pl-11">
                     {artifact.note}
                   </p>
                 </div>
@@ -353,7 +359,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
           <div className="text-center">
             <button
               onClick={() => onNavigate('resources')}
-              className="inline-flex items-center gap-2 text-sm font-semibold text-blue-900 hover:text-blue-700 transition-colors group cursor-pointer"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-blue-900 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors group cursor-pointer"
             >
               <span>Explore Companion Resources & Lab Canvases</span>
               <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
@@ -364,15 +370,15 @@ export const HomeView: React.FC<HomeViewProps> = ({
       </section>
 
       {/* 5.5. AUTHOR SPOTLIGHT — HARSH VERMA */}
-      <section className="py-24 bg-[#FAFAF7] border-y border-[#101828]/[0.08]">
+      <section className="py-24 bg-[#FAFAF7] dark:bg-[#0A101D] border-y border-[#101828]/[0.08] dark:border-white/10 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-2xl border border-[#101828]/10 p-8 sm:p-12 shadow-sm">
+          <div className="bg-white dark:bg-[#0D1527] rounded-2xl border border-[#101828]/10 dark:border-white/10 p-8 sm:p-12 shadow-sm">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
               
               {/* Left Column: Author Image */}
               <div className="lg:col-span-4 flex justify-center">
                 <div className="relative max-w-xs w-full group">
-                  <div className="rounded-xl overflow-hidden border border-[#101828]/10 shadow-lg bg-slate-100 aspect-[3/4]">
+                  <div className="rounded-xl overflow-hidden border border-[#101828]/10 dark:border-white/15 shadow-lg bg-slate-100 aspect-3/4">
                     <img
                       src="/assets/aistudio/harsh_verma_87a0217e.jpg"
                       alt="Harsh Verma, Author of Beyond AI Engineering"
@@ -387,8 +393,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     />
                   </div>
                   <div className="text-center mt-3">
-                    <span className="text-xs font-serif font-bold text-[#101828]">Harsh Verma</span>
-                    <span className="block text-[11px] text-[#475467]">Silicon Valley, California</span>
+                    <span className="text-xs font-serif font-bold text-[#101828] dark:text-white">Harsh Verma</span>
+                    <span className="block text-[11px] text-[#475467] dark:text-slate-400">Silicon Valley, California</span>
                   </div>
                 </div>
               </div>
@@ -396,47 +402,47 @@ export const HomeView: React.FC<HomeViewProps> = ({
               {/* Right Column: Grounded Bio & Leadership */}
               <div className="lg:col-span-8 space-y-4 text-left">
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-mono uppercase tracking-widest text-blue-900 font-semibold bg-blue-50 px-2.5 py-0.5 rounded">
+                  <span className="text-[11px] font-mono uppercase tracking-widest text-blue-900 dark:text-blue-300 font-semibold bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/60 px-2.5 py-0.5 rounded">
                     Meet the Author
                   </span>
-                  <span className="text-xs text-[#475467]">· Principal AI Engineer, Palo Alto Networks</span>
+                  <span className="text-xs text-[#475467] dark:text-slate-400">· Principal AI Engineer, Palo Alto Networks · Keynote Speaker</span>
                 </div>
 
-                <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#101828] leading-tight">
+                <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#101828] dark:text-white leading-tight">
                   Harsh Verma
                 </h2>
 
-                <p className="font-serif text-lg text-blue-950 italic">
+                <p className="font-serif text-lg text-blue-950 dark:text-blue-300 italic">
                   "AI can increasingly write the code. Your advantage moves to deciding what deserves to be built."
                 </p>
 
-                <p className="text-xs sm:text-sm text-[#475467] leading-relaxed font-sans">
+                <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed font-sans">
                   Harsh Verma is a Principal Software Engineer in AI at <strong>Palo Alto Networks</strong>, a <strong>Stanford Distinguished Scholar</strong> (Stanford Graduate School of Business LEAD program), an official member of the <strong>Forbes Technology Council</strong>, a <strong>Fellow of RSA, IFGICT & BCS</strong>, and an <strong>IEEE Senior Member</strong>. He serves as an advisor and mentor at <strong>Berkeley SkyDeck</strong>, <strong>Techstars</strong>, and the <strong>Mayfield Fund AI Garage</strong>.
                 </p>
 
                 {/* Published Books Highlights */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                  <div className="p-3.5 bg-[#FAFAF7] rounded-lg border border-[#101828]/[0.08]">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-blue-900 font-bold block mb-1">
+                  <div className="p-3.5 bg-[#FAFAF7] dark:bg-[#11192E] rounded-lg border border-[#101828]/[0.08] dark:border-white/10">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-blue-900 dark:text-blue-400 font-bold block mb-1">
                       Current Volume
                     </span>
-                    <div className="font-serif font-bold text-sm text-[#101828]">Beyond AI Engineering</div>
-                    <div className="text-[11px] text-[#475467]">The career operating system for the agentic AI era.</div>
+                    <div className="font-serif font-bold text-sm text-[#101828] dark:text-white">Beyond AI Engineering</div>
+                    <div className="text-[11px] text-[#475467] dark:text-slate-400">The career operating system for the agentic AI era.</div>
                   </div>
 
-                  <div className="p-3.5 bg-[#FAFAF7] rounded-lg border border-[#101828]/[0.08]">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#475467] font-bold block mb-1">
+                  <div className="p-3.5 bg-[#FAFAF7] dark:bg-[#11192E] rounded-lg border border-[#101828]/[0.08] dark:border-white/10">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#475467] dark:text-slate-400 font-bold block mb-1">
                       Cybersecurity Volume
                     </span>
-                    <div className="font-serif font-bold text-sm text-[#101828]">AI vs. AI</div>
-                    <div className="text-[11px] text-[#475467]">Engineering the Cybersecurity Counteroffensive.</div>
+                    <div className="font-serif font-bold text-sm text-[#101828] dark:text-white">AI vs. AI</div>
+                    <div className="text-[11px] text-[#475467] dark:text-slate-400">Engineering the Cybersecurity Counteroffensive.</div>
                   </div>
                 </div>
 
                 <div className="pt-2 flex flex-wrap items-center gap-3">
                   <button
                     onClick={() => onNavigate('author')}
-                    className="px-4 py-2 text-xs font-semibold bg-[#101828] text-white rounded-md hover:bg-blue-950 transition-colors inline-flex items-center gap-1.5 cursor-pointer shadow-xs"
+                    className="px-4 py-2 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors inline-flex items-center gap-1.5 cursor-pointer shadow-xs"
                   >
                     <span>Read Full Author Biography</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -445,7 +451,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     href="https://www.harshverma.me/page-about"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 text-xs font-semibold border border-[#101828]/20 rounded-md text-[#101828] hover:bg-black/5 transition-colors cursor-pointer"
+                    className="px-4 py-2 text-xs font-semibold border border-[#101828]/20 dark:border-white/20 rounded-md text-[#101828] dark:text-slate-200 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
                   >
                     View Official Profile on harshverma.me ↗
                   </a>
@@ -458,13 +464,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
       </section>
 
       {/* 6. EDITORIAL ENDORSEMENTS */}
-      <section className="py-24 bg-white border-y border-[#101828]/[0.08]">
+      <section className="py-24 bg-white dark:bg-[#070B14] border-y border-[#101828]/[0.08] dark:border-white/10 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-xs uppercase tracking-widest text-[#475467] font-mono block mb-2">
+            <span className="text-xs uppercase tracking-widest text-[#475467] dark:text-slate-400 font-mono block mb-2">
               Early Praise & Critical Acclaim
             </span>
-            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#101828]">
+            <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#101828] dark:text-white">
               What Technical Leaders Are Saying
             </h2>
           </div>
@@ -473,14 +479,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
             {ENDORSEMENTS.map((end, idx) => (
               <div
                 key={idx}
-                className="p-8 bg-[#FAFAF7] border border-[#101828]/10 rounded-xl flex flex-col justify-between"
+                className="p-8 bg-[#FAFAF7] dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-xl flex flex-col justify-between"
               >
-                <p className="font-serif text-base sm:text-lg text-[#101828] italic leading-relaxed mb-6">
+                <p className="font-serif text-base sm:text-lg text-[#101828] dark:text-slate-100 italic leading-relaxed mb-6">
                   "{end.quote}"
                 </p>
-                <div className="pt-4 border-t border-[#101828]/10">
-                  <div className="font-bold text-sm text-[#101828]">{end.name}</div>
-                  <div className="text-xs text-[#475467]">{end.role} · {end.organization}</div>
+                <div className="pt-4 border-t border-[#101828]/10 dark:border-white/10">
+                  <div className="font-bold text-sm text-[#101828] dark:text-white">{end.name}</div>
+                  <div className="text-xs text-[#475467] dark:text-slate-400">{end.role} · {end.organization}</div>
                 </div>
               </div>
             ))}
@@ -489,15 +495,15 @@ export const HomeView: React.FC<HomeViewProps> = ({
       </section>
 
       {/* 7. EMAIL CAPTURE: CONTINUE BEYOND THE BOOK */}
-      <section className="py-20 bg-[#FAFAF7]">
+      <section className="py-20 bg-[#FAFAF7] dark:bg-[#0A101D] transition-colors">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span className="text-xs uppercase tracking-widest text-blue-900 font-mono block mb-2 font-semibold">
+          <span className="text-xs uppercase tracking-widest text-blue-900 dark:text-blue-400 font-mono block mb-2 font-semibold">
             Stay on the Frontier
           </span>
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#101828] mb-3">
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#101828] dark:text-white mb-3">
             Continue Beyond the Book
           </h2>
-          <p className="text-sm sm:text-base text-[#475467] max-w-lg mx-auto mb-8 leading-relaxed">
+          <p className="text-sm sm:text-base text-[#475467] dark:text-slate-300 max-w-lg mx-auto mb-8 leading-relaxed">
             Get new frameworks, tools, and practical experiments for becoming an AI-era engineer. Direct from author Harsh Verma. No spam, ever.
           </p>
 
@@ -509,17 +515,17 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 value={emailInput}
                 onChange={(e) => setEmailInput(e.target.value)}
                 placeholder="Enter your work email"
-                className="w-full sm:w-80 px-4 py-2.5 text-sm bg-white border border-[#101828]/20 rounded-md focus:outline-2 focus:outline-blue-900"
+                className="w-full sm:w-80 px-4 py-2.5 text-sm bg-white dark:bg-[#0D1527] border border-[#101828]/20 dark:border-white/20 text-[#101828] dark:text-white rounded-md focus:outline-2 focus:outline-blue-900 dark:focus:outline-blue-400"
               />
               <button
                 type="submit"
-                className="w-full sm:w-auto px-5 py-2.5 text-xs font-semibold bg-[#101828] text-white rounded-md hover:bg-blue-950 transition-colors whitespace-nowrap cursor-pointer shadow-xs"
+                className="w-full sm:w-auto px-5 py-2.5 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors whitespace-nowrap cursor-pointer shadow-xs"
               >
                 Join Beyond AI Engineering
               </button>
             </form>
           ) : (
-            <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-lg max-w-md mx-auto text-xs sm:text-sm font-medium">
+            <div className="p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 rounded-lg max-w-md mx-auto text-xs sm:text-sm font-medium">
               ✓ Welcome! You have joined the Beyond AI Engineering community. We have sent the introductory C.A.O. field guide to your inbox.
             </div>
           )}

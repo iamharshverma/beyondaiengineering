@@ -66,10 +66,16 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
             <div className="relative group max-w-[320px] sm:max-w-[360px]">
               <div className="rounded-xl overflow-hidden book-shadow border border-[#101828]/10 bg-[#0E1B38]">
                 <img
-                  src="/src/assets/images/book_hardcover_mockup_1793842329740.jpg"
+                  src="/assets/images/book_hardcover_mockup_1793842329740.jpg"
                   alt="Beyond AI Engineering hardcover book by Harsh Verma"
                   className="w-full h-auto object-cover"
                   referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    if (!target.src.includes('public/assets')) {
+                      target.src = '/public/assets/images/book_hardcover_mockup_1793842329740.jpg';
+                    }
+                  }}
                 />
               </div>
               <div className="mt-4 text-center">

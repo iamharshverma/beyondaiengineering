@@ -19,7 +19,7 @@ export const Footer: React.FC<FooterProps> = ({
   };
 
   return (
-    <footer className="bg-[#101828] text-white pt-16 pb-12 border-t border-slate-800">
+    <footer className="bg-[#101828] dark:bg-[#05080F] text-white pt-16 pb-12 border-t border-slate-800 dark:border-white/10 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top Branding Section */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-12 border-b border-slate-800">

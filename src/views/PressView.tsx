@@ -89,7 +89,7 @@ export const PressView: React.FC<PressViewProps> = ({ onNavigate }) => {
               </p>
             </div>
             <a
-              href="/src/assets/images/book_hardcover_mockup_1793842329740.jpg"
+              href="/assets/images/book_hardcover_mockup_1793842329740.jpg"
               download="Beyond-AI-Engineering-Cover.jpg"
               className="text-xs font-semibold text-blue-900 hover:underline flex items-center gap-1.5"
             >

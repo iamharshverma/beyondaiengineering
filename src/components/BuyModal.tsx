@@ -61,27 +61,27 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xs overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-[#FAFAF7] rounded-2xl border border-[#101828]/10 shadow-2xl p-6 sm:p-8 my-8 text-[#101828] max-h-[92vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/75 backdrop-blur-xs overflow-y-auto">
+      <div className="relative w-full max-w-2xl bg-[#FAFAF7] dark:bg-[#0D1527] rounded-2xl border border-[#101828]/10 dark:border-white/10 shadow-2xl p-6 sm:p-8 my-8 text-[#101828] dark:text-slate-100 max-h-[92vh] flex flex-col transition-colors">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 text-[#475467] hover:text-[#101828] hover:bg-black/5 rounded-full transition-colors cursor-pointer"
+          className="absolute top-5 right-5 p-2 text-[#475467] dark:text-slate-400 hover:text-[#101828] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors cursor-pointer"
           aria-label="Close modal"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Header */}
-        <div className="mb-6 pb-4 border-b border-[#101828]/10 shrink-0">
-          <span className="text-xs font-mono uppercase tracking-widest text-blue-900 block mb-1">
+        <div className="mb-6 pb-4 border-b border-[#101828]/10 dark:border-white/10 shrink-0">
+          <span className="text-xs font-mono uppercase tracking-widest text-blue-900 dark:text-blue-400 font-semibold block mb-1">
             Official Book Editions & Retailers
           </span>
-          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#101828]">
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#101828] dark:text-white">
             Get Beyond AI Engineering
           </h2>
-          <p className="text-xs sm:text-sm text-[#475467] mt-1">
+          <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 mt-1">
             Choose your preferred format or request bulk licensing for your engineering team.
           </p>
         </div>
@@ -94,8 +94,8 @@ export const BuyModal: React.FC<BuyModalProps> = ({
               onClick={() => setSelectedFormat(fmt.id)}
               className={`p-2.5 rounded-lg border text-xs font-semibold text-center transition-all cursor-pointer ${
                 selectedFormat === fmt.id
-                  ? 'bg-[#101828] text-white border-[#101828] shadow-xs'
-                  : 'bg-white text-[#475467] border-[#101828]/10 hover:border-[#101828]/30'
+                  ? 'bg-[#101828] dark:bg-white text-white dark:text-[#070B14] border-[#101828] dark:border-white shadow-xs'
+                  : 'bg-white dark:bg-[#11192E] text-[#475467] dark:text-slate-300 border-[#101828]/10 dark:border-white/10 hover:border-[#101828]/30 dark:hover:border-white/30'
               }`}
             >
               <div className="truncate">{fmt.name.split(' ')[0]}</div>
@@ -106,8 +106,8 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             onClick={() => setSelectedFormat('bulk')}
             className={`col-span-2 sm:col-span-1 p-2.5 rounded-lg border text-xs font-semibold text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
               selectedFormat === 'bulk'
-                ? 'bg-blue-900 text-white border-blue-900 shadow-xs'
-                : 'bg-white text-[#475467] border-[#101828]/10 hover:border-[#101828]/30'
+                ? 'bg-blue-900 dark:bg-blue-600 text-white border-blue-900 dark:border-blue-600 shadow-xs'
+                : 'bg-white dark:bg-[#11192E] text-[#475467] dark:text-slate-300 border-[#101828]/10 dark:border-white/10 hover:border-[#101828]/30 dark:hover:border-white/30'
             }`}
           >
             <div className="truncate flex items-center gap-1">
@@ -125,33 +125,33 @@ export const BuyModal: React.FC<BuyModalProps> = ({
               {(() => {
                 const currentFmt = formats.find((f) => f.id === selectedFormat)!;
                 return (
-                  <div className="bg-white p-6 rounded-xl border border-[#101828]/10 shadow-xs space-y-4">
+                  <div className="bg-white dark:bg-[#11192E] p-6 rounded-xl border border-[#101828]/10 dark:border-white/10 shadow-xs space-y-4">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <h3 className="font-serif text-2xl font-bold text-[#101828]">
+                        <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white">
                           {currentFmt.name}
                         </h3>
-                        <p className="text-xs font-mono uppercase text-blue-900 tracking-wider">
+                        <p className="text-xs font-mono uppercase text-blue-900 dark:text-blue-400 font-semibold tracking-wider">
                           {currentFmt.subtitle}
                         </p>
                       </div>
                       <div className="text-right">
-                        <span className="font-serif text-2xl font-bold text-[#101828]">{currentFmt.price}</span>
-                        <span className="block text-[11px] text-[#475467]">USD MSRP</span>
+                        <span className="font-serif text-2xl font-bold text-[#101828] dark:text-white">{currentFmt.price}</span>
+                        <span className="block text-[11px] text-[#475467] dark:text-slate-400">USD MSRP</span>
                       </div>
                     </div>
 
-                    <p className="text-xs sm:text-sm text-[#475467] leading-relaxed">
+                    <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed">
                       {currentFmt.description}
                     </p>
 
-                    <div className="text-xs text-[#101828] font-mono pt-2 border-t border-[#101828]/[0.08]">
-                      Status: <span className="text-emerald-800 font-semibold">{currentFmt.availability}</span>
+                    <div className="text-xs text-[#101828] dark:text-slate-200 font-mono pt-2 border-t border-[#101828]/[0.08] dark:border-white/10">
+                      Status: <span className="text-emerald-700 dark:text-emerald-400 font-semibold">{currentFmt.availability}</span>
                     </div>
 
                     {/* Retailer Placeholders */}
                     <div className="pt-4 space-y-2">
-                      <span className="text-xs font-mono uppercase tracking-wider text-[#475467] block">
+                      <span className="text-xs font-mono uppercase tracking-wider text-[#475467] dark:text-slate-400 block">
                         Select Retailer
                       </span>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
@@ -159,28 +159,28 @@ export const BuyModal: React.FC<BuyModalProps> = ({
                           href="https://amazon.com"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-3 bg-[#FAFAF7] border border-[#101828]/15 rounded-lg hover:border-blue-900 font-medium flex items-center justify-between text-[#101828] transition-colors group"
+                          className="p-3 bg-[#FAFAF7] dark:bg-[#17233E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors group"
                         >
                           <span>Amazon Worldwide</span>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-900" />
+                          <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-900 dark:group-hover:text-blue-400" />
                         </a>
                         <a
                           href="https://barnesandnoble.com"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-3 bg-[#FAFAF7] border border-[#101828]/15 rounded-lg hover:border-blue-900 font-medium flex items-center justify-between text-[#101828] transition-colors group"
+                          className="p-3 bg-[#FAFAF7] dark:bg-[#17233E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors group"
                         >
                           <span>Barnes & Noble</span>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-900" />
+                          <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-900 dark:group-hover:text-blue-400" />
                         </a>
                         <a
                           href="https://bookshop.org"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-3 bg-[#FAFAF7] border border-[#101828]/15 rounded-lg hover:border-blue-900 font-medium flex items-center justify-between text-[#101828] transition-colors group"
+                          className="p-3 bg-[#FAFAF7] dark:bg-[#17233E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors group"
                         >
                           <span>Bookshop.org (Indie Booksellers)</span>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-900" />
+                          <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-900 dark:group-hover:text-blue-400" />
                         </a>
                         <a
                           href="https://audible.com"

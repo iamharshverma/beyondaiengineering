@@ -58,13 +58,13 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xs overflow-y-auto">
-      <div className="relative w-full max-w-2xl bg-[#FAFAF7] rounded-2xl border border-[#101828]/10 shadow-2xl p-6 sm:p-8 my-8 text-[#101828]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/75 backdrop-blur-xs overflow-y-auto">
+      <div className="relative w-full max-w-2xl bg-[#FAFAF7] dark:bg-[#0D1527] rounded-2xl border border-[#101828]/10 dark:border-white/10 shadow-2xl p-6 sm:p-8 my-8 text-[#101828] dark:text-slate-100 transition-colors">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 text-[#475467] hover:text-[#101828] hover:bg-black/5 rounded-full transition-colors cursor-pointer"
+          className="absolute top-5 right-5 p-2 text-[#475467] dark:text-slate-400 hover:text-[#101828] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors cursor-pointer"
           aria-label="Close assessment"
         >
           <X className="w-5 h-5" />
@@ -73,14 +73,14 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
         {!completed ? (
           <div>
             {/* Header & Progress */}
-            <div className="mb-6 pb-4 border-b border-[#101828]/10">
-              <div className="flex items-center justify-between text-xs font-mono text-[#475467] mb-2">
+            <div className="mb-6 pb-4 border-b border-[#101828]/10 dark:border-white/10">
+              <div className="flex items-center justify-between text-xs font-mono text-[#475467] dark:text-slate-400 mb-2">
                 <span>C.A.O. CAREER DIAGNOSTIC</span>
                 <span>Question {currentQuestionIndex + 1} of {totalQuestions}</span>
               </div>
-              <div className="w-full bg-[#101828]/10 h-1.5 rounded-full overflow-hidden">
+              <div className="w-full bg-[#101828]/10 dark:bg-white/10 h-1.5 rounded-full overflow-hidden">
                 <div
-                  className="bg-blue-900 h-full transition-all duration-300"
+                  className="bg-blue-900 dark:bg-blue-400 h-full transition-all duration-300"
                   style={{ width: `${((currentQuestionIndex + 1) / totalQuestions) * 100}%` }}
                 />
               </div>
@@ -88,10 +88,10 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
 
             {/* Scenario */}
             <div className="mb-8">
-              <span className="text-xs uppercase tracking-wider font-mono text-blue-900 block mb-2 font-semibold">
+              <span className="text-xs uppercase tracking-wider font-mono text-blue-900 dark:text-blue-400 block mb-2 font-semibold">
                 Scenario 0{currentQuestionIndex + 1}
               </span>
-              <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#101828] leading-snug">
+              <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#101828] dark:text-white leading-snug">
                 {currentQ.scenario}
               </h3>
             </div>
@@ -102,13 +102,13 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                 <button
                   key={idx}
                   onClick={() => handleSelectOption(option.stage)}
-                  className="w-full text-left p-4 sm:p-5 rounded-xl border border-[#101828]/10 bg-white hover:border-blue-900 hover:ring-1 hover:ring-blue-900/20 transition-all text-sm group cursor-pointer shadow-xs"
+                  className="w-full text-left p-4 sm:p-5 rounded-xl border border-[#101828]/10 dark:border-white/10 bg-white dark:bg-[#11192E] hover:border-blue-900 dark:hover:border-blue-400 hover:ring-1 hover:ring-blue-900/20 dark:hover:ring-blue-400/20 transition-all text-sm group cursor-pointer shadow-xs"
                 >
                   <div className="flex items-start gap-3">
-                    <span className="w-6 h-6 rounded-full border border-[#101828]/20 flex items-center justify-center font-mono text-xs text-[#475467] shrink-0 group-hover:border-blue-900 group-hover:text-blue-900 group-hover:bg-blue-50">
+                    <span className="w-6 h-6 rounded-full border border-[#101828]/20 dark:border-white/20 flex items-center justify-center font-mono text-xs text-[#475467] dark:text-slate-400 shrink-0 group-hover:border-blue-900 dark:group-hover:border-blue-400 group-hover:text-blue-900 dark:group-hover:text-blue-300 group-hover:bg-blue-50 dark:group-hover:bg-blue-950/40">
                       {String.fromCharCode(65 + idx)}
                     </span>
-                    <span className="text-[#101828] font-medium leading-relaxed">
+                    <span className="text-[#101828] dark:text-slate-100 font-medium leading-relaxed">
                       {option.text}
                     </span>
                   </div>
@@ -117,11 +117,11 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
             </div>
 
             {/* Footer Back action if > 0 */}
-            <div className="flex justify-between items-center text-xs text-[#475467]">
+            <div className="flex justify-between items-center text-xs text-[#475467] dark:text-slate-400">
               {currentQuestionIndex > 0 ? (
                 <button
                   onClick={() => setCurrentQuestionIndex(currentQuestionIndex - 1)}
-                  className="hover:text-[#101828] underline underline-offset-4 cursor-pointer"
+                  className="hover:text-[#101828] dark:hover:text-white underline underline-offset-4 cursor-pointer"
                 >
                   ← Previous question
                 </button>
@@ -135,23 +135,23 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
           /* Assessment Results Screen */
           result && (
             <div className="animate-in fade-in duration-300">
-              <div className="text-center mb-6 pb-6 border-b border-[#101828]/10">
-                <span className="text-xs font-mono uppercase tracking-widest text-[#475467] block mb-1">
+              <div className="text-center mb-6 pb-6 border-b border-[#101828]/10 dark:border-white/10">
+                <span className="text-xs font-mono uppercase tracking-widest text-[#475467] dark:text-slate-400 block mb-1">
                   Your C.A.O. Diagnostic Results
                 </span>
-                <h3 className="font-serif text-3xl font-bold text-[#101828] mb-2">
+                <h3 className="font-serif text-3xl font-bold text-[#101828] dark:text-white mb-2">
                   {result.archetypeTitle}
                 </h3>
-                <p className="text-sm text-[#475467] max-w-lg mx-auto">
+                <p className="text-sm text-[#475467] dark:text-slate-300 max-w-lg mx-auto">
                   {result.summary}
                 </p>
               </div>
 
               {/* Score Breakdown Bar */}
-              <div className="bg-white p-5 rounded-xl border border-[#101828]/10 mb-6 shadow-xs">
-                <div className="text-xs font-mono uppercase tracking-wider text-[#475467] mb-3 flex justify-between">
+              <div className="bg-white dark:bg-[#11192E] p-5 rounded-xl border border-[#101828]/10 dark:border-white/10 mb-6 shadow-xs">
+                <div className="text-xs font-mono uppercase tracking-wider text-[#475467] dark:text-slate-400 mb-3 flex justify-between">
                   <span>Current Operating Profile</span>
-                  <span className="text-[#101828] font-bold">100% Total Distribution</span>
+                  <span className="text-[#101828] dark:text-white font-bold">100% Total Distribution</span>
                 </div>
 
                 {/* Multi-segment horizontal bar */}
@@ -178,40 +178,40 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
 
                 {/* Metric labels */}
                 <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                  <div className="p-2 bg-blue-50 rounded">
-                    <span className="block text-[10px] uppercase font-mono text-blue-800">Creator (Build)</span>
-                    <strong className="text-base font-bold text-blue-900">{result.creatorPct}%</strong>
+                  <div className="p-2 bg-blue-50 dark:bg-blue-950/60 rounded border border-blue-100 dark:border-blue-900/40">
+                    <span className="block text-[10px] uppercase font-mono text-blue-800 dark:text-blue-300">Creator (Build)</span>
+                    <strong className="text-base font-bold text-blue-900 dark:text-blue-200">{result.creatorPct}%</strong>
                   </div>
-                  <div className="p-2 bg-purple-50 rounded">
-                    <span className="block text-[10px] uppercase font-mono text-purple-800">Architect (Design)</span>
-                    <strong className="text-base font-bold text-purple-900">{result.architectPct}%</strong>
+                  <div className="p-2 bg-purple-50 dark:bg-purple-950/60 rounded border border-purple-100 dark:border-purple-900/40">
+                    <span className="block text-[10px] uppercase font-mono text-purple-800 dark:text-purple-300">Architect (Design)</span>
+                    <strong className="text-base font-bold text-purple-900 dark:text-purple-200">{result.architectPct}%</strong>
                   </div>
-                  <div className="p-2 bg-emerald-50 rounded">
-                    <span className="block text-[10px] uppercase font-mono text-emerald-800">Orchestrator (Lead)</span>
-                    <strong className="text-base font-bold text-emerald-900">{result.orchestratorPct}%</strong>
+                  <div className="p-2 bg-emerald-50 dark:bg-emerald-950/60 rounded border border-emerald-100 dark:border-emerald-900/40">
+                    <span className="block text-[10px] uppercase font-mono text-emerald-800 dark:text-emerald-300">Orchestrator (Lead)</span>
+                    <strong className="text-base font-bold text-emerald-900 dark:text-emerald-200">{result.orchestratorPct}%</strong>
                   </div>
                 </div>
               </div>
 
               {/* Strengths & Blind Spots */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 text-xs">
-                <div className="p-4 bg-white rounded-lg border border-[#101828]/10">
-                  <h4 className="font-semibold text-emerald-900 uppercase font-mono tracking-wider mb-2 flex items-center gap-1.5">
-                    <CheckCircle className="w-4 h-4 text-emerald-600" />
+                <div className="p-4 bg-white dark:bg-[#11192E] rounded-lg border border-[#101828]/10 dark:border-white/10">
+                  <h4 className="font-semibold text-emerald-900 dark:text-emerald-300 uppercase font-mono tracking-wider mb-2 flex items-center gap-1.5">
+                    <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                     Key Strengths
                   </h4>
-                  <ul className="space-y-1.5 text-[#475467]">
+                  <ul className="space-y-1.5 text-[#475467] dark:text-slate-300">
                     {result.keyStrengths.map((str, idx) => (
                       <li key={idx}>· {str}</li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="p-4 bg-white rounded-lg border border-[#101828]/10">
-                  <h4 className="font-semibold text-amber-900 uppercase font-mono tracking-wider mb-2">
+                <div className="p-4 bg-white dark:bg-[#11192E] rounded-lg border border-[#101828]/10 dark:border-white/10">
+                  <h4 className="font-semibold text-amber-900 dark:text-amber-300 uppercase font-mono tracking-wider mb-2">
                     Blind Spots to Watch
                   </h4>
-                  <ul className="space-y-1.5 text-[#475467]">
+                  <ul className="space-y-1.5 text-[#475467] dark:text-slate-300">
                     {result.blindSpots.map((spot, idx) => (
                       <li key={idx}>· {spot}</li>
                     ))}
@@ -220,14 +220,14 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
               </div>
 
               {/* Recommended 30-Day Actions */}
-              <div className="bg-[#FAF9F5] p-4 rounded-lg border border-[#101828]/10 mb-6 text-xs">
-                <h4 className="font-semibold text-blue-950 uppercase font-mono tracking-wider mb-2">
+              <div className="bg-[#FAF9F5] dark:bg-[#11192E] p-4 rounded-lg border border-[#101828]/10 dark:border-white/10 mb-6 text-xs">
+                <h4 className="font-semibold text-blue-950 dark:text-blue-300 uppercase font-mono tracking-wider mb-2">
                   Your Recommended 30-Day Growth Actions
                 </h4>
-                <ul className="space-y-1.5 text-[#101828]">
+                <ul className="space-y-1.5 text-[#101828] dark:text-slate-200">
                   {result.recommended30DayActions.map((act, idx) => (
                     <li key={idx} className="flex items-start gap-2">
-                      <span className="font-mono text-blue-800 font-bold">0{idx + 1}.</span>
+                      <span className="font-mono text-blue-800 dark:text-blue-400 font-bold">0{idx + 1}.</span>
                       <span>{act}</span>
                     </li>
                   ))}
@@ -239,14 +239,14 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                 <div className="flex gap-2">
                   <button
                     onClick={handleRestart}
-                    className="px-3 py-2 text-xs border border-[#101828]/20 rounded-md text-[#475467] hover:text-[#101828] hover:bg-black/5 flex items-center gap-1.5 cursor-pointer"
+                    className="px-3 py-2 text-xs border border-[#101828]/20 dark:border-white/20 rounded-md text-[#475467] dark:text-slate-300 hover:text-[#101828] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 flex items-center gap-1.5 cursor-pointer"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>Retake</span>
                   </button>
                   <button
                     onClick={handleShare}
-                    className="px-3 py-2 text-xs border border-[#101828]/20 rounded-md text-[#475467] hover:text-[#101828] hover:bg-black/5 flex items-center gap-1.5 cursor-pointer"
+                    className="px-3 py-2 text-xs border border-[#101828]/20 dark:border-white/20 rounded-md text-[#475467] dark:text-slate-300 hover:text-[#101828] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 flex items-center gap-1.5 cursor-pointer"
                   >
                     <Share2 className="w-3.5 h-3.5" />
                     <span>{copiedLink ? 'Copied Summary!' : 'Share Profile'}</span>
@@ -259,7 +259,7 @@ export const AssessmentModal: React.FC<AssessmentModalProps> = ({
                       onClose();
                       onOpenBuyModal();
                     }}
-                    className="px-4 py-2 text-xs font-semibold bg-[#101828] text-white rounded-md hover:bg-blue-950 transition-colors flex items-center gap-1.5 cursor-pointer"
+                    className="px-4 py-2 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors flex items-center gap-1.5 cursor-pointer"
                   >
                     <span>Read Beyond AI Engineering</span>
                     <ArrowRight className="w-3.5 h-3.5" />

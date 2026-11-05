@@ -7,7 +7,7 @@ export const BOOK_DETAILS = {
   authorTitle: 'Principal AI Engineer at Palo Alto Networks · Keynote Speaker · Stanford Distinguished Scholar · Forbes Tech Council · Fellow of RSA & BCS · IEEE Senior Member',
   coreTagline: 'AI can increasingly write the code. Your advantage is deciding what deserves to be built.',
   positioning: 'Beyond AI Engineering is a practical career operating system for engineers navigating the age of AI agents. It helps engineers move from producing code to exercising judgment, designing systems, orchestrating AI and humans, and operating as a high-leverage Super Engineer.',
-  coverImage: '/src/assets/images/book_hardcover_mockup_1793842329740.jpg',
+  coverImage: '/assets/images/book_hardcover_mockup_1793842329740.jpg',
   authorImage: '/assets/aistudio/harsh_verma_87a0217e.jpg',
   authorImageFallback: '/public/assets/aistudio/harsh_verma_87a0217e.jpg',
   publisher: 'Beyond AI Publishing',

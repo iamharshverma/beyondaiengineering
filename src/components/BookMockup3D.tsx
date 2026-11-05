@@ -14,26 +14,28 @@ export const BookMockup3D: React.FC<BookMockup3DProps> = ({
 
   return (
     <div className="relative w-full max-w-md mx-auto lg:max-w-none flex items-center justify-center py-6">
-      {/* Ambient subtle glow background */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-blue-100/40 via-indigo-50/30 to-amber-50/20 blur-3xl -z-10 rounded-full" />
+      {/* Ambient luxury glow background */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/15 via-indigo-500/10 to-amber-500/10 dark:from-blue-600/25 dark:via-indigo-600/15 dark:to-amber-500/15 blur-3xl -z-10 rounded-full" />
 
       {/* 3D Book Container */}
       <div className="relative group perspective-1000">
-        <div className="book-spine-depth transition-transform duration-500 ease-out cursor-pointer">
-          <div className="relative rounded-lg overflow-hidden book-shadow border border-slate-900/10 bg-[#0E1B38] max-w-[340px] sm:max-w-[380px]">
+        <div className="book-spine-depth transition-transform duration-500 ease-out cursor-pointer hover:rotate-y-[-6deg]">
+          <div className="relative rounded-xl overflow-hidden book-shadow border border-slate-900/15 dark:border-white/20 bg-[#0E1B38] max-w-[340px] sm:max-w-[380px] shadow-2xl dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
             <img
-              src="/src/assets/images/book_hardcover_mockup_1793842329740.jpg"
+              src="/assets/images/book_hardcover_mockup_1793842329740.jpg"
               alt="Beyond AI Engineering hardcover book by Harsh Verma"
               className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-[1.02]"
               referrerPolicy="no-referrer"
               onError={(e) => {
-                // Fallback container in case image fails to load
-                (e.target as HTMLElement).style.display = 'none';
+                const target = e.target as HTMLImageElement;
+                if (!target.src.includes('public/assets')) {
+                  target.src = '/public/assets/images/book_hardcover_mockup_1793842329740.jpg';
+                }
               }}
             />
 
-            {/* Subtle editorial light sheen on hover */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+            {/* Subtle editorial gold/light sheen on hover */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 dark:via-amber-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
           </div>
         </div>
 
@@ -44,20 +46,20 @@ export const BookMockup3D: React.FC<BookMockup3DProps> = ({
           onMouseEnter={() => setActiveHoverNode('creator')}
           onMouseLeave={() => setActiveHoverNode(null)}
           onClick={() => onSelectPhase && onSelectPhase('creator')}
-          className={`absolute -top-4 -left-4 sm:-left-8 bg-white/95 backdrop-blur-md border border-[#101828]/10 rounded-lg p-2.5 sm:p-3 shadow-md hover:shadow-lg transition-all cursor-pointer z-20 ${
-            activeHoverNode === 'creator' ? 'scale-105 border-blue-600 ring-2 ring-blue-100' : ''
+          className={`absolute -top-4 -left-4 sm:-left-8 bg-white/95 dark:bg-[#0F172A]/90 backdrop-blur-md border border-[#101828]/10 dark:border-white/15 rounded-xl p-2.5 sm:p-3 shadow-md hover:shadow-lg transition-all cursor-pointer z-20 ${
+            activeHoverNode === 'creator' ? 'scale-105 border-blue-600 dark:border-blue-400 ring-2 ring-blue-100 dark:ring-blue-900/50' : ''
           }`}
         >
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 flex items-center justify-center shrink-0">
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[10px] tracking-wider uppercase font-mono text-[#475467]">Stage 01</div>
-              <div className="text-xs font-bold text-[#101828]">Creator · Build</div>
+              <div className="text-[10px] tracking-wider uppercase font-mono text-[#475467] dark:text-slate-400">Stage 01</div>
+              <div className="text-xs font-bold text-[#101828] dark:text-white">Creator · Build</div>
             </div>
           </div>
-          <div className="text-[11px] text-[#475467] mt-1 hidden sm:block">
+          <div className="text-[11px] text-[#475467] dark:text-slate-400 mt-1 hidden sm:block">
             Turns ideas into working systems
           </div>
         </div>
@@ -67,20 +69,20 @@ export const BookMockup3D: React.FC<BookMockup3DProps> = ({
           onMouseEnter={() => setActiveHoverNode('architect')}
           onMouseLeave={() => setActiveHoverNode(null)}
           onClick={() => onSelectPhase && onSelectPhase('architect')}
-          className={`absolute top-1/2 -right-4 sm:-right-8 -translate-y-1/2 bg-white/95 backdrop-blur-md border border-[#101828]/10 rounded-lg p-2.5 sm:p-3 shadow-md hover:shadow-lg transition-all cursor-pointer z-20 ${
-            activeHoverNode === 'architect' ? 'scale-105 border-violet-600 ring-2 ring-violet-100' : ''
+          className={`absolute top-1/2 -right-4 sm:-right-8 -translate-y-1/2 bg-white/95 dark:bg-[#0F172A]/90 backdrop-blur-md border border-[#101828]/10 dark:border-white/15 rounded-xl p-2.5 sm:p-3 shadow-md hover:shadow-lg transition-all cursor-pointer z-20 ${
+            activeHoverNode === 'architect' ? 'scale-105 border-violet-600 dark:border-purple-400 ring-2 ring-violet-100 dark:ring-purple-900/50' : ''
           }`}
         >
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-purple-50 text-purple-700 flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-purple-50 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 flex items-center justify-center shrink-0">
               <Compass className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[10px] tracking-wider uppercase font-mono text-[#475467]">Stage 02</div>
-              <div className="text-xs font-bold text-[#101828]">Architect · Design</div>
+              <div className="text-[10px] tracking-wider uppercase font-mono text-[#475467] dark:text-slate-400">Stage 02</div>
+              <div className="text-xs font-bold text-[#101828] dark:text-white">Architect · Design</div>
             </div>
           </div>
-          <div className="text-[11px] text-[#475467] mt-1 hidden sm:block">
+          <div className="text-[11px] text-[#475467] dark:text-slate-400 mt-1 hidden sm:block">
             Decides what should be built
           </div>
         </div>
@@ -90,20 +92,20 @@ export const BookMockup3D: React.FC<BookMockup3DProps> = ({
           onMouseEnter={() => setActiveHoverNode('orchestrator')}
           onMouseLeave={() => setActiveHoverNode(null)}
           onClick={() => onSelectPhase && onSelectPhase('orchestrator')}
-          className={`absolute -bottom-4 -left-2 sm:-left-6 bg-white/95 backdrop-blur-md border border-[#101828]/10 rounded-lg p-2.5 sm:p-3 shadow-md hover:shadow-lg transition-all cursor-pointer z-20 ${
-            activeHoverNode === 'orchestrator' ? 'scale-105 border-emerald-600 ring-2 ring-emerald-100' : ''
+          className={`absolute -bottom-4 -left-2 sm:-left-6 bg-white/95 dark:bg-[#0F172A]/90 backdrop-blur-md border border-[#101828]/10 dark:border-white/15 rounded-xl p-2.5 sm:p-3 shadow-md hover:shadow-lg transition-all cursor-pointer z-20 ${
+            activeHoverNode === 'orchestrator' ? 'scale-105 border-emerald-600 dark:border-emerald-400 ring-2 ring-emerald-100 dark:ring-emerald-900/50' : ''
           }`}
         >
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
-              <div className="text-[10px] tracking-wider uppercase font-mono text-[#475467]">Stage 03</div>
-              <div className="text-xs font-bold text-[#101828]">Orchestrator · Lead</div>
+              <div className="text-[10px] tracking-wider uppercase font-mono text-[#475467] dark:text-slate-400">Stage 03</div>
+              <div className="text-xs font-bold text-[#101828] dark:text-white">Orchestrator · Lead</div>
             </div>
           </div>
-          <div className="text-[11px] text-[#475467] mt-1 hidden sm:block">
+          <div className="text-[11px] text-[#475467] dark:text-slate-400 mt-1 hidden sm:block">
             Coordinates AI, humans & trust
           </div>
         </div>

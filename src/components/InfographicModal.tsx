@@ -209,7 +209,7 @@ export const InfographicModal: React.FC<InfographicModalProps> = ({
                         className="w-full h-full object-cover"
                       />
                       <span className="absolute bottom-0 inset-x-0 bg-black/80 text-[8px] font-mono text-center text-white py-0.5">
-                        {idx === 0 ? 'Intro' : idx > 11 ? 'Special' : `Ch ${idx}`}
+                        {item.chapterNumber === 0 ? 'Intro' : item.chapterNumber <= 11 ? `Ch ${item.chapterNumber}` : 'Blueprint'}
                       </span>
                     </button>
                   ))}
