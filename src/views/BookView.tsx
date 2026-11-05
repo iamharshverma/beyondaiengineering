@@ -43,13 +43,8 @@ export const BookView: React.FC<BookViewProps> = ({
           </p>
 
           <p className="text-base text-[#475467] dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            By <strong className="text-[#101828] dark:text-white">Harsh Verma</strong> — Principal AI Software Engineer at <strong>Palo Alto Networks</strong>, Keynote Speaker, Stanford Distinguished Scholar, Fellow of RSA & BCS, and IEEE Senior Member.
+            By <strong className="text-[#101828] dark:text-white">Harsh Verma</strong> — Principal AI Software Engineer at <strong>Palo Alto Networks</strong>, Keynote Speaker, and Fellow of RSA & BCS.
           </p>
-          <div className="text-xs text-[#475467] dark:text-slate-400 flex flex-wrap items-center justify-center gap-3">
-            <span>Official Author Catalog: <a href={BOOK_DETAILS.authorBooksUrl} target="_blank" rel="noopener noreferrer" className="text-blue-900 dark:text-blue-400 font-semibold underline">harshverma.me/page-books#book1 ↗</a></span>
-            <span>·</span>
-            <span>Contact: <a href={`mailto:${BOOK_DETAILS.contactEmail}`} className="text-blue-900 dark:text-blue-400 font-semibold underline">{BOOK_DETAILS.contactEmail}</a></span>
-          </div>
 
           <div className="pt-4 flex flex-wrap justify-center items-center gap-4">
             <button
@@ -117,7 +112,7 @@ export const BookView: React.FC<BookViewProps> = ({
       {/* 3. VISUAL INFOGRAPHIC EXPLORER SHOWCASE */}
       <section className="py-20 bg-[#FAF9F5] dark:bg-[#0A101D] border-b border-[#101828]/[0.08] dark:border-white/10 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>
               <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-blue-900 dark:text-blue-400 font-bold mb-2">
                 <Layers className="w-4 h-4" />
@@ -142,39 +137,9 @@ export const BookView: React.FC<BookViewProps> = ({
             )}
           </div>
 
-          {/* Infographic Filter Tabs */}
-          <div className="flex flex-wrap gap-2 mb-8 border-b border-[#101828]/10 dark:border-white/10 pb-4">
-            <span className="text-xs font-mono uppercase tracking-wider text-[#475467] dark:text-slate-400 self-center mr-2">
-              Filter Visuals:
-            </span>
-            {[
-              { id: 'ALL', label: 'All 15 Visual Guides (15)' },
-              { id: 'CHAPTERS', label: 'Core Chapters 1–11 (11)' },
-              { id: 'INTRO', label: 'Introduction (1)' },
-              { id: 'BLUEPRINTS', label: 'Master Blueprints (3)' },
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setSelectedSpecialTab(tab.id)}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors cursor-pointer ${
-                  selectedSpecialTab === tab.id || (tab.id === 'ALL' && selectedSpecialTab === 'intro')
-                    ? 'bg-[#101828] dark:bg-white text-white dark:text-[#070B14] shadow-xs'
-                    : 'bg-white dark:bg-[#11192E] border border-[#101828]/10 dark:border-white/10 text-[#475467] dark:text-slate-300 hover:text-[#101828] dark:hover:text-white'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Infographics Grid */}
+          {/* Infographics Grid: All 15 Visual Guides */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {ALL_INFOGRAPHICS.filter((info) => {
-              if (selectedSpecialTab === 'CHAPTERS') return info.id.startsWith('infographic-ch');
-              if (selectedSpecialTab === 'INTRO') return info.id === 'infographic-intro';
-              if (selectedSpecialTab === 'BLUEPRINTS') return ['infographic-routes', 'infographic-plan', 'infographic-conclusion'].includes(info.id);
-              return true; // 'ALL' or default
-            }).map((info) => (
+            {ALL_INFOGRAPHICS.map((info) => (
               <div
                 key={info.id}
                 onClick={() => onOpenInfographicModal && onOpenInfographicModal(info.id)}

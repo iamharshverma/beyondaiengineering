@@ -17,8 +17,8 @@ export const BookMockup3D: React.FC<BookMockup3DProps> = ({
       {/* Ambient luxury glow background */}
       <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/15 via-indigo-500/10 to-amber-500/10 dark:from-blue-600/25 dark:via-indigo-600/15 dark:to-amber-500/15 blur-3xl -z-10 rounded-full" />
 
-      {/* 3D Book Container */}
-      <div className="relative group perspective-1000">
+      {/* 3D Book Container with luxury floating animation */}
+      <div className="relative group perspective-1000 animate-float">
         <div className="book-spine-depth transition-transform duration-500 ease-out cursor-pointer hover:rotate-y-[-6deg]">
           <div className="relative rounded-xl overflow-hidden book-shadow border border-slate-900/15 dark:border-white/20 bg-[#0E1B38] max-w-[340px] sm:max-w-[380px] shadow-2xl dark:shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
             <img
@@ -115,7 +115,7 @@ export const BookMockup3D: React.FC<BookMockup3DProps> = ({
       {onOpenSample && (
         <button
           onClick={onOpenSample}
-          className="absolute -bottom-10 text-xs font-medium text-[#475467] hover:text-[#101828] underline underline-offset-4 transition-colors"
+          className="absolute -bottom-10 text-xs font-medium text-[#475467] dark:text-slate-400 hover:text-[#101828] dark:hover:text-white underline underline-offset-4 transition-colors cursor-pointer"
         >
           Read Free Sample Chapter Excerpt →
         </button>

@@ -148,8 +148,6 @@ export const Footer: React.FC<FooterProps> = ({
                 </div>
                 <div className="pt-2 text-slate-400 space-y-1">
                   <div>Berkeley SkyDeck & Techstars Advisor</div>
-                  <div>Mayfield Fund AI Garage Evaluator</div>
-                  <div>Stanford GSB LEAD Scholar</div>
                 </div>
               </div>
             </div>

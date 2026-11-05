@@ -186,10 +186,10 @@ export const BuyModal: React.FC<BuyModalProps> = ({
                           href="https://audible.com"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-3 bg-[#FAFAF7] border border-[#101828]/15 rounded-lg hover:border-blue-900 font-medium flex items-center justify-between text-[#101828] transition-colors group"
+                          className="p-3 bg-[#FAFAF7] dark:bg-[#17233E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors group"
                         >
                           <span>Audible & Apple Books</span>
-                          <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-900" />
+                          <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-900 dark:group-hover:text-blue-400" />
                         </a>
                       </div>
                     </div>
@@ -199,28 +199,28 @@ export const BuyModal: React.FC<BuyModalProps> = ({
             </div>
           ) : (
             /* Bulk Team Order Form */
-            <div className="bg-white p-6 rounded-xl border border-[#101828]/10 shadow-xs">
+            <div className="bg-white dark:bg-[#11192E] p-6 rounded-xl border border-[#101828]/10 dark:border-white/10 shadow-xs">
               {!teamSubmitted ? (
                 <form onSubmit={handleBulkSubmit} className="space-y-4">
                   <div className="flex items-center gap-2">
-                    <Users className="w-5 h-5 text-blue-900" />
-                    <h3 className="font-serif text-xl font-bold text-[#101828]">
+                    <Users className="w-5 h-5 text-blue-900 dark:text-blue-400" />
+                    <h3 className="font-serif text-xl font-bold text-[#101828] dark:text-white">
                       Team & Institutional Bulk Licensing
                     </h3>
                   </div>
-                  <p className="text-xs text-[#475467] leading-relaxed">
+                  <p className="text-xs text-[#475467] dark:text-slate-300 leading-relaxed">
                     Bring the Creator–Architect–Orchestrator framework to your entire engineering organization or computer science department. Bulk orders (10+ copies) include complimentary digital Lab toolkits and an optional private Q&A session with Harsh Verma.
                   </p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                     <div>
-                      <label className="block text-xs font-mono uppercase tracking-wider font-semibold text-[#101828] mb-1">
+                      <label className="block text-xs font-mono uppercase tracking-wider font-semibold text-[#101828] dark:text-slate-200 mb-1">
                         Team Size / Copies
                       </label>
                       <select
                         value={teamSize}
                         onChange={(e) => setTeamSize(e.target.value)}
-                        className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 bg-[#FAFAF7] focus:outline-blue-900"
+                        className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#0A101F] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
                       >
                         <option value="10-24 copies">10–24 copies (15% discount)</option>
                         <option value="25-50 copies">25–50 copies (25% discount)</option>
@@ -229,7 +229,7 @@ export const BuyModal: React.FC<BuyModalProps> = ({
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-mono uppercase tracking-wider font-semibold text-[#101828] mb-1">
+                      <label className="block text-xs font-mono uppercase tracking-wider font-semibold text-[#101828] dark:text-slate-200 mb-1">
                         Work Email
                       </label>
                       <input
@@ -238,25 +238,25 @@ export const BuyModal: React.FC<BuyModalProps> = ({
                         value={teamEmail}
                         onChange={(e) => setTeamEmail(e.target.value)}
                         placeholder="lead@company.com"
-                        className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 bg-[#FAFAF7] focus:outline-blue-900"
+                        className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#0A101F] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
                       />
                     </div>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-2.5 text-xs font-semibold bg-[#101828] text-white rounded-md hover:bg-blue-950 transition-colors cursor-pointer shadow-sm mt-3"
+                    className="w-full py-2.5 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors cursor-pointer shadow-sm mt-3"
                   >
                     Request Team Bulk Quote & Info Pack
                   </button>
                 </form>
               ) : (
                 <div className="text-center py-6 space-y-3">
-                  <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
-                  <h4 className="font-serif text-xl font-bold text-[#101828]">
+                  <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400 mx-auto" />
+                  <h4 className="font-serif text-xl font-bold text-[#101828] dark:text-white">
                     Bulk Inquiry Received
                   </h4>
-                  <p className="text-xs text-[#475467] max-w-sm mx-auto">
+                  <p className="text-xs text-[#475467] dark:text-slate-300 max-w-sm mx-auto">
                     We have received your request for <strong>{teamSize}</strong>. Our publishing liaison will reach out to <strong>{teamEmail}</strong> within 24 hours with custom invoice details.
                   </p>
                 </div>

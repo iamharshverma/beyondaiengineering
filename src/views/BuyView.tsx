@@ -58,13 +58,13 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
   return (
     <div className="space-y-0">
       {/* 1. HERO */}
-      <section className="pt-16 sm:pt-24 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08]">
+      <section className="pt-16 sm:pt-24 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* Left Column: Cover Showcase */}
           <div className="lg:col-span-5 flex justify-center">
-            <div className="relative group max-w-[320px] sm:max-w-[360px]">
-              <div className="rounded-xl overflow-hidden book-shadow border border-[#101828]/10 bg-[#0E1B38]">
+            <div className="relative group max-w-[320px] sm:max-w-[360px] animate-float">
+              <div className="rounded-xl overflow-hidden book-shadow border border-[#101828]/10 dark:border-white/20 bg-[#0E1B38]">
                 <img
                   src="/assets/images/book_hardcover_mockup_1793842329740.jpg"
                   alt="Beyond AI Engineering hardcover book by Harsh Verma"
@@ -81,7 +81,7 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
               <div className="mt-4 text-center">
                 <button
                   onClick={onOpenSample}
-                  className="text-xs font-semibold text-blue-900 hover:underline inline-flex items-center gap-1 cursor-pointer"
+                  className="text-xs font-semibold text-blue-900 dark:text-blue-400 hover:underline inline-flex items-center gap-1 cursor-pointer"
                 >
                   <BookOpen className="w-3.5 h-3.5" />
                   <span>Read Chapter 1 Sample First</span>
@@ -93,13 +93,13 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
           {/* Right Column: Buying Options */}
           <div className="lg:col-span-7 space-y-6 text-left">
             <div>
-              <span className="text-xs uppercase tracking-widest font-mono text-blue-900 font-semibold block mb-1">
+              <span className="text-xs uppercase tracking-widest font-mono text-blue-900 dark:text-blue-400 font-semibold block mb-1">
                 Official Book Distribution
               </span>
-              <h1 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-[#101828] mb-2">
+              <h1 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-[#101828] dark:text-white mb-2">
                 Ready to Go Beyond AI Engineering?
               </h1>
-              <p className="font-serif text-lg text-[#475467] italic">
+              <p className="font-serif text-lg text-[#475467] dark:text-slate-300 italic">
                 From Creator to Curator: Build Your Authority and Lead the AI Agent Revolution
               </p>
             </div>
@@ -110,34 +110,34 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                 <div
                   key={fmt.id}
                   onClick={() => setSelectedFormat(fmt.id)}
-                  className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
+                  className={`p-4 rounded-xl border text-left transition-all cursor-pointer hover:-translate-y-0.5 duration-200 ${
                     selectedFormat === fmt.id
-                      ? 'border-blue-900 bg-white ring-2 ring-blue-900/10 shadow-sm'
-                      : 'border-[#101828]/10 bg-[#FAFAF7] hover:border-[#101828]/30'
+                      ? 'border-blue-900 dark:border-blue-400 bg-white dark:bg-[#111C35] ring-2 ring-blue-900/10 dark:ring-blue-400/20 shadow-sm'
+                      : 'border-[#101828]/10 dark:border-white/10 bg-[#FAFAF7] dark:bg-[#0D1527] hover:border-[#101828]/30 dark:hover:border-white/20'
                   }`}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-blue-900 font-semibold">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-blue-900 dark:text-blue-300 font-semibold">
                       {fmt.badge}
                     </span>
-                    <span className="font-serif text-lg font-bold text-[#101828]">{fmt.price}</span>
+                    <span className="font-serif text-lg font-bold text-[#101828] dark:text-white">{fmt.price}</span>
                   </div>
-                  <div className="font-serif font-bold text-base text-[#101828] mb-1">{fmt.name}</div>
-                  <p className="text-[11px] text-[#475467] leading-relaxed line-clamp-2">{fmt.description}</p>
+                  <div className="font-serif font-bold text-base text-[#101828] dark:text-white mb-1">{fmt.name}</div>
+                  <p className="text-[11px] text-[#475467] dark:text-slate-400 leading-relaxed line-clamp-2">{fmt.description}</p>
                 </div>
               ))}
             </div>
 
             {/* Selected Format Retailers */}
-            <div className="bg-white p-6 rounded-xl border border-[#101828]/10 shadow-xs space-y-4">
+            <div className="bg-white dark:bg-[#0D1527] p-6 rounded-xl border border-[#101828]/10 dark:border-white/10 shadow-xs space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-serif text-xl font-bold text-[#101828]">
+                  <h3 className="font-serif text-xl font-bold text-[#101828] dark:text-white">
                     {formats.find((f) => f.id === selectedFormat)?.name}
                   </h3>
-                  <span className="text-xs text-[#475467]">Choose your preferred authorized bookseller:</span>
+                  <span className="text-xs text-[#475467] dark:text-slate-400">Choose your preferred authorized bookseller:</span>
                 </div>
-                <div className="font-serif text-2xl font-bold text-[#101828]">
+                <div className="font-serif text-2xl font-bold text-[#101828] dark:text-white">
                   {formats.find((f) => f.id === selectedFormat)?.price}
                 </div>
               </div>
@@ -147,7 +147,7 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                   href="https://amazon.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 bg-[#FAFAF7] border border-[#101828]/15 rounded-lg hover:border-blue-900 font-medium flex items-center justify-between text-[#101828] transition-colors"
+                  className="p-3 bg-[#FAFAF7] dark:bg-[#11192E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors"
                 >
                   <span>Amazon Worldwide</span>
                   <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
@@ -156,7 +156,7 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                   href="https://barnesandnoble.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 bg-[#FAFAF7] border border-[#101828]/15 rounded-lg hover:border-blue-900 font-medium flex items-center justify-between text-[#101828] transition-colors"
+                  className="p-3 bg-[#FAFAF7] dark:bg-[#11192E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors"
                 >
                   <span>Barnes & Noble</span>
                   <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
@@ -165,7 +165,7 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                   href="https://bookshop.org"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 bg-[#FAFAF7] border border-[#101828]/15 rounded-lg hover:border-blue-900 font-medium flex items-center justify-between text-[#101828] transition-colors"
+                  className="p-3 bg-[#FAFAF7] dark:bg-[#11192E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors"
                 >
                   <span>Bookshop.org (Independent Bookstores)</span>
                   <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
@@ -174,15 +174,15 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                   href="https://audible.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-3 bg-[#FAFAF7] border border-[#101828]/15 rounded-lg hover:border-blue-900 font-medium flex items-center justify-between text-[#101828] transition-colors"
+                  className="p-3 bg-[#FAFAF7] dark:bg-[#11192E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors"
                 >
                   <span>Audible & Apple Books</span>
                   <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
                 </a>
               </div>
 
-              <div className="text-[11px] text-[#475467] pt-2 border-t border-[#101828]/[0.08] flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+              <div className="text-[11px] text-[#475467] dark:text-slate-400 pt-2 border-t border-[#101828]/[0.08] dark:border-white/10 flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
                 <span>All editions include complimentary access to the Beyond AI Engineering Lab canvases.</span>
               </div>
             </div>
@@ -193,17 +193,17 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
       </section>
 
       {/* 2. TEAM & BULK ORDERS */}
-      <section className="py-20 bg-[#FAF9F5]">
+      <section className="py-20 bg-[#FAF9F5] dark:bg-[#0A101D] transition-colors">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white p-8 sm:p-12 rounded-2xl border border-[#101828]/10 shadow-sm">
+          <div className="bg-white dark:bg-[#0D1527] p-8 sm:p-12 rounded-2xl border border-[#101828]/10 dark:border-white/10 shadow-sm">
             <div className="text-center max-w-xl mx-auto mb-8">
-              <span className="text-xs font-mono uppercase tracking-widest text-blue-900 font-semibold block mb-1">
+              <span className="text-xs font-mono uppercase tracking-widest text-blue-900 dark:text-blue-400 font-semibold block mb-1">
                 Enterprise & University Licensing
               </span>
-              <h2 className="font-serif text-3xl font-bold text-[#101828] mb-2">
+              <h2 className="font-serif text-3xl font-bold text-[#101828] dark:text-white mb-2">
                 Buying for an Engineering Team?
               </h2>
-              <p className="text-xs sm:text-sm text-[#475467] leading-relaxed">
+              <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed">
                 Bring the Creator–Architect–Orchestrator framework into your engineering organization. Bulk orders of 10+ copies receive tiered team discounts and a private virtual Q&A with Harsh Verma.
               </p>
             </div>
@@ -212,7 +212,7 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
               <form onSubmit={handleBulkSubmit} className="space-y-4 max-w-lg mx-auto">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-mono uppercase text-[#101828] font-semibold mb-1">
+                    <label className="block text-xs font-mono uppercase text-[#101828] dark:text-slate-200 font-semibold mb-1">
                       Your Name
                     </label>
                     <input
@@ -221,11 +221,11 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                       value={teamName}
                       onChange={(e) => setTeamName(e.target.value)}
                       placeholder="e.g. Marcus Vance"
-                      className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 bg-[#FAFAF7] focus:outline-blue-900"
+                      className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/20 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-mono uppercase text-[#101828] font-semibold mb-1">
+                    <label className="block text-xs font-mono uppercase text-[#101828] dark:text-slate-200 font-semibold mb-1">
                       Work Email
                     </label>
                     <input
@@ -234,19 +234,19 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                       value={teamEmail}
                       onChange={(e) => setTeamEmail(e.target.value)}
                       placeholder="lead@company.com"
-                      className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 bg-[#FAFAF7] focus:outline-blue-900"
+                      className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/20 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono uppercase text-[#101828] font-semibold mb-1">
+                  <label className="block text-xs font-mono uppercase text-[#101828] dark:text-slate-200 font-semibold mb-1">
                     Number of Copies Needed
                   </label>
                   <select
                     value={teamSize}
                     onChange={(e) => setTeamSize(e.target.value)}
-                    className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 bg-[#FAFAF7] focus:outline-blue-900"
+                    className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/20 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
                   >
                     <option value="10-24 copies">10–24 copies (15% discount + Lab Bundle)</option>
                     <option value="25-50 copies">25–50 copies (25% discount + Virtual Q&A)</option>
@@ -257,18 +257,18 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
 
                 <button
                   type="submit"
-                  className="w-full py-3 text-xs font-semibold bg-[#101828] text-white rounded-md hover:bg-blue-950 transition-colors cursor-pointer shadow-xs"
+                  className="w-full py-3 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors cursor-pointer shadow-xs"
                 >
                   Request Bulk Invoice & Delivery Timeline
                 </button>
               </form>
             ) : (
               <div className="text-center py-6 space-y-2">
-                <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
-                <h3 className="font-serif text-2xl font-bold text-[#101828]">
+                <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400 mx-auto" />
+                <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white">
                   Bulk Request Received
                 </h3>
-                <p className="text-xs sm:text-sm text-[#475467] max-w-sm mx-auto">
+                <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 max-w-sm mx-auto">
                   Thank you, {teamName}. We have received your inquiry for <strong>{teamSize}</strong> and sent confirmation details to <strong>{teamEmail}</strong>.
                 </p>
               </div>

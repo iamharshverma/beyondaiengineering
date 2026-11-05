@@ -42,8 +42,18 @@ export default function App() {
   const [speakingTopic, setSpeakingTopic] = useState<string>('The Engineer After Code');
   const [activeInfographicId, setActiveInfographicId] = useState<string | null>(null);
 
-  // Sync with browser hash on initial load
+  // Sync with browser hash and saved theme on initial load
   useEffect(() => {
+    // Restore dark mode preference
+    try {
+      const savedTheme = localStorage.getItem('beyond-theme');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    } catch (e) {}
+
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '') as PageId;
       const validPages: PageId[] = [
