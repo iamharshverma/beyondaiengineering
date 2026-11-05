@@ -3,34 +3,64 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
   <url>
-    <loc>https://www.beyondaiengineering.com/</loc>
-    <lastmod>2026-11-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://www.beyondaiengineering.com/book</loc>
-    <lastmod>2026-11-05</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
-  </url>
-  <url>
-    <loc>https://www.beyondaiengineering.com/book/sample</loc>
+    <loc>https://www.beyondaiengineering.com/ideas/engineer-after-code</loc>
     <lastmod>2026-11-05</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.90</priority>
+    <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://www.beyondaiengineering.com/book/buy</loc>
+    <loc>https://www.beyondaiengineering.com/ideas/why-ai-makes-judgment-more-valuable</loc>
     <lastmod>2026-11-05</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.90</priority>
+    <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://www.beyondaiengineering.com/teams</loc>
+    <loc>https://www.beyondaiengineering.com/ideas/from-how-to-what</loc>
     <lastmod>2026-11-05</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.beyondaiengineering.com/ideas/ai-agents-authority-boundaries</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.beyondaiengineering.com/ideas/first-agent-experiment-not-product</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.beyondaiengineering.com/ideas/why-multi-agent-systems-change-cybersecurity</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.beyondaiengineering.com/ideas/career-moat-for-engineers</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.beyondaiengineering.com/ideas/why-professional-authority-beats-personal-branding</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.beyondaiengineering.com/ideas/what-students-should-learn</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.beyondaiengineering.com/ideas/a-model-is-not-a-system</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.beyondaiengineering.com/author</loc>
@@ -39,16 +69,22 @@
     <priority>0.95</priority>
   </url>
   <url>
-    <loc>https://www.beyondaiengineering.com/cao-framework</loc>
+    <loc>https://www.beyondaiengineering.com/book</loc>
     <lastmod>2026-11-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
-    <loc>https://www.beyondaiengineering.com/frameworks</loc>
+    <loc>https://www.beyondaiengineering.com/book/buy</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://www.beyondaiengineering.com/cao-framework</loc>
     <lastmod>2026-11-05</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
+    <priority>0.95</priority>
   </url>
   <url>
     <loc>https://www.beyondaiengineering.com/frameworks/how-to-what</loc>
@@ -117,40 +153,16 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.beyondaiengineering.com/manifesto</loc>
-    <lastmod>2026-11-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.beyondaiengineering.com/resources</loc>
+    <loc>https://www.beyondaiengineering.com/frameworks</loc>
     <lastmod>2026-11-05</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.beyondaiengineering.com/toolkit</loc>
+    <loc>https://www.beyondaiengineering.com/</loc>
     <lastmod>2026-11-05</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.beyondaiengineering.com/students</loc>
-    <lastmod>2026-11-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.beyondaiengineering.com/speaking</loc>
-    <lastmod>2026-11-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.beyondaiengineering.com/press</loc>
-    <lastmod>2026-11-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
+    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.beyondaiengineering.com/ideas</loc>
@@ -159,61 +171,31 @@
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.beyondaiengineering.com/ideas/engineer-after-code</loc>
+    <loc>https://www.beyondaiengineering.com/manifesto</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.beyondaiengineering.com/press</loc>
     <lastmod>2026-11-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://www.beyondaiengineering.com/ideas/why-ai-makes-judgment-more-valuable</loc>
+    <loc>https://www.beyondaiengineering.com/resources</loc>
     <lastmod>2026-11-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://www.beyondaiengineering.com/ideas/from-how-to-what</loc>
+    <loc>https://www.beyondaiengineering.com/book/sample</loc>
     <lastmod>2026-11-05</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
+    <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://www.beyondaiengineering.com/ideas/ai-agents-authority-boundaries</loc>
-    <lastmod>2026-11-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.beyondaiengineering.com/ideas/first-agent-experiment-not-product</loc>
-    <lastmod>2026-11-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.beyondaiengineering.com/ideas/why-multi-agent-systems-change-cybersecurity</loc>
-    <lastmod>2026-11-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.beyondaiengineering.com/ideas/career-moat-for-engineers</loc>
-    <lastmod>2026-11-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.beyondaiengineering.com/ideas/why-professional-authority-beats-personal-branding</loc>
-    <lastmod>2026-11-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.beyondaiengineering.com/ideas/what-students-should-learn</loc>
-    <lastmod>2026-11-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://www.beyondaiengineering.com/ideas/a-model-is-not-a-system</loc>
+    <loc>https://www.beyondaiengineering.com/speaking</loc>
     <lastmod>2026-11-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
@@ -223,5 +205,23 @@
     <lastmod>2026-11-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.beyondaiengineering.com/students</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.beyondaiengineering.com/teams</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.beyondaiengineering.com/toolkit</loc>
+    <lastmod>2026-11-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
 </urlset>
