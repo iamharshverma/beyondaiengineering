@@ -58,7 +58,7 @@ export const ManifestoView: React.FC<ManifestoViewProps> = ({
 
   const handleShareQuote = (quote: string) => {
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(`"${quote}" — The Beyond AI Engineering Manifesto by Harsh Verma. https://beyondaiengineering.com/manifesto`);
+      navigator.clipboard.writeText(`"${quote}" — The Beyond AI Engineering Manifesto by Harsh Verma. https://www.beyondaiengineering.com/manifesto`);
       setCopiedQuote(quote);
       setTimeout(() => setCopiedQuote(null), 2500);
     }

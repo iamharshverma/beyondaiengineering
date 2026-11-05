@@ -29,7 +29,7 @@ export const FrameworksView: React.FC<FrameworksViewProps> = ({
   const handleShareFramework = (fw: Framework) => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(
-        `"${fw.title}: ${fw.subtitle}" from Beyond AI Engineering by Harsh Verma.\n\nDefinition: ${fw.definition}\n\nExplore at https://beyondaiengineering.com`
+        `"${fw.title}: ${fw.subtitle}" from Beyond AI Engineering by Harsh Verma.\n\nDefinition: ${fw.definition}\n\nExplore at https://www.beyondaiengineering.com`
       );
       setCopiedId(fw.id);
       setTimeout(() => setCopiedId(null), 2500);

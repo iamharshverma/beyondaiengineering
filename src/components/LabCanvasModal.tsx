@@ -38,7 +38,7 @@ ${Object.entries(fields)
   .map(([k, v]) => `=== ${k.toUpperCase()} ===\n${v}\n`)
   .join('\n')}
 
-Framework by Harsh Verma · Beyond AI Engineering (https://beyondaiengineering.com)`;
+Framework by Harsh Verma · Beyond AI Engineering (https://www.beyondaiengineering.com)`;
 
     if (navigator.clipboard) {
       navigator.clipboard.writeText(textOutput);

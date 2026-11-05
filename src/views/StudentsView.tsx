@@ -36,7 +36,7 @@ Goal: Prove you understand human-AI boundary governance and multi-actor communic
 Action: Build an agent workflow with cryptographic human approval gates, audit logging, and automated safety rollback.
 Evidence: Production-ready documentation, architecture schematic, security post-mortem.
 
-Explore full chapters & lab at https://beyondaiengineering.com/students`;
+Explore full chapters & lab at https://www.beyondaiengineering.com/students`;
 
     const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
