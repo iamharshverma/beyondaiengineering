@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { PageId, Framework } from '../types';
 import { FRAMEWORKS } from '../data/frameworksData';
-import { updatePageSeo, CANONICAL_ORIGIN } from '../utils/seo';
+import { updatePageSeo, CANONICAL_ORIGIN, PAGE_OG_IMAGES } from '../utils/seo';
 import { CiteThisFramework } from '../components/CiteThisFramework';
 import { trackEvent } from '../utils/analytics';
 import { ChevronRight, ArrowLeft, ArrowRight, BookOpen, Layers, CheckCircle2, Shield, Compass, Sparkles } from 'lucide-react';
@@ -22,11 +22,16 @@ export const FrameworkDetailView: React.FC<FrameworkDetailViewProps> = ({
   const framework = FRAMEWORKS.find((f) => f.id === frameworkId) || FRAMEWORKS[0];
 
   useEffect(() => {
+    const ogImg = framework.id === 'cao-framework'
+      ? PAGE_OG_IMAGES.caoFramework
+      : PAGE_OG_IMAGES.frameworks;
+
     updatePageSeo({
       title: `${framework.title} | Beyond AI Engineering`,
       description: `${framework.subtitle}. Learn the ${framework.title} framework by Harsh Verma from Beyond AI Engineering: ${framework.definition.slice(0, 140)}...`,
       canonicalPath: `/frameworks/${framework.id}`,
       ogType: 'article',
+      ogImage: ogImg,
       breadcrumbs: [
         { name: 'Frameworks', path: '/frameworks' },
         { name: framework.title, path: `/frameworks/${framework.id}` },

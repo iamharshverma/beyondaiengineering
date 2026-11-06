@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { PageId, Article } from '../types';
 import { ARTICLES } from '../data/articlesData';
-import { updatePageSeo, CANONICAL_ORIGIN } from '../utils/seo';
+import { updatePageSeo, CANONICAL_ORIGIN, PAGE_OG_IMAGES } from '../utils/seo';
 import { trackEvent } from '../utils/analytics';
 import { ChevronRight, Calendar, Clock, Share2, Check, ArrowRight, BookOpen, Quote } from 'lucide-react';
 
@@ -27,6 +27,7 @@ export const ArticleDetailView: React.FC<ArticleDetailViewProps> = ({
       description: `${article.subtitle} Read the authoritative essay by Harsh Verma, author of Beyond AI Engineering.`,
       canonicalPath: `/ideas/${article.id}`,
       ogType: 'article',
+      ogImage: PAGE_OG_IMAGES.ideas,
       schemaType: 'Article',
       breadcrumbs: [
         { name: 'Ideas Beyond the Book', path: '/ideas' },

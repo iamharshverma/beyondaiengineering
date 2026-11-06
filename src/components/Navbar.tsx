@@ -61,16 +61,16 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="sticky top-0 z-50 bg-[#FAFAF7]/90 dark:bg-[#070B14]/90 backdrop-blur-md border-b border-[#101828]/[0.08] dark:border-white/10 transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-6">
         {/* Zone 1: Brand Wordmark (Single-Line Text Element) */}
         <button
           onClick={() => handleLinkClick('home')}
           className="text-left group focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-4 rounded-sm shrink-0 cursor-pointer"
         >
-          <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap block">
+          <span className="font-serif text-base sm:text-2xl font-bold tracking-tight text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap block">
             BEYOND AI ENGINEERING
           </span>
-          <span className="text-[11px] tracking-widest uppercase text-[#475467] dark:text-slate-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors whitespace-nowrap block -mt-1 font-sans">
+          <span className="text-[9px] sm:text-[11px] tracking-wider sm:tracking-widest uppercase text-[#475467] dark:text-slate-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors whitespace-nowrap block -mt-0.5 sm:-mt-1 font-sans">
             By Harsh Verma · The Career OS for Engineers
           </span>
         </button>

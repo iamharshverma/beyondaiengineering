@@ -35,7 +35,7 @@ import { BuyModal } from './components/BuyModal';
 import { InfographicModal } from './components/InfographicModal';
 
 import { parseCurrentRoute, navigateTo, RouteState } from './utils/router';
-import { updatePageSeo } from './utils/seo';
+import { updatePageSeo, PAGE_SEO_CONFIGS } from './utils/seo';
 import { ARTICLES } from './data/articlesData';
 
 export default function App() {
@@ -88,117 +88,8 @@ export default function App() {
   // Update SEO for top-level pages
   useEffect(() => {
     const page = currentRoute.page;
-    if (page === 'home') {
-      updatePageSeo({
-        title: 'Beyond AI Engineering | Harsh Verma',
-        description:
-          'Beyond AI Engineering by Harsh Verma explores how engineers move from Creator to Architect to Orchestrator in the age of AI agents, building careers around judgment, systems thinking, and trust.',
-        canonicalPath: '/',
-        schemaType: 'WebSite',
-      });
-    } else if (page === 'book') {
-      updatePageSeo({
-        title: 'The Book | Beyond AI Engineering — Harsh Verma',
-        description:
-          'Read Beyond AI Engineering: From Creator to Curator by Harsh Verma. The practical career operating system for engineers navigating AI agents, code generation, and systems orchestration.',
-        canonicalPath: '/book',
-        ogType: 'book',
-        schemaType: 'Book',
-        breadcrumbs: [{ name: 'The Book', path: '/book' }],
-      });
-    } else if (page === 'frameworks') {
-      updatePageSeo({
-        title: '10 Proprietary Frameworks for the Agentic Era | Beyond AI Engineering',
-        description:
-          'Explore the 10 proprietary frameworks from Beyond AI Engineering by Harsh Verma: Trust Economy, How to What, Prompt Empathy, Agentic Diplomacy, Ethical Curation, and more.',
-        canonicalPath: '/frameworks',
-        breadcrumbs: [{ name: 'Frameworks', path: '/frameworks' }],
-      });
-    } else if (page === 'resources') {
-      updatePageSeo({
-        title: 'Interactive Engineering Lab & Canvases | Beyond AI Engineering',
-        description:
-          'Interactive strategy canvases, ethical AI audit rubrics, and the 30-60-90 day engineering leadership transition planner from Beyond AI Engineering.',
-        canonicalPath: '/resources',
-        breadcrumbs: [{ name: 'Resources', path: '/resources' }],
-      });
-    } else if (page === 'toolkit') {
-      updatePageSeo({
-        title: 'The Living AI Engineering Toolkit | Beyond AI Engineering',
-        description:
-          'Curated tools, prompt architectures, agent frameworks, and evaluation harness recommendations for modern AI orchestrators.',
-        canonicalPath: '/toolkit',
-        breadcrumbs: [{ name: 'Toolkit', path: '/toolkit' }],
-      });
-    } else if (page === 'students') {
-      updatePageSeo({
-        title: 'Student & New Grad Guide | Beyond AI Engineering',
-        description:
-          'How computer science students and early-career engineers can thrive when LLMs write syntax: build proof of work, develop product judgment, and orchestrate systems.',
-        canonicalPath: '/students',
-        breadcrumbs: [{ name: 'Students', path: '/students' }],
-      });
-    } else if (page === 'manifesto') {
-      updatePageSeo({
-        title: 'The Engineer After Code Manifesto | Beyond AI Engineering',
-        description:
-          'The 10 foundational theses for software engineers building careers in the age of generative models, autonomous agents, and ambient intelligence.',
-        canonicalPath: '/manifesto',
-        breadcrumbs: [{ name: 'Manifesto', path: '/manifesto' }],
-      });
-    } else if (page === 'author') {
-      updatePageSeo({
-        title: 'Harsh Verma | Author of Beyond AI Engineering',
-        description:
-          'Harsh Verma is the author of Beyond AI Engineering, Principal AI Engineer, Fellow of BCS, IEEE Senior Member, and Forbes Technology Council Member.',
-        canonicalPath: '/author',
-        ogType: 'profile',
-        schemaType: 'ProfilePage',
-        breadcrumbs: [{ name: 'Author', path: '/author' }],
-      });
-    } else if (page === 'speaking') {
-      updatePageSeo({
-        title: 'Keynotes & Speaking | Harsh Verma — Beyond AI Engineering',
-        description:
-          'Book Harsh Verma for keynotes, executive briefings, and engineering all-hands on the future of engineering, autonomous agents, and the trust economy.',
-        canonicalPath: '/speaking',
-        breadcrumbs: [{ name: 'Speaking', path: '/speaking' }],
-      });
-    } else if (page === 'press') {
-      updatePageSeo({
-        title: 'Press Kit & Media Assets | Beyond AI Engineering',
-        description:
-          'Official press kit, high-resolution author headshots, book covers, approved author bio, and media inquiry contacts for Harsh Verma.',
-        canonicalPath: '/press',
-        breadcrumbs: [{ name: 'Press', path: '/press' }],
-      });
-    } else if (page === 'ideas') {
-      updatePageSeo({
-        title: 'Ideas Beyond the Book | Essays & Research by Harsh Verma',
-        description:
-          'In-depth essays, technical commentary, and ongoing research on the transition from code-centric to judgment-centric software engineering.',
-        canonicalPath: '/ideas',
-        breadcrumbs: [{ name: 'Ideas', path: '/ideas' }],
-      });
-    } else if (page === 'stories') {
-      updatePageSeo({
-        title: 'Reader Stories & Field Reports | Beyond AI Engineering',
-        description:
-          'Real-world accounts from engineers, managers, and architects putting the C.A.O. framework and trust economy principles into practice.',
-        canonicalPath: '/stories',
-        breadcrumbs: [{ name: 'Stories', path: '/stories' }],
-      });
-    } else if (page === 'buy') {
-      updatePageSeo({
-        title: 'Buy Beyond AI Engineering | Hardcover, Paperback & Digital',
-        description:
-          'Order Beyond AI Engineering by Harsh Verma from Amazon, Barnes & Noble, Bookshop.org, and direct digital retailers.',
-        canonicalPath: '/book/buy',
-        breadcrumbs: [
-          { name: 'The Book', path: '/book' },
-          { name: 'Order Now', path: '/book/buy' },
-        ],
-      });
+    if (PAGE_SEO_CONFIGS[page]) {
+      updatePageSeo(PAGE_SEO_CONFIGS[page]);
     }
   }, [currentRoute.page]);
 
@@ -238,7 +129,7 @@ export default function App() {
   const currentPage = currentRoute.page;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#FAFAF7] dark:bg-[#070B14] text-[#101828] dark:text-[#F1F5F9] selection:bg-blue-100 selection:text-blue-900 dark:selection:bg-blue-900/40 dark:selection:text-blue-200 transition-colors duration-200">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col bg-[#FAFAF7] dark:bg-[#070B14] text-[#101828] dark:text-[#F1F5F9] selection:bg-blue-100 selection:text-blue-900 dark:selection:bg-blue-900/40 dark:selection:text-blue-200 transition-colors duration-200">
       {/* 1. Header / Navbar following Top Bar Contract */}
       <Navbar
         currentPage={currentPage}
