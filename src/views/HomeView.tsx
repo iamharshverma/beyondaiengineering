@@ -106,6 +106,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </h1>
 
             <p className="font-serif text-xl sm:text-2xl text-[#101828] dark:text-slate-100 font-normal leading-relaxed text-balance">
+              <strong className="font-bold text-blue-900 dark:text-blue-300 block mb-2 font-sans tracking-tight text-lg sm:text-2xl">
+                From Being Creator to Curator !!
+              </strong>
               AI can increasingly write the implementation. <br className="hidden sm:block" />
               <strong className="font-semibold text-blue-950 dark:text-blue-400">Your advantage moves to judgment.</strong>
             </p>
