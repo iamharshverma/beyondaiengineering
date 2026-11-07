@@ -234,19 +234,20 @@ export const Navbar: React.FC<NavbarProps> = ({
       <header className="sticky top-0 z-40 w-full bg-[#FAFAF7]/95 dark:bg-[#070B14]/95 backdrop-blur-md border-b border-[#101828]/[0.08] dark:border-white/10 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-1.5 sm:gap-3 w-full">
           
-          {/* ZONE 1: BRAND LOGO + SPLIT TITLE (Top: Beyond AI, Bottom: Engineering) */}
+          {/* ZONE 1: BRAND LOGO (Mobile: Logo only; Big screens sm+: Logo + Title) */}
           <button
             onClick={() => handleLinkClick('home')}
-            className="text-left group focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 rounded-xl shrink min-w-0 cursor-pointer pr-1 flex items-center gap-2 sm:gap-2.5"
+            className="text-left group focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 rounded-xl shrink-0 cursor-pointer flex items-center gap-2.5 sm:gap-3"
             title="Beyond AI Engineering - Home"
+            aria-label="Beyond AI Engineering Home"
           >
             <BrandLogo size="md" />
 
-            <div className="min-w-0 flex flex-col justify-center leading-tight">
-              <span className="font-serif text-xs xs:text-sm sm:text-base lg:text-lg font-bold tracking-tight text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap block">
+            <div className="hidden sm:flex min-w-0 flex-col justify-center leading-tight">
+              <span className="font-serif text-sm sm:text-base lg:text-lg font-bold tracking-tight text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap block">
                 Beyond AI
               </span>
-              <span className="font-sans text-[8px] xs:text-[9px] sm:text-[10px] lg:text-[11px] font-bold tracking-[0.22em] uppercase text-blue-900 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors whitespace-nowrap block -mt-0.5 sm:-mt-1">
+              <span className="font-sans text-[9px] sm:text-[10px] lg:text-[11px] font-bold tracking-[0.22em] uppercase text-blue-900 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors whitespace-nowrap block -mt-0.5 sm:-mt-1">
                 Engineering
               </span>
             </div>
