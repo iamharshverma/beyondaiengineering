@@ -102,7 +102,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </div>
 
             <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#101828] dark:text-white leading-[1.08] text-balance">
-              The Engineer After Code
+              The Engineering After Code
             </h1>
 
             <p className="font-serif text-xl sm:text-2xl text-[#101828] dark:text-slate-100 font-normal leading-relaxed text-balance">
