@@ -31,6 +31,59 @@ interface NavbarProps {
   onOpenAssessment: () => void;
 }
 
+// Brand Logo: The 3-Facet Curator Prism Emblem (Creator → Architect → Orchestrator)
+export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; className?: string }> = ({
+  size = 'md',
+  className = '',
+}) => {
+  const containerSize =
+    size === 'sm' ? 'w-7 h-7' : size === 'lg' ? 'w-10 h-10' : 'w-8 h-8 sm:w-9 sm:h-9';
+  const iconSize =
+    size === 'sm' ? 'w-4 h-4' : size === 'lg' ? 'w-6 h-6' : 'w-5 h-5';
+
+  return (
+    <div
+      className={`${containerSize} rounded-xl bg-gradient-to-br from-[#101828] via-[#1E293B] to-blue-950 dark:from-[#0E1726] dark:via-[#1E293B] dark:to-blue-900 border border-[#101828]/15 dark:border-white/15 shadow-2xs group-hover:shadow-md group-hover:border-blue-500/50 dark:group-hover:border-blue-400/50 flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105 ${className}`}
+      aria-hidden="true"
+    >
+      <svg
+        viewBox="0 0 24 24"
+        className={`${iconSize} drop-shadow-xs`}
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        {/* Top Facet: Orchestrator / Horizon */}
+        <path
+          d="M12 2.5L20.5 7.4L12 12.3L3.5 7.4L12 2.5Z"
+          className="fill-blue-400/90 dark:fill-blue-300 stroke-blue-200/50"
+          strokeWidth="0.5"
+        />
+        {/* Left Facet: Creator / Foundation */}
+        <path
+          d="M3.5 7.4L12 12.3V21.5L3.5 16.6V7.4Z"
+          className="fill-blue-700 dark:fill-blue-600 stroke-blue-400/30"
+          strokeWidth="0.5"
+        />
+        {/* Right Facet: Architect / Systems */}
+        <path
+          d="M12 12.3L20.5 7.4V16.6L12 21.5V12.3Z"
+          className="fill-blue-600 dark:fill-blue-500 stroke-blue-300/30"
+          strokeWidth="0.5"
+        />
+        {/* Center Curator Nexus: Golden Lens & Crosshair of High Judgment */}
+        <circle cx="12" cy="12.3" r="1.8" className="fill-amber-400 dark:fill-amber-300" />
+        <circle cx="12" cy="12.3" r="3.2" className="stroke-white/40" strokeWidth="0.6" strokeDasharray="1.2 1.2" />
+        <path
+          d="M12 9.4V15.2M9.1 12.3H14.9"
+          stroke="white"
+          strokeWidth="0.8"
+          strokeLinecap="round"
+        />
+      </svg>
+    </div>
+  );
+};
+
 export const Navbar: React.FC<NavbarProps> = ({
   currentPage,
   onNavigate,
@@ -160,18 +213,22 @@ export const Navbar: React.FC<NavbarProps> = ({
       <header className="sticky top-0 z-40 w-full bg-[#FAFAF7]/95 dark:bg-[#070B14]/95 backdrop-blur-md border-b border-[#101828]/[0.08] dark:border-white/10 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-1.5 sm:gap-3 w-full">
           
-          {/* ZONE 1: BRAND WORDMARK (Responsive, shrinkable, never clips right-side buttons) */}
+          {/* ZONE 1: BRAND LOGO + COMPLETE TITLE + TAGLINE */}
           <button
             onClick={() => handleLinkClick('home')}
-            className="text-left group focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 rounded-sm shrink min-w-0 cursor-pointer pr-1"
-            title="Beyond AI Engineering - Home"
+            className="text-left group focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 rounded-lg shrink min-w-0 cursor-pointer pr-1 flex items-center gap-2 sm:gap-2.5"
+            title="Beyond AI Engineering - From Being Creator to Curator !!"
           >
-            <span className="font-serif text-xs xs:text-sm sm:text-lg lg:text-xl font-bold tracking-tight text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap block truncate">
-              BEYOND AI <span className="hidden xs:inline">ENGINEERING</span>
-            </span>
-            <span className="text-[8px] xs:text-[9px] sm:text-[10px] tracking-wider uppercase text-[#475467] dark:text-slate-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors whitespace-nowrap block -mt-0.5 sm:-mt-1 font-sans truncate">
-              Harsh Verma <span className="hidden sm:inline">· The Career OS</span>
-            </span>
+            <BrandLogo size="md" />
+
+            <div className="min-w-0">
+              <span className="font-serif text-xs xs:text-sm sm:text-base lg:text-lg font-bold tracking-tight text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap block truncate">
+                BEYOND AI ENGINEERING
+              </span>
+              <span className="text-[8px] xs:text-[9px] sm:text-[10px] tracking-wider uppercase text-[#475467] dark:text-slate-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors whitespace-nowrap block -mt-0.5 font-sans truncate font-medium">
+                <span className="font-semibold text-blue-900 dark:text-blue-400">From Being Creator to Curator !!</span>
+              </span>
+            </div>
           </button>
 
           {/* ZONE 2: DIRECT DESKTOP NAVIGATION (Visible on Desktop lg+, Clean & Authoritative) */}
@@ -273,12 +330,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             
             {/* Sidebar Header */}
             <div className="p-4 sm:p-5 border-b border-[#101828]/10 dark:border-white/10 flex items-center justify-between shrink-0 bg-white/80 dark:bg-[#0D1527]/80 backdrop-blur-md">
-              <div className="space-y-0.5">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-blue-900 dark:text-blue-400 font-bold block">
-                  Beyond AI Engineering
-                </span>
-                <div className="font-serif text-lg sm:text-xl font-bold text-[#101828] dark:text-white">
-                  Navigation & Resources
+              <div className="flex items-center gap-2.5 min-w-0">
+                <BrandLogo size="sm" />
+                <div className="space-y-0.5 min-w-0">
+                  <div className="font-serif text-sm sm:text-base font-bold text-[#101828] dark:text-white truncate">
+                    BEYOND AI ENGINEERING
+                  </div>
+                  <span className="text-[9px] font-mono uppercase tracking-wider text-blue-900 dark:text-blue-400 font-bold block truncate">
+                    From Being Creator to Curator !!
+                  </span>
                 </div>
               </div>
 

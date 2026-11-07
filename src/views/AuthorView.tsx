@@ -30,7 +30,7 @@ export const AuthorView: React.FC<AuthorViewProps> = ({
     {
       title: 'Beyond AI Engineering',
       subtitle: 'From Creator to Curator: Build Your Authority and Lead the AI Agent Revolution',
-      focus: 'Career OS for engineers navigating autonomous agents, systems judgment, and the transition from code writer to high-leverage curator.',
+      focus: 'The essential blueprint for engineers navigating autonomous agents, systems judgment, and the transition: From Being Creator to Curator !!',
       badge: 'Current Release',
       isCurrent: true,
       linkText: 'Explore This Book',

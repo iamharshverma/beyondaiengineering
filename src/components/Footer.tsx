@@ -1,6 +1,7 @@
 import React from 'react';
 import { PageId } from '../types';
 import { ArrowUpRight, BookOpen, ExternalLink } from 'lucide-react';
+import { BrandLogo } from './Navbar';
 
 interface FooterProps {
   onNavigate: (page: PageId) => void;
@@ -24,14 +25,22 @@ export const Footer: React.FC<FooterProps> = ({
         {/* Top Branding Section */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-12 border-b border-slate-800">
           <div className="lg:col-span-5 space-y-4">
-            <span className="text-xs uppercase tracking-widest text-blue-400 font-mono">
-              The Book & Movement
-            </span>
+            <div className="flex items-center gap-3">
+              <BrandLogo size="md" />
+              <div>
+                <span className="text-[10px] uppercase tracking-widest text-blue-400 font-mono block">
+                  The Book & Movement
+                </span>
+                <span className="text-xs uppercase tracking-wider text-amber-300 font-semibold block font-sans">
+                  From Being Creator to Curator !!
+                </span>
+              </div>
+            </div>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-white">
               BEYOND AI ENGINEERING
             </h2>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-md">
-              The practical career operating system for engineers in the age of AI agents. Helping builders move from producing code to exercising judgment, designing systems, and orchestrating trusted outcomes.
+              The essential guidebook for engineers in the age of AI agents. Helping builders move from writing code to exercising architectural judgment, designing resilient systems, and curating trusted autonomous outcomes.
             </p>
             <div className="pt-2 flex flex-wrap gap-4 items-center">
               <button
