@@ -31,79 +31,75 @@ interface NavbarProps {
   onOpenAssessment: () => void;
 }
 
-// Brand Logo: High-efficiency, iconic Curator Prism Emblem (Creator → Architect → Orchestrator)
+// Brand Logo: Signature Architectural 'B' Monogram & Curator Nexus (Beyond AI Engineering)
 export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; className?: string }> = ({
   size = 'md',
   className = '',
 }) => {
   const containerSize =
-    size === 'sm' ? 'w-7 h-7' : size === 'lg' ? 'w-10 h-10' : 'w-8 h-8 sm:w-9 sm:h-9';
+    size === 'sm'
+      ? 'w-8 h-8'
+      : size === 'lg'
+      ? 'w-12 h-12'
+      : 'w-10 h-10 sm:w-11 sm:h-11';
   const iconSize =
-    size === 'sm' ? 'w-4 h-4' : size === 'lg' ? 'w-6 h-6' : 'w-5 h-5';
+    size === 'sm'
+      ? 'w-5 h-5'
+      : size === 'lg'
+      ? 'w-8 h-8'
+      : 'w-6 h-6 sm:w-7 sm:h-7';
 
   return (
     <div
-      className={`${containerSize} rounded-xl bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0A0F1D] border border-blue-500/25 dark:border-blue-400/30 shadow-xs group-hover:shadow-md group-hover:shadow-blue-500/15 group-hover:border-blue-400/60 flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-105 ${className}`}
+      className={`${containerSize} rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#070B14] via-[#0F172A] to-[#1E293B] border border-blue-500/30 dark:border-blue-400/40 shadow-xs group-hover:shadow-md group-hover:shadow-blue-500/25 group-hover:border-blue-400/70 flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-105 ${className}`}
       aria-hidden="true"
     >
       <svg
-        viewBox="0 0 24 24"
+        viewBox="0 0 36 36"
         className={`${iconSize} drop-shadow-sm`}
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <linearGradient id="prismTopGrad" x1="4" y1="7.5" x2="20" y2="7.5" gradientUnits="userSpaceOnUse">
+          <linearGradient id="baeBlueGrad" x1="6" y1="6" x2="30" y2="30" gradientUnits="userSpaceOnUse">
             <stop stopColor="#60A5FA" />
-            <stop offset="1" stopColor="#38BDF8" />
+            <stop offset="0.5" stopColor="#2563EB" />
+            <stop offset="1" stopColor="#1E3A8A" />
           </linearGradient>
-          <linearGradient id="prismLeftGrad" x1="4" y1="12" x2="12" y2="21" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#1E3A8A" />
-            <stop offset="1" stopColor="#1D4ED8" />
+          <linearGradient id="baeCyanGrad" x1="14" y1="6" x2="28" y2="20" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#38BDF8" />
+            <stop offset="1" stopColor="#2563EB" />
           </linearGradient>
-          <linearGradient id="prismRightGrad" x1="12" y1="12" x2="20" y2="21" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#2563EB" />
-            <stop offset="1" stopColor="#3B82F6" />
-          </linearGradient>
-          <radialGradient id="curatorGlowGrad" cx="12" cy="12" r="4" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#F59E0B" />
+          <linearGradient id="baeAmberGrad" x1="16" y1="15" x2="24" y2="21" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#FBBF24" />
             <stop offset="1" stopColor="#D97706" />
-          </radialGradient>
+          </linearGradient>
         </defs>
 
-        {/* Top Facet: Orchestrator / High Horizon */}
+        {/* Dynamic Architectural 'B' Glyph */}
+        {/* Backbone Pillar (Solid Engineering Foundation) */}
+        <rect x="7" y="6" width="4.5" height="24" rx="2.25" fill="url(#baeBlueGrad)" />
+
+        {/* Upper Loop: Curator Lens (Architect) */}
         <path
-          d="M12 3.2L19.8 7.5L12 11.8L4.2 7.5L12 3.2Z"
-          fill="url(#prismTopGrad)"
-          stroke="#93C5FD"
-          strokeWidth="0.6"
-          strokeLinejoin="round"
-        />
-        {/* Left Facet: Creator / Deep Code */}
-        <path
-          d="M4.2 7.5L12 11.8V20.8L4.2 16.5V7.5Z"
-          fill="url(#prismLeftGrad)"
-          stroke="#3B82F6"
-          strokeWidth="0.6"
-          strokeLinejoin="round"
-        />
-        {/* Right Facet: Architect / Systems */}
-        <path
-          d="M12 11.8L19.8 7.5V16.5L12 20.8V11.8Z"
-          fill="url(#prismRightGrad)"
-          stroke="#60A5FA"
-          strokeWidth="0.6"
-          strokeLinejoin="round"
+          d="M10 6.5H19.5C23.0899 6.5 26 9.41015 26 13C26 16.5899 23.0899 19.5 19.5 19.5H10V15H19.5C20.6046 15 21.5 14.1046 21.5 13C21.5 11.8954 20.6046 11 19.5 11H10V6.5Z"
+          fill="url(#baeCyanGrad)"
         />
 
-        {/* Center Curator Diamond Nexus: Judgment & Curation */}
+        {/* Lower Loop: Orchestration Frontier (Beyond) */}
         <path
-          d="M12 9.4L14.6 12L12 14.6L9.4 12L12 9.4Z"
-          fill="url(#curatorGlowGrad)"
-          stroke="#FEF08A"
-          strokeWidth="0.75"
+          d="M10 15H21.5C25.366 15 28.5 18.134 28.5 22C28.5 25.866 25.366 29 21.5 29H10V24.5H21.5C22.8807 24.5 24 23.3807 24 22C24 20.6193 22.8807 19.5 21.5 19.5H10V15Z"
+          fill="url(#baeBlueGrad)"
         />
-        <circle cx="12" cy="12" r="0.9" fill="#FFFFFF" />
+
+        {/* Center Curator Diamond / Nexus (Judgment & Synthesis) */}
+        <path
+          d="M20.5 15L23 17.5L20.5 20L18 17.5L20.5 15Z"
+          fill="url(#baeAmberGrad)"
+          stroke="#FEF08A"
+          strokeWidth="0.6"
+        />
+        <circle cx="20.5" cy="17.5" r="0.8" fill="#FFFFFF" />
       </svg>
     </div>
   );
@@ -238,20 +234,18 @@ export const Navbar: React.FC<NavbarProps> = ({
       <header className="sticky top-0 z-40 w-full bg-[#FAFAF7]/95 dark:bg-[#070B14]/95 backdrop-blur-md border-b border-[#101828]/[0.08] dark:border-white/10 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-1.5 sm:gap-3 w-full">
           
-          {/* ZONE 1: BRAND LOGO + COMPLETE TITLE */}
+          {/* ZONE 1: BRAND LOGO (Bigger, iconic, without By Harsh Verma) */}
           <button
             onClick={() => handleLinkClick('home')}
-            className="text-left group focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 rounded-lg shrink min-w-0 cursor-pointer pr-1 flex items-center gap-2 sm:gap-2.5"
+            className="text-left group focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 rounded-xl shrink min-w-0 cursor-pointer pr-1 flex items-center gap-2.5 sm:gap-3"
             title="Beyond AI Engineering - Home"
           >
             <BrandLogo size="md" />
 
-            <div className="min-w-0">
-              <span className="font-serif text-xs xs:text-sm sm:text-base lg:text-lg font-bold tracking-tight text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap block truncate">
-                BEYOND AI ENGINEERING
-              </span>
-              <span className="text-[8px] xs:text-[9px] sm:text-[10px] tracking-wider uppercase text-[#475467] dark:text-slate-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors whitespace-nowrap block -mt-0.5 font-sans truncate font-medium">
-                By Harsh Verma
+            <div className="min-w-0 flex items-center">
+              <span className="font-serif text-sm xs:text-base sm:text-lg lg:text-xl font-bold tracking-tight text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap block truncate">
+                <span className="hidden sm:inline">BEYOND AI ENGINEERING</span>
+                <span className="sm:hidden">BEYOND AI</span>
               </span>
             </div>
           </button>
