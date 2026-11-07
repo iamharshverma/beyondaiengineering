@@ -234,18 +234,20 @@ export const Navbar: React.FC<NavbarProps> = ({
       <header className="sticky top-0 z-40 w-full bg-[#FAFAF7]/95 dark:bg-[#070B14]/95 backdrop-blur-md border-b border-[#101828]/[0.08] dark:border-white/10 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-1.5 sm:gap-3 w-full">
           
-          {/* ZONE 1: BRAND LOGO (Bigger, iconic, without By Harsh Verma) */}
+          {/* ZONE 1: BRAND LOGO + SPLIT TITLE (Top: Beyond AI, Bottom: Engineering) */}
           <button
             onClick={() => handleLinkClick('home')}
-            className="text-left group focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 rounded-xl shrink min-w-0 cursor-pointer pr-1 flex items-center gap-2.5 sm:gap-3"
+            className="text-left group focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 rounded-xl shrink min-w-0 cursor-pointer pr-1 flex items-center gap-2 sm:gap-2.5"
             title="Beyond AI Engineering - Home"
           >
             <BrandLogo size="md" />
 
-            <div className="min-w-0 flex items-center">
-              <span className="font-serif text-sm xs:text-base sm:text-lg lg:text-xl font-bold tracking-tight text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap block truncate">
-                <span className="hidden sm:inline">BEYOND AI ENGINEERING</span>
-                <span className="sm:hidden">BEYOND AI</span>
+            <div className="min-w-0 flex flex-col justify-center leading-tight">
+              <span className="font-serif text-xs xs:text-sm sm:text-base lg:text-lg font-bold tracking-tight text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap block">
+                Beyond AI
+              </span>
+              <span className="font-sans text-[8px] xs:text-[9px] sm:text-[10px] lg:text-[11px] font-bold tracking-[0.22em] uppercase text-blue-900 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors whitespace-nowrap block -mt-0.5 sm:-mt-1">
+                Engineering
               </span>
             </div>
           </button>
@@ -351,12 +353,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="p-4 sm:p-5 border-b border-[#101828]/10 dark:border-white/10 flex items-center justify-between shrink-0 bg-white/80 dark:bg-[#0D1527]/80 backdrop-blur-md">
               <div className="flex items-center gap-2.5 min-w-0">
                 <BrandLogo size="sm" />
-                <div className="space-y-0.5 min-w-0">
+                <div className="min-w-0 flex flex-col justify-center leading-tight">
                   <div className="font-serif text-sm sm:text-base font-bold text-[#101828] dark:text-white truncate">
-                    BEYOND AI ENGINEERING
+                    Beyond AI
                   </div>
-                  <span className="text-[9px] font-mono uppercase tracking-wider text-blue-900 dark:text-blue-400 font-bold block truncate">
-                    From Being Creator to Curator !!
+                  <span className="text-[9px] font-sans font-bold tracking-[0.2em] uppercase text-blue-900 dark:text-blue-400 block truncate">
+                    Engineering
                   </span>
                 </div>
               </div>
