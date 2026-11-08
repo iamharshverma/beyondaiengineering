@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle2, ArrowRight, RotateCcw, Share2, Printer, Compass, AlertCircle, Award, BookOpen } from 'lucide-react';
+import { CheckCircle2, ArrowRight, RotateCcw, Share2, Printer, Compass, AlertCircle, Award, Download, FileText } from 'lucide-react';
 import { ASSESSMENT_QUESTIONS, calculateAssessmentResult, AssessmentResult } from '../data/assessmentData';
 
 interface CAOBenchmarkProps {
@@ -18,6 +18,7 @@ export const CAOBenchmark: React.FC<CAOBenchmarkProps> = ({
   const [completed, setCompleted] = useState<boolean>(false);
   const [result, setResult] = useState<AssessmentResult | null>(null);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [downloadedReport, setDownloadedReport] = useState(false);
 
   const currentQ = ASSESSMENT_QUESTIONS[currentQuestionIndex];
   const totalQuestions = ASSESSMENT_QUESTIONS.length;
@@ -45,6 +46,14 @@ export const CAOBenchmark: React.FC<CAOBenchmarkProps> = ({
     setResult(null);
   };
 
+  const currentDateString = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const reportId = result ? `BAE-CAO-${Math.abs(result.creatorPct * 31 + result.orchestratorPct * 17 + 104)}` : '';
+
   const handleShare = () => {
     if (!result) return;
     const shareText = `I just completed the Executive C.A.O. Benchmark from Beyond AI Engineering by Harsh Verma!\nMy Result: ${result.archetypeTitle} (Creator: ${result.creatorPct}%, Architect: ${result.architectPct}%, Orchestrator: ${result.orchestratorPct}%).\nTake the benchmark: https://www.beyondaiengineering.com/cao-framework`;
@@ -56,86 +65,455 @@ export const CAOBenchmark: React.FC<CAOBenchmarkProps> = ({
     }
   };
 
-  const handlePrint = () => {
-    document.body.classList.add('printing-assessment');
-    const cleanup = () => {
-      document.body.classList.remove('printing-assessment');
-      window.removeEventListener('afterprint', cleanup);
-    };
-    window.addEventListener('afterprint', cleanup);
-    window.print();
-    setTimeout(cleanup, 1500);
-  };
-
-  const currentDateString = new Date().toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-
-  // SVG Geometry for C.A.O. Triad Radar
-  // ViewBox: 0 0 340 240 ensures ample horizontal margin for labels
-  const renderTriadRadar = (creatorPct: number, architectPct: number, orchestratorPct: number, isPrint = false) => {
+  // Helper to construct self-contained print radar SVG
+  const generatePrintRadarSvg = (creatorPct: number, architectPct: number, orchestratorPct: number) => {
     const cx = 170;
     const cy = 118;
     const R = 68;
     const sin30 = 0.5;
     const cos30 = 0.8660;
 
-    // Minimum radius so 0% has an anchor point
     const cR = Math.max(10, (creatorPct / 100) * R);
     const aR = Math.max(10, (architectPct / 100) * R);
     const oR = Math.max(10, (orchestratorPct / 100) * R);
 
-    // Vertex points for user data polygon
     const cPt = { x: cx, y: cy - cR };
     const aPt = { x: cx + aR * cos30, y: cy + aR * sin30 };
     const oPt = { x: cx - oR * cos30, y: cy + oR * sin30 };
 
-    // Outer reference triangle (100%)
     const outC = `${cx},${cy - R}`;
     const outA = `${cx + R * cos30},${cy + R * sin30}`;
     const outO = `${cx - R * cos30},${cy + R * sin30}`;
 
-    // Mid reference triangle (66%)
     const midR = R * 0.66;
-    const midC = `${cx},${cy - midR}`;
-    const midA = `${cx + midR * cos30},${cy + midR * sin30}`;
-    const midO = `${cx - midR * cos30},${cy + midR * sin30}`;
-
-    // Inner reference triangle (33%)
     const inR = R * 0.33;
-    const inC = `${cx},${cy - inR}`;
-    const inA = `${cx + inR * cos30},${cy + inR * sin30}`;
-    const inO = `${cx - inR * cos30},${cy + inR * sin30}`;
+
+    return `
+      <svg viewBox="0 0 340 240" width="310" height="215" style="margin: 0 auto; display: block; overflow: visible;">
+        <polygon points="${outC} ${outA} ${outO}" fill="none" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="3 3" />
+        <polygon points="${cx},${cy - midR} ${cx + midR * cos30},${cy + midR * sin30} ${cx - midR * cos30},${cy + midR * sin30}" fill="none" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2 2" />
+        <polygon points="${cx},${cy - inR} ${cx + inR * cos30},${cy + inR * sin30} ${cx - inR * cos30},${cy + inR * sin30}" fill="none" stroke="#E2E8F0" stroke-width="1" />
+        <line x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy - R}" stroke="#94A3B8" stroke-width="1" />
+        <line x1="${cx}" y1="${cy}" x2="${cx + R * cos30}" y2="${cy + R * sin30}" stroke="#94A3B8" stroke-width="1" />
+        <line x1="${cx}" y1="${cy}" x2="${cx - R * cos30}" y2="${cy + R * sin30}" stroke="#94A3B8" stroke-width="1" />
+        <circle cx="${cx}" cy="${cy}" r="2.5" fill="#64748B" />
+        <polygon points="${cPt.x},${cPt.y} ${aPt.x},${aPt.y} ${oPt.x},${oPt.y}" fill="rgba(37, 99, 235, 0.25)" stroke="#1D4ED8" stroke-width="2.5" />
+        <circle cx="${cPt.x}" cy="${cPt.y}" r="4.5" fill="#2563EB" stroke="#ffffff" stroke-width="2" />
+        <circle cx="${aPt.x}" cy="${aPt.y}" r="4.5" fill="#9333EA" stroke="#ffffff" stroke-width="2" />
+        <circle cx="${oPt.x}" cy="${oPt.y}" r="4.5" fill="#059669" stroke="#ffffff" stroke-width="2" />
+        <text x="${cx}" y="${cy - R - 16}" text-anchor="middle" font-family="monospace" font-size="11px" font-weight="bold" fill="#1E40AF">CREATOR (${creatorPct}%)</text>
+        <text x="${cx}" y="${cy - R - 5}" text-anchor="middle" font-family="monospace" font-size="9px" fill="#64748B">Build & Syntax</text>
+        <text x="${cx + R * cos30 + 10}" y="${cy + R * sin30 + 12}" text-anchor="start" font-family="monospace" font-size="11px" font-weight="bold" fill="#6B21A8">ARCHITECT (${architectPct}%)</text>
+        <text x="${cx + R * cos30 + 10}" y="${cy + R * sin30 + 23}" text-anchor="start" font-family="monospace" font-size="9px" fill="#64748B">Design & Boundaries</text>
+        <text x="${cx - R * cos30 - 10}" y="${cy + R * sin30 + 12}" text-anchor="end" font-family="monospace" font-size="11px" font-weight="bold" fill="#065F46">ORCHESTRATOR (${orchestratorPct}%)</text>
+        <text x="${cx - R * cos30 - 10}" y="${cy + R * sin30 + 23}" text-anchor="end" font-family="monospace" font-size="9px" fill="#64748B">Governance & Trust</text>
+      </svg>
+    `;
+  };
+
+  /**
+   * Publication-grade PDF Print Export using a dedicated isolated iframe.
+   * Bypasses all modal clipping, parent overflow bounds, and dark mode overrides.
+   */
+  const handlePrint = () => {
+    if (!result) return;
+
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    iframe.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow?.document;
+    if (!doc) return;
+
+    const radarSvgHtml = generatePrintRadarSvg(result.creatorPct, result.architectPct, result.orchestratorPct);
+
+    const printHtml = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="utf-8" />
+        <title>Beyond AI Engineering · C.A.O. Diagnostic Report · ${result.archetypeTitle}</title>
+        <style>
+          @page {
+            size: A4 portrait;
+            margin: 1.2cm 1.5cm;
+          }
+          * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Plus Jakarta Sans", sans-serif;
+            color: #0F172A;
+            background: #FFFFFF;
+            margin: 0;
+            padding: 0;
+            font-size: 10pt;
+            line-height: 1.5;
+          }
+          .header {
+            border-bottom: 2px solid #0F172A;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+          }
+          .brand-title {
+            font-family: Georgia, serif;
+            font-size: 19pt;
+            font-weight: bold;
+            color: #0F172A;
+            margin: 0;
+            letter-spacing: -0.015em;
+          }
+          .brand-sub {
+            font-size: 8.5pt;
+            color: #475569;
+            margin-top: 3px;
+          }
+          .meta-box {
+            text-align: right;
+            font-family: ui-monospace, Menlo, Consolas, monospace;
+            font-size: 8pt;
+            color: #64748B;
+            line-height: 1.4;
+          }
+          .archetype-banner {
+            background: #F8FAFC;
+            border: 1px solid #CBD5E1;
+            border-left: 4px solid #1E40AF;
+            border-radius: 6px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+          }
+          .archetype-kicker {
+            font-family: ui-monospace, Menlo, monospace;
+            font-size: 8pt;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #1E40AF;
+            font-weight: bold;
+            margin-bottom: 3px;
+          }
+          .archetype-title {
+            font-family: Georgia, serif;
+            font-size: 16pt;
+            font-weight: bold;
+            color: #020617;
+            margin: 0 0 6px 0;
+          }
+          .archetype-summary {
+            font-size: 9pt;
+            color: #334155;
+            line-height: 1.5;
+            margin: 0;
+          }
+          .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #E2E8F0;
+            border-radius: 6px;
+            padding: 14px;
+            background: #FAFAFA;
+            align-items: center;
+          }
+          .score-card {
+            margin-bottom: 10px;
+          }
+          .score-label {
+            display: flex;
+            justify-content: space-between;
+            font-family: ui-monospace, monospace;
+            font-size: 8.5pt;
+            margin-bottom: 3px;
+            font-weight: 600;
+          }
+          .bar-bg {
+            background: #E2E8F0;
+            height: 7px;
+            border-radius: 3.5px;
+            overflow: hidden;
+          }
+          .bar-fill {
+            height: 100%;
+            border-radius: 3.5px;
+          }
+          .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 16px;
+          }
+          .card {
+            border: 1px solid #E2E8F0;
+            border-radius: 6px;
+            padding: 12px 14px;
+            background: #FFFFFF;
+          }
+          .card-title {
+            font-family: ui-monospace, Menlo, monospace;
+            font-size: 8pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 0 0 6px 0;
+          }
+          .text-emerald { color: #065F46; }
+          .text-amber { color: #92400E; }
+          .text-blue { color: #1E40AF; }
+          ul, ol {
+            margin: 0;
+            padding-left: 16px;
+            font-size: 8.5pt;
+            color: #334155;
+          }
+          li {
+            margin-bottom: 4px;
+            line-height: 1.4;
+          }
+          .roadmap-box {
+            border: 1px solid #E2E8F0;
+            border-radius: 6px;
+            padding: 12px 14px;
+            background: #FFFFFF;
+            margin-bottom: 16px;
+          }
+          .footer {
+            border-top: 1px solid #CBD5E1;
+            padding-top: 8px;
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            font-family: ui-monospace, monospace;
+            font-size: 7.5pt;
+            color: #64748B;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div>
+            <div class="brand-title">Beyond AI Engineering · C.A.O. Diagnostic</div>
+            <div class="brand-sub">By Harsh Verma · Principal AI Software Engineer, Fellow of BCS, IEEE Senior Member</div>
+          </div>
+          <div class="meta-box">
+            <div><strong>Date:</strong> ${currentDateString}</div>
+            <div><strong>Profile ID:</strong> ${reportId}</div>
+          </div>
+        </div>
+
+        <div class="archetype-banner">
+          <div class="archetype-kicker">Primary Operating Profile</div>
+          <div class="archetype-title">${result.archetypeTitle}</div>
+          <p class="archetype-summary">${result.summary}</p>
+        </div>
+
+        <div class="dashboard-grid">
+          <div>
+            ${radarSvgHtml}
+          </div>
+          <div>
+            <div style="font-family: ui-monospace, monospace; font-size: 8pt; font-weight: bold; text-transform: uppercase; color: #475569; margin-bottom: 10px; border-bottom: 1px solid #E2E8F0; padding-bottom: 4px;">
+              Triad Equilibrium Breakdown
+            </div>
+            <div class="score-card">
+              <div class="score-label" style="color: #1E40AF;">
+                <span>Creator (Build & Syntax)</span>
+                <span>${result.creatorPct}%</span>
+              </div>
+              <div class="bar-bg">
+                <div class="bar-fill" style="width: ${result.creatorPct}%; background: #2563EB;"></div>
+              </div>
+            </div>
+            <div class="score-card">
+              <div class="score-label" style="color: #6B21A8;">
+                <span>Architect (Design & Boundaries)</span>
+                <span>${result.architectPct}%</span>
+              </div>
+              <div class="bar-bg">
+                <div class="bar-fill" style="width: ${result.architectPct}%; background: #9333EA;"></div>
+              </div>
+            </div>
+            <div class="score-card">
+              <div class="score-label" style="color: #065F46;">
+                <span>Orchestrator (Governance & Trust)</span>
+                <span>${result.orchestratorPct}%</span>
+              </div>
+              <div class="bar-bg">
+                <div class="bar-fill" style="width: ${result.orchestratorPct}%; background: #059669;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title text-emerald">✓ Key Strengths</div>
+            <ul>
+              ${result.keyStrengths.map((str) => `<li>${str}</li>`).join('')}
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-title text-amber">⚠ Blind Spots to Watch</div>
+            <ul>
+              ${result.blindSpots.map((spot) => `<li>${spot}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+
+        <div class="roadmap-box">
+          <div class="card-title text-blue">Personalized 30-Day Transition Roadmap</div>
+          <ol>
+            ${result.recommended30DayActions.map((act) => `<li>${act}</li>`).join('')}
+          </ol>
+        </div>
+
+        <div class="footer">
+          <div>Beyond AI Engineering · Harsh Verma · ISBN 978-1-965432-01-3</div>
+          <div>Official Verification: https://www.beyondaiengineering.com/cao-framework</div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    doc.open();
+    doc.write(printHtml);
+    doc.close();
+
+    // Trigger print once content has rendered
+    setTimeout(() => {
+      iframe.contentWindow?.focus();
+      iframe.contentWindow?.print();
+      setTimeout(() => {
+        if (document.body.contains(iframe)) {
+          document.body.removeChild(iframe);
+        }
+      }, 2000);
+    }, 250);
+  };
+
+  /**
+   * Direct text report export as a clean .txt / markdown file for immediate archival.
+   */
+  const handleDownloadTextReport = () => {
+    if (!result) return;
+
+    const reportContent = `================================================================================
+BEYOND AI ENGINEERING · EXECUTIVE C.A.O. BENCHMARK REPORT
+Author: Harsh Verma · Principal AI Engineer, Fellow of BCS, IEEE Senior Member
+Canonical Verification: https://www.beyondaiengineering.com/cao-framework
+================================================================================
+
+ASSESSMENT DATE: ${currentDateString}
+REPORT VERIFICATION ID: ${reportId}
+
+--------------------------------------------------------------------------------
+PRIMARY ARCHETYPE: ${result.archetypeTitle}
+--------------------------------------------------------------------------------
+${result.summary}
+
+--------------------------------------------------------------------------------
+TRIAD OPERATING EQUILIBRIUM:
+--------------------------------------------------------------------------------
+• Creator (Build & Syntax):          ${result.creatorPct}%
+• Architect (Design & Boundaries):   ${result.architectPct}%
+• Orchestrator (Governance & Trust):  ${result.orchestratorPct}%
+
+--------------------------------------------------------------------------------
+CORE STRENGTHS:
+--------------------------------------------------------------------------------
+${result.keyStrengths.map((s, idx) => `[${idx + 1}] ${s}`).join('\n')}
+
+--------------------------------------------------------------------------------
+STRATEGIC BLIND SPOTS TO WATCH:
+--------------------------------------------------------------------------------
+${result.blindSpots.map((b, idx) => `[${idx + 1}] ${b}`).join('\n')}
+
+--------------------------------------------------------------------------------
+PERSONALIZED 30-DAY TRANSITION ROADMAP:
+--------------------------------------------------------------------------------
+${result.recommended30DayActions.map((a, idx) => `[Phase ${idx + 1}] ${a}`).join('\n')}
+
+================================================================================
+Reference: Beyond AI Engineering by Harsh Verma (Chapters 3 & 11)
+ISBN: 978-1-965432-01-3 · Beyond AI Engineering Publishing
+================================================================================
+`;
+
+    const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Beyond_AI_Engineering_CAO_Report_${result.archetypeTitle.replace(/\s+/g, '_')}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    setDownloadedReport(true);
+    setTimeout(() => setDownloadedReport(false), 2500);
+  };
+
+  // SVG Geometry for On-Screen C.A.O. Triad Radar
+  const renderTriadRadar = (creatorPct: number, architectPct: number, orchestratorPct: number) => {
+    const cx = 170;
+    const cy = 118;
+    const R = 68;
+    const sin30 = 0.5;
+    const cos30 = 0.8660;
+
+    const cR = Math.max(10, (creatorPct / 100) * R);
+    const aR = Math.max(10, (architectPct / 100) * R);
+    const oR = Math.max(10, (orchestratorPct / 100) * R);
+
+    const cPt = { x: cx, y: cy - cR };
+    const aPt = { x: cx + aR * cos30, y: cy + aR * sin30 };
+    const oPt = { x: cx - oR * cos30, y: cy + oR * sin30 };
+
+    const outC = `${cx},${cy - R}`;
+    const outA = `${cx + R * cos30},${cy + R * sin30}`;
+    const outO = `${cx - R * cos30},${cy + R * sin30}`;
+
+    const midR = R * 0.66;
+    const inR = R * 0.33;
 
     return (
       <svg
         viewBox="0 0 340 240"
-        className={`w-full max-w-[320px] mx-auto select-none overflow-visible ${isPrint ? 'my-2' : ''}`}
+        className="w-full max-w-[320px] mx-auto select-none overflow-visible"
         aria-label="C.A.O. Triad Radar Visualization"
       >
         {/* Background Grid Triangles */}
         <polygon
           points={`${outC} ${outA} ${outO}`}
           fill="none"
-          stroke={isPrint ? '#94A3B8' : 'currentColor'}
+          stroke="currentColor"
           className="text-slate-300 dark:text-slate-700/80"
           strokeWidth="1.2"
           strokeDasharray="3 3"
         />
         <polygon
-          points={`${midC} ${midA} ${midO}`}
+          points={`${cx},${cy - midR} ${cx + midR * cos30},${cy + midR * sin30} ${cx - midR * cos30},${cy + midR * sin30}`}
           fill="none"
-          stroke={isPrint ? '#CBD5E1' : 'currentColor'}
+          stroke="currentColor"
           className="text-slate-200 dark:text-slate-800"
           strokeWidth="1"
           strokeDasharray="2 2"
         />
         <polygon
-          points={`${inC} ${inA} ${inO}`}
+          points={`${cx},${cy - inR} ${cx + inR * cos30},${cy + inR * sin30} ${cx - inR * cos30},${cy + inR * sin30}`}
           fill="none"
-          stroke={isPrint ? '#E2E8F0' : 'currentColor'}
+          stroke="currentColor"
           className="text-slate-100 dark:text-slate-800/50"
           strokeWidth="1"
         />
@@ -146,7 +524,7 @@ export const CAOBenchmark: React.FC<CAOBenchmarkProps> = ({
           y1={cy}
           x2={cx}
           y2={cy - R}
-          stroke={isPrint ? '#94A3B8' : 'currentColor'}
+          stroke="currentColor"
           className="text-slate-300 dark:text-slate-700"
           strokeWidth="1"
         />
@@ -155,7 +533,7 @@ export const CAOBenchmark: React.FC<CAOBenchmarkProps> = ({
           y1={cy}
           x2={cx + R * cos30}
           y2={cy + R * sin30}
-          stroke={isPrint ? '#94A3B8' : 'currentColor'}
+          stroke="currentColor"
           className="text-slate-300 dark:text-slate-700"
           strokeWidth="1"
         />
@@ -164,7 +542,7 @@ export const CAOBenchmark: React.FC<CAOBenchmarkProps> = ({
           y1={cy}
           x2={cx - R * cos30}
           y2={cy + R * sin30}
-          stroke={isPrint ? '#94A3B8' : 'currentColor'}
+          stroke="currentColor"
           className="text-slate-300 dark:text-slate-700"
           strokeWidth="1"
         />
@@ -175,11 +553,7 @@ export const CAOBenchmark: React.FC<CAOBenchmarkProps> = ({
         {/* User Polygon */}
         <polygon
           points={`${cPt.x},${cPt.y} ${aPt.x},${aPt.y} ${oPt.x},${oPt.y}`}
-          className={
-            isPrint
-              ? 'fill-blue-600/30 stroke-blue-700'
-              : 'fill-blue-600/25 dark:fill-blue-400/25 stroke-blue-600 dark:stroke-blue-400'
-          }
+          className="fill-blue-600/25 dark:fill-blue-400/25 stroke-blue-600 dark:stroke-blue-400"
           strokeWidth="2.5"
           strokeLinejoin="round"
         />
@@ -189,7 +563,7 @@ export const CAOBenchmark: React.FC<CAOBenchmarkProps> = ({
         <circle cx={aPt.x} cy={aPt.y} r={4.5} className="fill-purple-600 dark:fill-purple-400 stroke-white stroke-2" />
         <circle cx={oPt.x} cy={oPt.y} r={4.5} className="fill-emerald-600 dark:fill-emerald-400 stroke-white stroke-2" />
 
-        {/* Axis Labels - Positioned safely inside 340px width */}
+        {/* Axis Labels */}
         {/* Creator (Top) */}
         <text
           x={cx}
@@ -471,11 +845,19 @@ export const CAOBenchmark: React.FC<CAOBenchmarkProps> = ({
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={handlePrint}
-                  className="px-4 py-2.5 text-xs font-semibold border border-blue-900/30 dark:border-blue-400/30 rounded-md text-blue-900 dark:text-blue-300 bg-blue-50/70 dark:bg-blue-950/40 hover:bg-blue-100/70 dark:hover:bg-blue-900/50 flex items-center gap-2 cursor-pointer shadow-xs transition-colors"
-                  title="Print or export as high-resolution PDF"
+                  className="px-4 py-2.5 text-xs font-semibold border border-blue-900/30 dark:border-blue-400/30 rounded-md text-white bg-blue-900 hover:bg-blue-950 dark:bg-blue-600 dark:hover:bg-blue-500 flex items-center gap-2 cursor-pointer shadow-sm transition-colors"
+                  title="Export complete publication-grade PDF report"
                 >
-                  <Printer className="w-3.5 h-3.5" />
+                  <Printer className="w-4 h-4 text-white" />
                   <span>Export PDF Report</span>
+                </button>
+                <button
+                  onClick={handleDownloadTextReport}
+                  className="px-3.5 py-2.5 text-xs font-medium border border-[#101828]/20 dark:border-white/20 rounded-md text-[#475467] dark:text-slate-300 hover:text-[#101828] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 flex items-center gap-1.5 cursor-pointer transition-colors"
+                  title="Download complete text report"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>{downloadedReport ? 'Downloaded!' : 'Download .txt'}</span>
                 </button>
                 <button
                   onClick={handleShare}
@@ -508,129 +890,6 @@ export const CAOBenchmark: React.FC<CAOBenchmarkProps> = ({
             </div>
           </div>
         )
-      )}
-
-      {/* Formatted Isolated PDF Report for Print Mode */}
-      {result && (
-        <div id="cao-print-report" className="hidden font-sans text-slate-900">
-          <div className="max-w-3xl mx-auto border-b-2 border-slate-900 pb-4 mb-6 flex justify-between items-end">
-            <div>
-              <span className="font-mono text-xs uppercase tracking-widest text-slate-500 block">
-                Official Career Benchmark Report
-              </span>
-              <h1 className="font-serif text-2xl font-bold text-slate-900">
-                Beyond AI Engineering · C.A.O. Diagnostic
-              </h1>
-              <p className="text-xs text-slate-600 mt-1">
-                By Harsh Verma · Fellow BCS, IEEE Senior Member, Forbes Technology Council
-              </p>
-            </div>
-            <div className="text-right font-mono text-xs text-slate-500">
-              <div>Assessment Date: {currentDateString}</div>
-              <div>ID: BAE-CAO-{Math.abs(result.creatorPct * 31 + result.orchestratorPct * 17)}</div>
-            </div>
-          </div>
-
-          {/* Archetype Profile */}
-          <div className="mb-6 p-4 bg-slate-50 border border-slate-200 rounded">
-            <span className="text-[11px] font-mono uppercase text-blue-900 tracking-wider font-semibold block mb-1">
-              Primary Engineering Profile
-            </span>
-            <h2 className="font-serif text-2xl font-bold text-slate-950 mb-2">
-              {result.archetypeTitle}
-            </h2>
-            <p className="text-xs text-slate-700 leading-relaxed">
-              {result.summary}
-            </p>
-          </div>
-
-          {/* Triad Breakdown with Vector Graphic */}
-          <div className="grid grid-cols-2 gap-6 items-center mb-6 border border-slate-200 p-4 rounded">
-            <div>
-              {renderTriadRadar(result.creatorPct, result.architectPct, result.orchestratorPct, true)}
-            </div>
-            <div className="space-y-3 font-mono text-xs">
-              <div className="border-b border-slate-200 pb-1 font-bold text-slate-900 uppercase">
-                Triad Equilibrium Breakdown
-              </div>
-              <div>
-                <div className="flex justify-between text-blue-900 font-semibold mb-0.5">
-                  <span>Creator (Build & Syntax):</span>
-                  <span>{result.creatorPct}%</span>
-                </div>
-                <div className="w-full bg-slate-100 h-2 rounded overflow-hidden">
-                  <div className="bg-blue-700 h-full" style={{ width: `${result.creatorPct}%` }} />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-purple-900 font-semibold mb-0.5">
-                  <span>Architect (Design & Boundaries):</span>
-                  <span>{result.architectPct}%</span>
-                </div>
-                <div className="w-full bg-slate-100 h-2 rounded overflow-hidden">
-                  <div className="bg-purple-700 h-full" style={{ width: `${result.architectPct}%` }} />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-emerald-900 font-semibold mb-0.5">
-                  <span>Orchestrator (Governance & Trust):</span>
-                  <span>{result.orchestratorPct}%</span>
-                </div>
-                <div className="w-full bg-slate-100 h-2 rounded overflow-hidden">
-                  <div className="bg-emerald-700 h-full" style={{ width: `${result.orchestratorPct}%` }} />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Strengths & Blind Spots */}
-          <div className="grid grid-cols-2 gap-6 mb-6">
-            <div className="p-4 border border-slate-200 rounded">
-              <h3 className="font-mono text-xs uppercase tracking-wider font-bold text-emerald-900 mb-2">
-                Core Strengths
-              </h3>
-              <ul className="text-xs space-y-1.5 text-slate-700">
-                {result.keyStrengths.map((str, idx) => (
-                  <li key={idx}>✓ {str}</li>
-                ))}
-              </ul>
-            </div>
-            <div className="p-4 border border-slate-200 rounded">
-              <h3 className="font-mono text-xs uppercase tracking-wider font-bold text-amber-900 mb-2">
-                Strategic Blind Spots
-              </h3>
-              <ul className="text-xs space-y-1.5 text-slate-700">
-                {result.blindSpots.map((spot, idx) => (
-                  <li key={idx}>⚠ {spot}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Recommended 30-Day Plan */}
-          <div className="p-4 border border-slate-200 rounded mb-6">
-            <h3 className="font-mono text-xs uppercase tracking-wider font-bold text-slate-900 mb-2">
-              Personalized 30-Day Transition Action Plan
-            </h3>
-            <ol className="text-xs space-y-2 text-slate-700 list-decimal pl-4">
-              {result.recommended30DayActions.map((act, idx) => (
-                <li key={idx} className="leading-relaxed">
-                  {act}
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          {/* Author Footnote & Verification */}
-          <div className="border-t border-slate-300 pt-3 text-[10px] font-mono text-slate-500 flex justify-between">
-            <div>
-              Beyond AI Engineering · Harsh Verma · ISBN 978-1-965432-01-3
-            </div>
-            <div>
-              https://www.beyondaiengineering.com
-            </div>
-          </div>
-        </div>
       )}
     </div>
   );
