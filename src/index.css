@@ -114,13 +114,42 @@
   animation: luxury-shimmer 3s infinite;
 }
 
-/* Print optimizations for Manifesto & Lab Worksheets */
+/* Print optimizations for Executive Assessment PDF Report & Manifesto */
 @media print {
+  @page {
+    margin: 1.5cm;
+    size: auto;
+  }
+
+  /* When printing the assessment report */
+  body.printing-assessment * {
+    visibility: hidden;
+  }
+
+  body.printing-assessment #cao-print-report,
+  body.printing-assessment #cao-print-report * {
+    visibility: visible;
+  }
+
+  body.printing-assessment #cao-print-report {
+    display: block !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: white !important;
+    color: #101828 !important;
+  }
+
+  /* General print rule */
   header, footer, nav, .no-print {
     display: none !important;
   }
+
   body {
     background: white !important;
-    color: black !important;
+    color: #101828 !important;
   }
 }

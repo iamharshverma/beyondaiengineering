@@ -127,6 +127,90 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
       },
     ],
   },
+  {
+    id: 7,
+    scenario: 'Your organization plans a multi-quarter initiative to migrate a 10-year-old monolith with sparse documentation to a modern architecture. Where do you focus your energy?',
+    options: [
+      {
+        stage: 'creator',
+        text: 'Prompt coding agents to parse the legacy codebase, generate modern microservices, and synthesize unit tests for each endpoint.',
+        explanation: 'Relies on automated code translation and prompt-assisted syntax porting (Creator).',
+      },
+      {
+        stage: 'architect',
+        text: 'Deconstruct domain invariants, event boundaries, and state consistency guarantees before writing any service code.',
+        explanation: 'Prioritizes architectural decomposition, data boundaries, and failure isolation (Architect).',
+      },
+      {
+        stage: 'orchestrator',
+        text: 'Establish migration risk governance, define stage-gate rollback criteria, and coordinate cross-team organizational alignment.',
+        explanation: 'Governs organizational risk, system-wide accountability, and strategic business delivery (Orchestrator).',
+      },
+    ],
+  },
+  {
+    id: 8,
+    scenario: 'An engineering squad wants to give an autonomous LLM agent execution permissions to run SQL queries and bash scripts in pre-production. What is your reaction?',
+    options: [
+      {
+        stage: 'creator',
+        text: 'Craft system prompt guardrails such as "Never execute DROP or destructive statements" and monitor the responses.',
+        explanation: 'Relies on probabilistic model prompting rather than hard deterministic security boundaries (Creator).',
+      },
+      {
+        stage: 'architect',
+        text: 'Enforce deterministic read-only database replicas, strictly typed parameterized APIs, and ephemeral container sandboxes.',
+        explanation: 'Designs structural security boundaries and deterministic blast-radius constraints (Architect).',
+      },
+      {
+        stage: 'orchestrator',
+        text: 'Implement Agentic Diplomacy protocols: cryptographic co-signing, multi-party authorization thresholds, and immutable forensic audit logs.',
+        explanation: 'Builds comprehensive multi-agent governance, institutional compliance, and trust verification (Orchestrator).',
+      },
+    ],
+  },
+  {
+    id: 9,
+    scenario: 'A product manager proposes replacing the standard faceted search in your enterprise SaaS application with an open-ended conversational AI agent. How do you evaluate it?',
+    options: [
+      {
+        stage: 'creator',
+        text: 'Rapidly assemble an interactive prototype with streaming LLM responses over the weekend to test user reactions.',
+        explanation: 'Validates through rapid tactile prototyping and implementation speed (Creator).',
+      },
+      {
+        stage: 'architect',
+        text: 'Analyze token unit economics, p99 latency SLAs vs user attention spans, and evaluate whether semantic reranking delivers superior utility.',
+        explanation: 'Applies AI Product Sense to balance cost, performance, and true functional value (Architect).',
+      },
+      {
+        stage: 'orchestrator',
+        text: 'Audit whether conversational search creates data liability, defensible customer retention moats, and business alignment.',
+        explanation: 'Protects enterprise data rights, strategic defensibility, and long-term customer trust (Orchestrator).',
+      },
+    ],
+  },
+  {
+    id: 10,
+    scenario: 'An early-career software engineer confides that they feel anxious and demoralized because AI tools can synthesize their code in seconds. How do you mentor them?',
+    options: [
+      {
+        stage: 'creator',
+        text: 'Teach them advanced prompt engineering techniques and keyboard shortcuts so they become the fastest code generators on the team.',
+        explanation: 'Focuses on increasing implementation velocity within existing paradigms (Creator).',
+      },
+      {
+        stage: 'architect',
+        text: 'Guide them to build systems intuition: understanding boundary failures, reading complex telemetry, and writing Architecture Decision Records.',
+        explanation: 'Expands their skills into systems design, trade-offs, and critical technical discernment (Architect).',
+      },
+      {
+        stage: 'orchestrator',
+        text: 'Help them curate an irreplaceable Proof of Work portfolio, cultivate peer trust in specialized micro-communities, and master the curator mindset.',
+        explanation: 'Develops long-term career resilience, personal authority, and strategic trust in the age of code abundance (Orchestrator).',
+      },
+    ],
+  },
 ];
 
 export interface AssessmentResult {

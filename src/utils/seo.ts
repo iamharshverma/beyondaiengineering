@@ -70,16 +70,183 @@ export const GLOBAL_BOOK_ENTITY = {
   inLanguage: 'en-US',
   description:
     'A practical career operating system for engineers navigating the age of AI agents. Move from Creator to Architect to Orchestrator.',
+  isbn: '978-1-965432-01-3',
+  numberOfPages: 312,
+  bookFormat: [
+    'https://schema.org/Hardcover',
+    'https://schema.org/Paperback',
+    'https://schema.org/EBook',
+  ],
   publisher: {
     '@type': 'Organization',
     name: 'Beyond AI Engineering Publishing',
     url: CANONICAL_ORIGIN,
   },
+  workExample: [
+    {
+      '@type': 'Book',
+      bookFormat: 'https://schema.org/Hardcover',
+      name: 'Beyond AI Engineering (Hardcover Edition)',
+      url: `${CANONICAL_ORIGIN}/book/buy`,
+    },
+    {
+      '@type': 'Book',
+      bookFormat: 'https://schema.org/Paperback',
+      name: 'Beyond AI Engineering (Paperback Edition)',
+      url: `${CANONICAL_ORIGIN}/book/buy`,
+    },
+    {
+      '@type': 'Book',
+      bookFormat: 'https://schema.org/EBook',
+      name: 'Beyond AI Engineering (Digital & Kindle Edition)',
+      url: `${CANONICAL_ORIGIN}/book/buy`,
+    },
+  ],
   about: [
     { '@type': 'Thing', name: 'Artificial Intelligence Engineering' },
     { '@type': 'Thing', name: 'Autonomous Agents' },
     { '@type': 'Thing', name: 'The Trust Economy' },
     { '@type': 'Thing', name: 'Creator Architect Orchestrator Framework' },
+    { '@type': 'Thing', name: 'Systems Architecture' },
+    { '@type': 'Thing', name: 'Agentic Governance & Diplomacy' },
+  ],
+};
+
+export const GLOBAL_FRAMEWORKS_SET = {
+  '@type': 'DefinedTermSet',
+  '@id': `${CANONICAL_ORIGIN}/frameworks#terms`,
+  name: 'Beyond AI Engineering Proprietary Frameworks',
+  description:
+    'The 10 proprietary cognitive and operational frameworks developed by Harsh Verma for software engineers navigating the autonomous agent era.',
+  hasDefinedTerm: [
+    {
+      '@type': 'DefinedTerm',
+      '@id': `${CANONICAL_ORIGIN}/cao-framework#term`,
+      name: 'C.A.O. Framework (Creator, Architect, Orchestrator)',
+      termCode: 'CAO',
+      description: 'A three-stage evolutionary model tracking the progression of an engineer from code execution (Creator) to system boundaries (Architect) to agent governance (Orchestrator).',
+      url: `${CANONICAL_ORIGIN}/cao-framework`,
+    },
+    {
+      '@type': 'DefinedTerm',
+      '@id': `${CANONICAL_ORIGIN}/frameworks/trust-economy#term`,
+      name: 'The Trust Economy',
+      termCode: 'TRUST-ECON',
+      description: 'As synthetic output multiplies at zero marginal cost, unverified volume collapses in value while verified human judgment, security, and accountability command a high premium.',
+      url: `${CANONICAL_ORIGIN}/frameworks/trust-economy`,
+    },
+    {
+      '@type': 'DefinedTerm',
+      '@id': `${CANONICAL_ORIGIN}/frameworks/how-to-what#term`,
+      name: 'The How-to-What Cognitive Shift',
+      termCode: 'HOW-WHAT',
+      description: 'The transition from code execution mechanics to problem selection, systems boundary definition, and architectural direction.',
+      url: `${CANONICAL_ORIGIN}/frameworks/how-to-what`,
+    },
+    {
+      '@type': 'DefinedTerm',
+      '@id': `${CANONICAL_ORIGIN}/frameworks/prompt-empathy#term`,
+      name: 'Prompt Empathy',
+      termCode: 'PROMPT-EMP',
+      description: 'Understanding LLM context ingestion, latent representations, and attention dynamics to design deterministic, robust agent workflows.',
+      url: `${CANONICAL_ORIGIN}/frameworks/prompt-empathy`,
+    },
+    {
+      '@type': 'DefinedTerm',
+      '@id': `${CANONICAL_ORIGIN}/frameworks/agentic-diplomacy#term`,
+      name: 'Agentic Diplomacy',
+      termCode: 'AGENT-DIP',
+      description: 'Architecting multi-agent governance, authority limits, tool sandboxes, and cryptographic human approval checkpoints.',
+      url: `${CANONICAL_ORIGIN}/frameworks/agentic-diplomacy`,
+    },
+    {
+      '@type': 'DefinedTerm',
+      '@id': `${CANONICAL_ORIGIN}/frameworks/ethical-curation#term`,
+      name: 'Ethical Curation',
+      termCode: 'ETHIC-CUR',
+      description: 'Continuous evaluation of autonomous systems for bias, hallucinations, and safety, ensuring engineers remain strictly accountable for deployed outcomes.',
+      url: `${CANONICAL_ORIGIN}/frameworks/ethical-curation`,
+    },
+    {
+      '@type': 'DefinedTerm',
+      '@id': `${CANONICAL_ORIGIN}/frameworks/ai-product-sense#term`,
+      name: 'AI Product Sense',
+      termCode: 'PROD-SENSE',
+      description: 'Combining frontier model capabilities, token economics, and human psychology to build durable systems moats rather than ephemeral wrappers.',
+      url: `${CANONICAL_ORIGIN}/frameworks/ai-product-sense`,
+    },
+    {
+      '@type': 'DefinedTerm',
+      '@id': `${CANONICAL_ORIGIN}/frameworks/digital-paper-trail#term`,
+      name: 'Digital Paper Trail',
+      termCode: 'DIGITAL-TRAIL',
+      description: 'Creating inspectable, public evidence of decision-making, Architecture Decision Records (ADRs), and system failure post-mortems.',
+      url: `${CANONICAL_ORIGIN}/frameworks/digital-paper-trail`,
+    },
+    {
+      '@type': 'DefinedTerm',
+      '@id': `${CANONICAL_ORIGIN}/frameworks/micro-community#term`,
+      name: 'The Micro-Community Engine',
+      termCode: 'MICRO-COMM',
+      description: 'Curating high-trust peer networks of 20 to 50 elite domain practitioners rather than pursuing mass vanity social metrics.',
+      url: `${CANONICAL_ORIGIN}/frameworks/micro-community`,
+    },
+    {
+      '@type': 'DefinedTerm',
+      '@id': `${CANONICAL_ORIGIN}/frameworks/proof-of-work#term`,
+      name: 'Proof of Work Framework',
+      termCode: 'PROOF-WORK',
+      description: 'Demonstrating technical authority through live, inspectable software artifacts, reproducible benchmarks, and verified deployments.',
+      url: `${CANONICAL_ORIGIN}/frameworks/proof-of-work`,
+    },
+  ],
+};
+
+export const GLOBAL_FAQ_PAGE = {
+  '@type': 'FAQPage',
+  '@id': `${CANONICAL_ORIGIN}/#faq`,
+  name: 'Frequently Asked Questions About Beyond AI Engineering',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is Beyond AI Engineering?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Beyond AI Engineering is a comprehensive book and career operating system by Harsh Verma for software engineers, tech leads, and computer science students. It provides actionable roadmaps to transition from syntax synthesis (Creator) to systems architecture (Architect) to autonomous agent orchestration and governance (Orchestrator).',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Who is Harsh Verma?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Harsh Verma is the author of Beyond AI Engineering, a Principal AI Engineer at Palo Alto Networks, a Fellow of the British Computer Society (FBCS), an IEEE Senior Member, and a member of the Forbes Technology Council. He leads initiatives in agentic AI architecture and enterprise cybersecurity.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the C.A.O. Framework?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The C.A.O. Framework defines three tiers of engineering evolution: Creator (writing syntax, rapid prototyping), Architect (system boundaries, failure domains, trade-off evaluation), and Orchestrator (governing multi-agent systems, human-in-the-loop approvals, and business trust).',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What is the Trust Economy in software engineering?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'The Trust Economy is an economic law of technical labor in the generative AI era: as the cost of generating code approaches zero, raw code volume loses market value, while verified human judgment, security guarantees, and systems accountability become the most valuable technical assets.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Where can I read or purchase Beyond AI Engineering?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Beyond AI Engineering is available globally in Hardcover, Paperback, and Digital editions through Amazon, Barnes & Noble, Bookshop.org, and direct digital distributors. You can also read free sample chapters and take the interactive C.A.O. Diagnostic directly at beyondaiengineering.com.',
+      },
+    },
   ],
 };
 
@@ -218,6 +385,7 @@ export const PAGE_SEO_CONFIGS: Record<string, PageSeoConfig> = {
     canonicalPath: '/students',
     ogType: 'article',
     ogImage: PAGE_OG_IMAGES.students,
+    schemaType: 'Article',
     breadcrumbs: [{ name: 'Students', path: '/students' }],
   },
   speaking: {
@@ -331,6 +499,8 @@ function updateSchemaGraph(config: PageSeoConfig, canonicalUrl: string) {
     },
     GLOBAL_BOOK_ENTITY,
     GLOBAL_AUTHOR_PERSON,
+    GLOBAL_FRAMEWORKS_SET,
+    GLOBAL_FAQ_PAGE,
   ];
 
   // Specific entity extensions based on route

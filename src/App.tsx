@@ -52,6 +52,21 @@ export default function App() {
   const [isSpeakingModalOpen, setIsSpeakingModalOpen] = useState(false);
   const [speakingTopic, setSpeakingTopic] = useState<string>('The Engineer After Code');
   const [activeInfographicId, setActiveInfographicId] = useState<string | null>(null);
+  const [readingProgress, setReadingProgress] = useState<number>(0);
+
+  // Track scroll depth for subtle reading progress indicator
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight > 0) {
+        const progress = (window.scrollY / scrollHeight) * 100;
+        setReadingProgress(Math.min(100, Math.max(0, progress)));
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [currentRoute.page]);
 
   // Sync with browser URL / history and saved theme on initial load & popstate
   useEffect(() => {
@@ -130,6 +145,16 @@ export default function App() {
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col bg-[#FAFAF7] dark:bg-[#070B14] text-[#101828] dark:text-[#F1F5F9] selection:bg-blue-100 selection:text-blue-900 dark:selection:bg-blue-900/40 dark:selection:text-blue-200 transition-colors duration-200">
+      {/* Subtle Top Reading Progress Indicator */}
+      <div
+        className="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-blue-700 via-blue-500 to-indigo-500 z-50 transition-all duration-75 pointer-events-none no-print"
+        style={{ width: `${readingProgress}%` }}
+        role="progressbar"
+        aria-valuenow={Math.round(readingProgress)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      />
+
       {/* 1. Header / Navbar following Top Bar Contract */}
       <Navbar
         currentPage={currentPage}
