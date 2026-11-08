@@ -101,7 +101,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
               </span>
             </div>
 
-            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-[#101828] dark:text-white leading-[1.08] text-balance">
+            <h1 className="font-serif text-fluid-hero font-bold tracking-tight text-[#101828] dark:text-white text-balance">
               The Engineering After Code
             </h1>
 

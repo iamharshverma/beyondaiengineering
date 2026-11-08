@@ -34,7 +34,7 @@ export const BookView: React.FC<BookViewProps> = ({
             The Definitive Volume
           </span>
 
-          <h1 className="font-serif text-4xl sm:text-6xl font-bold tracking-tight text-[#101828] dark:text-white text-balance">
+          <h1 className="font-serif text-fluid-hero font-bold tracking-tight text-[#101828] dark:text-white text-balance">
             This Is Not Another Book About Prompting.
           </h1>
 

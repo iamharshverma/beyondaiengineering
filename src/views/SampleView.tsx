@@ -89,7 +89,7 @@ To read the complete book across 11 chapters, companion lab canvases, and full a
             <span>Official Book Excerpt</span>
           </div>
 
-          <h1 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-[#101828] dark:text-white">
+          <h1 className="font-serif text-fluid-hero font-bold tracking-tight text-[#101828] dark:text-white text-balance">
             Read an Exclusive Excerpt from Beyond AI Engineering
           </h1>
 

@@ -69,7 +69,7 @@ export const ChapterModal: React.FC<ChapterModalProps> = ({
               </button>
             )}
           </div>
-          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#101828] dark:text-white leading-tight">
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#101828] dark:text-white leading-tight text-balance">
             {currentChapter.title}
           </h2>
           <h3 className="text-xs sm:text-sm font-sans text-[#475467] dark:text-slate-300 italic mt-0.5">

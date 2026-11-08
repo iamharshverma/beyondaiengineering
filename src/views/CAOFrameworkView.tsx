@@ -3,6 +3,7 @@ import { PageId } from '../types';
 import { updatePageSeo, CANONICAL_ORIGIN } from '../utils/seo';
 import { trackEvent } from '../utils/analytics';
 import { CAOInteractiveFramework } from '../components/CAOInteractiveFramework';
+import { CAOBenchmark } from '../components/CAOBenchmark';
 import { CiteThisFramework } from '../components/CiteThisFramework';
 import { ArrowRight, BookOpen, Layers, CheckCircle2, Shield, Compass, Sparkles, ChevronRight, Activity } from 'lucide-react';
 
@@ -52,7 +53,7 @@ export const CAOFrameworkView: React.FC<CAOFrameworkViewProps> = ({
             <span>Foundational Career Architecture</span>
           </div>
 
-          <h1 className="font-serif text-4xl sm:text-6xl font-bold tracking-tight text-[#101828] dark:text-white">
+          <h1 className="font-serif text-fluid-hero font-bold tracking-tight text-[#101828] dark:text-white text-balance">
             The Creator · Architect · Orchestrator Framework
           </h1>
 
@@ -202,7 +203,26 @@ export const CAOFrameworkView: React.FC<CAOFrameworkViewProps> = ({
         </div>
       </section>
 
-      {/* 4. OVERLAP & SYSTEMIC INTEGRATION */}
+      {/* 4. LIVE ROLE BENCHMARK DIAGNOSTIC */}
+      <section id="benchmark" className="py-16 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <span className="text-xs uppercase tracking-widest font-mono text-blue-900 dark:text-blue-400 font-semibold block mb-1">
+            Live Role Benchmark
+          </span>
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#101828] dark:text-white text-balance">
+            Benchmark Your Engineering Operating Profile
+          </h2>
+          <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-400 mt-2 text-balance leading-relaxed">
+            Answer 10 executive engineering scenarios to calculate your Creator, Architect, and Orchestrator balance, visualize your triad radar, and export a formatted executive career report.
+          </p>
+        </div>
+
+        <div className="bg-[#FAF9F5] dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-2xl p-6 sm:p-10 shadow-sm">
+          <CAOBenchmark onOpenBuyModal={onOpenBuyModal} />
+        </div>
+      </section>
+
+      {/* 5. OVERLAP & SYSTEMIC INTEGRATION */}
       <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
         <div className="max-w-3xl mx-auto space-y-6">
           <h2 className="font-serif text-3xl font-bold text-[#101828] dark:text-white text-center">

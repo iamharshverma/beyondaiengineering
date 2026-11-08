@@ -96,7 +96,7 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
               <span className="text-xs uppercase tracking-widest font-mono text-blue-900 dark:text-blue-400 font-semibold block mb-1">
                 Official Book Distribution
               </span>
-              <h1 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-[#101828] dark:text-white mb-2">
+              <h1 className="font-serif text-fluid-hero font-bold tracking-tight text-[#101828] dark:text-white mb-2 text-balance">
                 Ready to Go Beyond AI Engineering?
               </h1>
               <p className="font-serif text-lg text-[#475467] dark:text-slate-300 italic">
