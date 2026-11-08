@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PageId } from '../types';
 import { updatePageSeo, CANONICAL_ORIGIN } from '../utils/seo';
 import { trackEvent } from '../utils/analytics';
@@ -18,6 +18,16 @@ export const CAOFrameworkView: React.FC<CAOFrameworkViewProps> = ({
   onOpenAssessment,
   onOpenBuyModal,
 }) => {
+  const [activeConsoleStage, setActiveConsoleStage] = useState<'creator' | 'architect' | 'orchestrator'>('architect');
+
+  const handleSelectTier = (stage: 'creator' | 'architect' | 'orchestrator') => {
+    setActiveConsoleStage(stage);
+    const el = document.getElementById('cao-console');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   useEffect(() => {
     updatePageSeo({
       title: 'Creator Architect Orchestrator Framework | Beyond AI Engineering',
@@ -106,7 +116,19 @@ export const CAOFrameworkView: React.FC<CAOFrameworkViewProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* TIER 1: CREATOR */}
-          <div className="bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-2xl p-6 sm:p-8 flex flex-col justify-between shadow-xs">
+          <div
+            onClick={() => handleSelectTier('creator')}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleSelectTier('creator');
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label="Explore Stage 01: The Creator details and rituals"
+            className="bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 hover:border-blue-700 dark:hover:border-blue-400 rounded-2xl p-6 sm:p-8 flex flex-col justify-between shadow-xs hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 cursor-pointer group focus:outline-hidden focus:ring-2 focus:ring-blue-600"
+          >
             <div>
               <div className="flex items-center justify-between mb-4">
                 <span className="text-xs font-mono font-bold text-blue-800 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded">
@@ -114,7 +136,7 @@ export const CAOFrameworkView: React.FC<CAOFrameworkViewProps> = ({
                 </span>
                 <span className="text-[11px] font-mono text-[#98A2B3]">Execution Tier</span>
               </div>
-              <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white mb-2">
+              <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white mb-2 group-hover:text-blue-900 dark:group-hover:text-blue-300 transition-colors">
                 The Creator
               </h3>
               <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed mb-4">
@@ -131,14 +153,59 @@ export const CAOFrameworkView: React.FC<CAOFrameworkViewProps> = ({
                 </div>
               </div>
             </div>
-            <div className="mt-6 pt-4 border-t border-[#101828]/[0.08] dark:border-white/10 text-xs text-[#475467] dark:text-slate-400 font-mono">
-              Key Question: "How do we build this feature?"
+
+            <div className="mt-6 pt-4 border-t border-[#101828]/[0.08] dark:border-white/10 space-y-3">
+              <div className="text-xs text-[#475467] dark:text-slate-400 font-mono">
+                Key Question: "How do we build this feature?"
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSelectTier('creator');
+                }}
+                className="w-full py-2.5 px-3 rounded-lg bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 border border-blue-200 dark:border-blue-800/40 text-blue-900 dark:text-blue-300 text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer group/btn"
+              >
+                <span>Deep Dive into Creator Console</span>
+                <ArrowRight className="w-3.5 h-3.5 transform group-hover/btn:translate-x-1 transition-transform" />
+              </button>
+              <div className="flex items-center justify-between text-[11px] font-mono text-[#475467] dark:text-slate-400">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onNavigate('frameworks');
+                  }}
+                  className="hover:text-blue-900 dark:hover:text-blue-300 underline underline-offset-2 cursor-pointer"
+                >
+                  Prompt Empathy →
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenAssessment();
+                  }}
+                  className="hover:text-blue-900 dark:hover:text-blue-300 font-medium cursor-pointer"
+                >
+                  Test Benchmark →
+                </button>
+              </div>
             </div>
           </div>
 
           {/* TIER 2: ARCHITECT */}
-          <div className="bg-white dark:bg-[#0D1527] border-2 border-blue-600/40 dark:border-blue-500/40 rounded-2xl p-6 sm:p-8 flex flex-col justify-between shadow-sm relative">
-            <span className="absolute -top-3 left-6 bg-blue-600 text-white font-mono text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded">
+          <div
+            onClick={() => handleSelectTier('architect')}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleSelectTier('architect');
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label="Explore Stage 02: The Architect details and rituals"
+            className="bg-white dark:bg-[#0D1527] border-2 border-blue-600/50 dark:border-blue-500/50 hover:border-blue-600 dark:hover:border-blue-400 rounded-2xl p-6 sm:p-8 flex flex-col justify-between shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 relative cursor-pointer group focus:outline-hidden focus:ring-2 focus:ring-blue-600"
+          >
+            <span className="absolute -top-3 left-6 bg-blue-600 text-white font-mono text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded shadow-xs">
               High Leverage Pivot
             </span>
             <div>
@@ -148,7 +215,7 @@ export const CAOFrameworkView: React.FC<CAOFrameworkViewProps> = ({
                 </span>
                 <span className="text-[11px] font-mono text-[#98A2B3]">Systems Tier</span>
               </div>
-              <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white mb-2">
+              <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white mb-2 group-hover:text-purple-900 dark:group-hover:text-purple-300 transition-colors">
                 The Architect
               </h3>
               <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed mb-4">
@@ -165,13 +232,58 @@ export const CAOFrameworkView: React.FC<CAOFrameworkViewProps> = ({
                 </div>
               </div>
             </div>
-            <div className="mt-6 pt-4 border-t border-[#101828]/[0.08] dark:border-white/10 text-xs text-blue-900 dark:text-blue-400 font-mono font-semibold">
-              Key Question: "What system deserves to exist and what are its boundaries?"
+
+            <div className="mt-6 pt-4 border-t border-[#101828]/[0.08] dark:border-white/10 space-y-3">
+              <div className="text-xs text-blue-900 dark:text-blue-400 font-mono font-semibold">
+                Key Question: "What system deserves to exist and what are its boundaries?"
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSelectTier('architect');
+                }}
+                className="w-full py-2.5 px-3 rounded-lg bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 dark:hover:bg-purple-900/60 border border-purple-200 dark:border-purple-800/40 text-purple-900 dark:text-purple-300 text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer group/btn"
+              >
+                <span>Deep Dive into Architect Console</span>
+                <ArrowRight className="w-3.5 h-3.5 transform group-hover/btn:translate-x-1 transition-transform" />
+              </button>
+              <div className="flex items-center justify-between text-[11px] font-mono text-[#475467] dark:text-slate-400">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onNavigate('frameworks');
+                  }}
+                  className="hover:text-purple-900 dark:hover:text-purple-300 underline underline-offset-2 cursor-pointer"
+                >
+                  How → What & AI Sense →
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenAssessment();
+                  }}
+                  className="hover:text-purple-900 dark:hover:text-purple-300 font-medium cursor-pointer"
+                >
+                  Test Benchmark →
+                </button>
+              </div>
             </div>
           </div>
 
           {/* TIER 3: ORCHESTRATOR */}
-          <div className="bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-2xl p-6 sm:p-8 flex flex-col justify-between shadow-xs">
+          <div
+            onClick={() => handleSelectTier('orchestrator')}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleSelectTier('orchestrator');
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label="Explore Stage 03: The Orchestrator details and rituals"
+            className="bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 hover:border-emerald-700 dark:hover:border-emerald-400 rounded-2xl p-6 sm:p-8 flex flex-col justify-between shadow-xs hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 cursor-pointer group focus:outline-hidden focus:ring-2 focus:ring-emerald-600"
+          >
             <div>
               <div className="flex items-center justify-between mb-4">
                 <span className="text-xs font-mono font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded">
@@ -179,7 +291,7 @@ export const CAOFrameworkView: React.FC<CAOFrameworkViewProps> = ({
                 </span>
                 <span className="text-[11px] font-mono text-[#98A2B3]">Governance Tier</span>
               </div>
-              <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white mb-2">
+              <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white mb-2 group-hover:text-emerald-900 dark:group-hover:text-emerald-300 transition-colors">
                 The Orchestrator
               </h3>
               <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed mb-4">
@@ -196,8 +308,41 @@ export const CAOFrameworkView: React.FC<CAOFrameworkViewProps> = ({
                 </div>
               </div>
             </div>
-            <div className="mt-6 pt-4 border-t border-[#101828]/[0.08] dark:border-white/10 text-xs text-[#475467] dark:text-slate-400 font-mono">
-              Key Question: "Who and what guarantees this system will not fail catastrophically?"
+
+            <div className="mt-6 pt-4 border-t border-[#101828]/[0.08] dark:border-white/10 space-y-3">
+              <div className="text-xs text-[#475467] dark:text-slate-400 font-mono">
+                Key Question: "Who and what guarantees this system will not fail catastrophically?"
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSelectTier('orchestrator');
+                }}
+                className="w-full py-2.5 px-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800/40 text-emerald-900 dark:text-emerald-300 text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer group/btn"
+              >
+                <span>Deep Dive into Orchestrator Console</span>
+                <ArrowRight className="w-3.5 h-3.5 transform group-hover/btn:translate-x-1 transition-transform" />
+              </button>
+              <div className="flex items-center justify-between text-[11px] font-mono text-[#475467] dark:text-slate-400">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onNavigate('frameworks');
+                  }}
+                  className="hover:text-emerald-900 dark:hover:text-emerald-300 underline underline-offset-2 cursor-pointer"
+                >
+                  Trust & Diplomacy →
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenAssessment();
+                  }}
+                  className="hover:text-emerald-900 dark:hover:text-emerald-300 font-medium cursor-pointer"
+                >
+                  Test Benchmark →
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -278,7 +423,11 @@ export const CAOFrameworkView: React.FC<CAOFrameworkViewProps> = ({
           </p>
         </div>
 
-        <CAOInteractiveFramework onOpenAssessment={onOpenAssessment} />
+        <CAOInteractiveFramework
+          selectedStage={activeConsoleStage}
+          onSelectStage={setActiveConsoleStage}
+          onOpenAssessment={onOpenAssessment}
+        />
 
         {/* 6. CITE THIS FRAMEWORK */}
         <CiteThisFramework

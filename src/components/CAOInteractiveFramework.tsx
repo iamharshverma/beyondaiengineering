@@ -3,12 +3,24 @@ import { Sparkles, Compass, ShieldCheck, ArrowRight, Check } from 'lucide-react'
 
 interface CAOInteractiveFrameworkProps {
   onOpenAssessment: () => void;
+  selectedStage?: 'creator' | 'architect' | 'orchestrator';
+  onSelectStage?: (stage: 'creator' | 'architect' | 'orchestrator') => void;
 }
 
 export const CAOInteractiveFramework: React.FC<CAOInteractiveFrameworkProps> = ({
   onOpenAssessment,
+  selectedStage: externalSelectedStage,
+  onSelectStage,
 }) => {
-  const [selectedStage, setSelectedStage] = useState<'creator' | 'architect' | 'orchestrator'>('architect');
+  const [internalStage, setInternalStage] = useState<'creator' | 'architect' | 'orchestrator'>('architect');
+  const selectedStage = externalSelectedStage !== undefined ? externalSelectedStage : internalStage;
+
+  const handleStageChange = (stageId: 'creator' | 'architect' | 'orchestrator') => {
+    setInternalStage(stageId);
+    if (onSelectStage) {
+      onSelectStage(stageId);
+    }
+  };
 
   const stages = [
     {
@@ -73,7 +85,7 @@ export const CAOInteractiveFramework: React.FC<CAOInteractiveFrameworkProps> = (
   ];
 
   return (
-    <section className="py-24 bg-[#FAFAF7] dark:bg-[#070B14] relative transition-colors">
+    <section id="cao-console" className="py-24 bg-[#FAFAF7] dark:bg-[#070B14] relative transition-colors scroll-mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Heading */}
@@ -97,7 +109,7 @@ export const CAOInteractiveFramework: React.FC<CAOInteractiveFrameworkProps> = (
             return (
               <div
                 key={stage.id}
-                onClick={() => setSelectedStage(stage.id)}
+                onClick={() => handleStageChange(stage.id)}
                 className={`p-6 sm:p-8 rounded-xl border transition-all cursor-pointer relative flex flex-col justify-between hover:-translate-y-1 duration-300 ${
                   isSelected
                     ? 'border-blue-900 dark:border-blue-400 shadow-md ring-2 ring-blue-900/10 dark:ring-blue-400/20 bg-white dark:bg-[#111C35]'
