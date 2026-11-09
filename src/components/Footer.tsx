@@ -115,6 +115,11 @@ export const Footer: React.FC<FooterProps> = ({
               </h3>
               <ul className="space-y-2.5 text-slate-300">
                 <li>
+                  <button onClick={() => handleNavigate('blog')} className="hover:text-white transition-colors cursor-pointer text-blue-400 font-medium">
+                    Engineering Blog & Notes
+                  </button>
+                </li>
+                <li>
                   <button onClick={() => handleNavigate('students')} className="hover:text-white transition-colors cursor-pointer">
                     For Students
                   </button>
@@ -151,6 +156,15 @@ export const Footer: React.FC<FooterProps> = ({
                   <strong className="text-white">Harsh Verma</strong> is a Principal AI Software Engineer at <strong className="text-white">Palo Alto Networks</strong>, Stanford Distinguished Scholar, Fellow of RSA & BCS, IEEE Senior Member, and Forbes Technology Council Member.
                 </p>
                 <div className="flex flex-col gap-1.5 pt-1">
+                  <a
+                    href="https://www.harshverma.me/page-blog"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors"
+                  >
+                    <span>Harsh Verma Blog (harshverma.me)</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
                   <a
                     href="https://www.harshverma.me/page-about"
                     target="_blank"

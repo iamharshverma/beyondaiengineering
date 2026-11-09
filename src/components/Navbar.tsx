@@ -167,12 +167,12 @@ export const Navbar: React.FC<NavbarProps> = ({
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Direct desktop navigation links requested: The Book, C.A.O. Framework, Manifesto, Speaking, Author
+  // Direct desktop navigation links: The Book, C.A.O. Framework, Blog, Manifesto, Author
   const directDesktopLinks = [
     { label: 'The Book', page: 'book' as PageId },
     { label: 'C.A.O. Framework', page: 'cao-framework' as PageId },
+    { label: 'Blog', page: 'blog' as PageId },
     { label: 'Manifesto', page: 'manifesto' as PageId },
-    { label: 'Speaking', page: 'speaking' as PageId },
     { label: 'Author', page: 'author' as PageId },
   ];
 
@@ -203,8 +203,9 @@ export const Navbar: React.FC<NavbarProps> = ({
       title: 'Speaking, Authority & Community',
       badge: 'Perspectives',
       items: [
-        { label: 'Keynotes & Speaking', page: 'speaking' as PageId, icon: Mic, desc: 'Executive briefings & conference keynotes by Harsh Verma' },
+        { label: 'Engineering Blog & Notes', page: 'blog' as PageId, icon: Newspaper, desc: 'Technical notes, Forbes columns & systems experiments by Harsh Verma' },
         { label: 'Author Biography', page: 'author' as PageId, icon: User, desc: 'Harsh Verma, Principal AI Engineer & Fellow' },
+        { label: 'Keynotes & Speaking', page: 'speaking' as PageId, icon: Mic, desc: 'Executive briefings & conference keynotes by Harsh Verma' },
         { label: 'Ideas & Research', page: 'ideas' as PageId, icon: Lightbulb, desc: 'Deep-dive technical essays and industry commentary' },
         { label: 'Reader Stories', page: 'stories' as PageId, icon: ShieldCheck, desc: 'Field reports and production transformation case studies' },
         { label: 'Press Kit & Media', page: 'press' as PageId, icon: Newspaper, desc: 'High-res photos, bios & media contacts' },

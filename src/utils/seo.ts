@@ -424,6 +424,15 @@ export const PAGE_SEO_CONFIGS: Record<string, PageSeoConfig> = {
     ogImage: PAGE_OG_IMAGES.stories,
     breadcrumbs: [{ name: 'Stories', path: '/stories' }],
   },
+  blog: {
+    title: 'Engineering Blog & Technical Dispatches | Harsh Verma — Beyond AI Engineering',
+    description:
+      'Field experiments, local model benchmarks, Model Context Protocol (MCP) implementations, Forbes columns, and systems engineering notes by Harsh Verma.',
+    canonicalPath: '/blog',
+    ogType: 'website',
+    ogImage: PAGE_OG_IMAGES.ideas,
+    breadcrumbs: [{ name: 'Engineering Blog', path: '/blog' }],
+  },
 };
 
 /**

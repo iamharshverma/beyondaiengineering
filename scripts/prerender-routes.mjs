@@ -206,6 +206,60 @@ const routes = [
     description: 'Real-world accounts from engineers, managers, and architects putting the C.A.O. framework and trust economy principles into practice.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_04_PM-2_73d3bcaa.png',
   },
+  {
+    path: '/blog',
+    title: 'Engineering Blog & Technical Dispatches | Harsh Verma — Beyond AI Engineering',
+    description: 'Field experiments, local model benchmarks, Model Context Protocol (MCP) implementations, Forbes columns, and systems engineering notes by Harsh Verma.',
+    ogImage: AUTHOR_IMAGE,
+  },
+  {
+    path: '/blog/whole-articles-local-model-accurate-15x-slow',
+    title: 'Whole Articles Made a Local Model Accurate, and 15× Too Slow | Harsh Verma',
+    description: 'An engineering deep-dive into local model context lengths, token prefill economics, and RAG retrieval latency on quantized hardware.',
+    ogImage: AUTHOR_IMAGE,
+  },
+  {
+    path: '/blog/mcp-tool-over-durable-agent',
+    title: 'MCP Tool Over a Durable Agent: The Realities of State & Latency | Harsh Verma',
+    description: 'Why Model Context Protocol (MCP) servers must be backed by deterministic workflow orchestrators like Temporal and OpenTelemetry tracing.',
+    ogImage: AUTHOR_IMAGE,
+  },
+  {
+    path: '/blog/evolution-software-2-to-agentic-ai',
+    title: 'The Evolution from Software 2.0 to Agentic AI | Forbes Technology Council',
+    description: 'From neural weights that replace algorithms to autonomous agents that orchestrate enterprise workflows by Harsh Verma.',
+    ogImage: AUTHOR_IMAGE,
+  },
+  {
+    path: '/blog/deterministic-verification-ai-pipelines',
+    title: 'Deterministic Verification in Non-Deterministic AI Pipelines | HackerNoon',
+    description: 'Why the only answer to probabilistic hallucinations is strict, immutable invariant checking and isolated test sandboxes.',
+    ogImage: AUTHOR_IMAGE,
+  },
+  {
+    path: '/blog/zero-trust-architecture-agent-fleets',
+    title: 'Zero-Trust Architecture for Autonomous Agent Fleets | Forbes Technology Council',
+    description: 'Applying cybersecurity first principles to autonomous tools, execution sandboxes, and lateral privilege movement.',
+    ogImage: AUTHOR_IMAGE,
+  },
+  {
+    path: '/blog/context-routing-multi-agent-orchestration',
+    title: 'Context Routing and Multi-Agent Orchestration Patterns | Harsh Verma',
+    description: 'Hierarchical topologies, semantic gatekeepers, and the end of monolithic mega-prompts in production agent systems.',
+    ogImage: AUTHOR_IMAGE,
+  },
+  {
+    path: '/blog/economic-mechanics-trust-economy',
+    title: 'The Economic Mechanics of the Trust Economy | Harsh Verma',
+    description: 'Why commoditized code generation makes trusted human systems judgment the rarest asset in technology.',
+    ogImage: AUTHOR_IMAGE,
+  },
+  {
+    path: '/blog/builder-to-curator-engineering-shift',
+    title: 'From Builder to Curator: The 3-Stage Engineering Shift | Beyond AI Engineering',
+    description: 'The cognitive roadmap from typing code to architecting and orchestrating intelligence by Harsh Verma.',
+    ogImage: AUTHOR_IMAGE,
+  },
 ];
 
 console.log(`Prerendering ${routes.length} canonical static pages for GitHub Pages with unique OpenGraph images...`);

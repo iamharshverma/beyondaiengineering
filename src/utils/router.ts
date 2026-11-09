@@ -91,6 +91,15 @@ function routeFromPath(rawPath: string): RouteState {
   // 12. Stories
   if (clean === '/stories') return { page: 'stories', path: '/stories' };
 
+  // 13. Blog & Engineering Dispatches
+  if (clean === '/blog' || clean === '/posts' || clean === '/articles') {
+    return { page: 'blog', path: '/blog' };
+  }
+  if (clean.startsWith('/blog/')) {
+    const slug = clean.replace('/blog/', '');
+    return { page: 'blog-detail', param: slug, path: clean };
+  }
+
   return { page: 'home', path: '/' };
 }
 

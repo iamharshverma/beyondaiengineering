@@ -25,6 +25,8 @@ import { IdeasView } from './views/IdeasView';
 import { ArticleDetailView } from './views/ArticleDetailView';
 import { StoriesView } from './views/StoriesView';
 import { BuyView } from './views/BuyView';
+import { BlogView } from './views/BlogView';
+import { BlogDetailView } from './views/BlogDetailView';
 
 import { AssessmentModal } from './components/AssessmentModal';
 import { ChapterModal } from './components/ChapterModal';
@@ -42,6 +44,7 @@ export default function App() {
   const [currentRoute, setCurrentRoute] = useState<RouteState>(() => parseCurrentRoute());
   const [currentFrameworkId, setCurrentFrameworkId] = useState<string>('cao-framework');
   const [currentArticleId, setCurrentArticleId] = useState<string>(() => ARTICLES[0]?.id || 'from-builder-to-curator');
+  const [currentBlogSlug, setCurrentBlogSlug] = useState<string>('whole-articles-local-model-accurate-15x-slow');
 
   // Modals
   const [isAssessmentOpen, setIsAssessmentOpen] = useState(false);
@@ -89,6 +92,9 @@ export default function App() {
       if (route.page === 'article-detail' && route.param) {
         setCurrentArticleId(route.param);
       }
+      if (route.page === 'blog-detail' && route.param) {
+        setCurrentBlogSlug(route.param);
+      }
     };
 
     handleRouteChange();
@@ -123,6 +129,8 @@ export default function App() {
       navigateTo('/teams');
     } else if (pageOrPath === 'cao-framework') {
       navigateTo('/cao-framework');
+    } else if (pageOrPath === 'blog') {
+      navigateTo('/blog');
     } else {
       navigateTo('/' + pageOrPath);
     }
@@ -307,6 +315,28 @@ export default function App() {
           <BuyView
             onNavigate={handleNavigate}
             onOpenSample={() => handleOpenSample(1)}
+          />
+        )}
+
+        {currentPage === 'blog' && (
+          <BlogView
+            onNavigate={handleNavigate}
+            onOpenArticleDetail={(slug) => {
+              setCurrentBlogSlug(slug);
+              handleNavigate('/blog/' + slug);
+            }}
+          />
+        )}
+
+        {currentPage === 'blog-detail' && (
+          <BlogDetailView
+            slug={currentBlogSlug}
+            onNavigate={handleNavigate}
+            onSelectPost={(slug) => {
+              setCurrentBlogSlug(slug);
+              handleNavigate('/blog/' + slug);
+            }}
+            onOpenBuyModal={() => setIsBuyModalOpen(true)}
           />
         )}
       </main>

@@ -50,6 +50,20 @@ function getArticleIds(): string[] {
   return [];
 }
 
+function getBlogSlugs(): string[] {
+  try {
+    const filePath = path.resolve('src/data/blogData.ts');
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, 'utf-8');
+      const matches = [...content.matchAll(/slug:\s*['"]([^'"]+)['"]/g)];
+      return Array.from(new Set(matches.map(m => m[1])));
+    }
+  } catch (err) {
+    console.warn('Could not read blog data:', err);
+  }
+  return [];
+}
+
 export async function generateSitemap(): Promise<number> {
   console.log('Crawling src/views with fast-glob...');
 
@@ -64,6 +78,7 @@ export async function generateSitemap(): Promise<number> {
 
   const frameworkIds = getFrameworkIds();
   const articleIds = getArticleIds();
+  const blogSlugs = getBlogSlugs();
 
   // 2. Map view files to canonical route paths
   for (const filePath of viewFiles) {
@@ -247,6 +262,28 @@ export async function generateSitemap(): Promise<number> {
           priority: '0.80',
         });
         break;
+
+      case 'BlogView.tsx':
+        urls.push({
+          loc: '/blog',
+          lastmod,
+          changefreq: 'weekly',
+          priority: '0.90',
+        });
+        break;
+
+      case 'BlogDetailView.tsx': {
+        // Expand into all individual blog post canonical routes
+        for (const slug of blogSlugs) {
+          urls.push({
+            loc: `/blog/${slug}`,
+            lastmod,
+            changefreq: 'monthly',
+            priority: '0.85',
+          });
+        }
+        break;
+      }
 
       default:
         break;

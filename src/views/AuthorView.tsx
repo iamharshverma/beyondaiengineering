@@ -1,6 +1,6 @@
 import React from 'react';
 import { PageId } from '../types';
-import { ExternalLink, Award, Shield, Cpu, BookOpen, ArrowRight, CheckCircle2, Sparkles, Building2, GraduationCap } from 'lucide-react';
+import { ExternalLink, Award, Shield, Cpu, BookOpen, ArrowRight, CheckCircle2, Sparkles, Building2, GraduationCap, ChevronRight } from 'lucide-react';
 import { BOOK_DETAILS } from '../data/bookData';
 
 interface AuthorViewProps {
@@ -114,14 +114,22 @@ export const AuthorView: React.FC<AuthorViewProps> = ({
               </div>
             </div>
 
-            <div className="pt-2 flex flex-wrap items-center gap-4">
+            <div className="pt-2 flex flex-wrap items-center gap-3">
+              <button
+                onClick={() => onNavigate('blog')}
+                className="px-5 py-3 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors inline-flex items-center gap-1.5 cursor-pointer shadow-xs"
+              >
+                <span>Read Engineering Blog & Notes</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+
               <a
                 href={BOOK_DETAILS.authorAboutUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-3 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors inline-flex items-center gap-1.5 cursor-pointer shadow-xs"
+                className="px-5 py-3 text-xs font-semibold bg-white dark:bg-[#0D1527] border border-[#101828]/20 dark:border-white/20 rounded-md text-[#101828] dark:text-slate-200 hover:bg-black/5 dark:hover:bg-white/5 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
               >
-                <span>Official Portfolio (harshverma.me)</span>
+                <span>harshverma.me</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
 
@@ -129,7 +137,7 @@ export const AuthorView: React.FC<AuthorViewProps> = ({
                 onClick={onOpenSpeakingModal}
                 className="px-5 py-3 text-xs font-semibold bg-white dark:bg-[#0D1527] border border-[#101828]/20 dark:border-white/20 rounded-md text-[#101828] dark:text-slate-200 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
               >
-                Invite Harsh to Speak
+                Invite to Speak
               </button>
             </div>
           </div>

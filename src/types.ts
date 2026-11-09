@@ -17,7 +17,9 @@ export type PageId =
   | 'buy'
   | 'sample'
   | 'teams'
-  | 'assessment';
+  | 'assessment'
+  | 'blog'
+  | 'blog-detail';
 
 export interface CaseStudyItem {
   name: string;
@@ -137,4 +139,23 @@ export interface AssessmentQuestion {
     stage: 'creator' | 'architect' | 'orchestrator';
     explanation: string;
   }[];
+}
+
+export interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  subtitle: string;
+  category: 'Engineering Note' | 'Forbes Column' | 'Agentic AI' | 'Systems Judgment' | 'Architecture';
+  readTime: string;
+  publishDate: string;
+  syndicatedPlatform?: 'harshverma.me' | 'Forbes Technology Council' | 'HackerNoon' | 'RSAC' | 'Internal Note';
+  externalUrl?: string;
+  summary?: string;
+  keyQuote: string;
+  leadParagraph: string;
+  content: string[];
+  tags: string[];
+  benchmarks?: { label: string; value: string; note?: string }[];
+  relatedFrameworkId?: string;
 }
