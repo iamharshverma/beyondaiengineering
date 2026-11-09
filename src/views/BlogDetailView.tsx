@@ -157,6 +157,43 @@ export const BlogDetailView: React.FC<BlogDetailViewProps> = ({
       <div className="py-12 sm:py-16">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           
+          {/* Featured Header Image if present */}
+          {post.img && (
+            <div className="mb-8 rounded-2xl overflow-hidden aspect-[16/9] bg-slate-100 dark:bg-slate-900 border border-slate-200/60 dark:border-white/10 shadow-sm relative">
+              <img
+                src={post.img}
+                alt={post.title}
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = 'none';
+                }}
+              />
+            </div>
+          )}
+
+          {/* Original Publication Banner */}
+          {post.externalUrl && (
+            <div className="mb-8 p-4 rounded-xl bg-slate-100/80 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="text-slate-600 dark:text-slate-300">
+                <span>Originally published on </span>
+                <strong className="text-slate-900 dark:text-white font-semibold">
+                  {post.syndicatedPlatform || 'Forbes Council'}
+                </strong>
+                <span>. Read the original column and audience discussions.</span>
+              </div>
+              <a
+                href={post.externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 font-semibold text-blue-900 dark:text-blue-300 bg-white dark:bg-white/10 border border-slate-200 dark:border-white/10 hover:border-slate-300 rounded-lg whitespace-nowrap shrink-0 transition-colors self-start sm:self-auto"
+              >
+                <span>Open Original Article</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          )}
+
           {/* Key Pull Quote */}
           {post.keyQuote && (
             <div className="my-8 py-5 px-6 rounded-2xl bg-white dark:bg-[#0B111E] border-y border-[#101828]/[0.08] dark:border-white/10 shadow-xs">

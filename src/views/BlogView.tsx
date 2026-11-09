@@ -13,6 +13,12 @@ import {
   Award,
   ChevronRight,
   SlidersHorizontal,
+  Star,
+  CheckCircle2,
+  Bookmark,
+  Layers,
+  ArrowUpRight,
+  Radio,
 } from 'lucide-react';
 
 interface BlogViewProps {
@@ -21,33 +27,71 @@ interface BlogViewProps {
 }
 
 export const BlogView: React.FC<BlogViewProps> = ({ onNavigate }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedTopic, setSelectedTopic] = useState<string>('all');
+  const [selectedPlatform, setSelectedPlatform] = useState<string>('all');
+  const [onlyFeatured, setOnlyFeatured] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sortBy, setSortBy] = useState<'latest' | 'readTime'>('latest');
 
-  const categories = [
-    { id: 'all', label: 'All Dispatches' },
-    { id: 'Engineering Note', label: 'Engineering Notes' },
-    { id: 'Forbes Column', label: 'Forbes Columns' },
-    { id: 'Agentic AI', label: 'Agentic Systems' },
-    { id: 'Systems Judgment', label: 'Systems Judgment' },
-    { id: 'Architecture', label: 'Architecture' },
+  const topics = [
+    { id: 'all', label: 'All Topics' },
+    { id: 'AI Research', label: 'AI Research & Physical AI' },
+    { id: 'Engineering', label: 'Engineering & Architecture' },
+    { id: 'Cybersecurity', label: 'Cybersecurity & Zero-Trust' },
+    { id: 'Interviews', label: 'Interviews & Leadership' },
+  ];
+
+  const platforms = [
+    { id: 'all', label: 'All Sources' },
+    { id: 'Forbes Technology Council', label: 'Forbes' },
+    { id: 'HackerNoon', label: 'HackerNoon' },
+    { id: 'RSAC', label: 'RSA Conference' },
+    { id: 'The AI Journal', label: 'The AI Journal' },
+    { id: 'harshverma.me', label: 'Engineering Notes' },
   ];
 
   const filteredPosts = useMemo(() => {
-    return BLOG_POSTS.filter((post) => {
-      const matchesCategory =
-        selectedCategory === 'all' || post.category === selectedCategory;
-      const matchesSearch =
-        searchQuery.trim() === '' ||
-        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.subtitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.summary?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-      return matchesCategory && matchesSearch;
-    });
-  }, [selectedCategory, searchQuery]);
+    let result = BLOG_POSTS.filter((post) => {
+      // Topic match
+      const matchesTopic =
+        selectedTopic === 'all' ||
+        post.mainCategory === selectedTopic ||
+        post.category === selectedTopic;
 
-  // Lead story is the primary featured post (e.g. latency experiment)
+      // Platform match
+      const matchesPlatform =
+        selectedPlatform === 'all' ||
+        (post.syndicatedPlatform && post.syndicatedPlatform.includes(selectedPlatform)) ||
+        (selectedPlatform === 'Forbes Technology Council' && post.syndicatedPlatform?.includes('Forbes'));
+
+      // Featured match
+      const matchesFeatured = !onlyFeatured || post.isFeatured;
+
+      // Search match
+      const query = searchQuery.toLowerCase().trim();
+      const matchesSearch =
+        query === '' ||
+        post.title.toLowerCase().includes(query) ||
+        post.subtitle.toLowerCase().includes(query) ||
+        (post.subCategory && post.subCategory.toLowerCase().includes(query)) ||
+        (post.syndicatedPlatform && post.syndicatedPlatform.toLowerCase().includes(query)) ||
+        post.tags.some((tag) => tag.toLowerCase().includes(query));
+
+      return matchesTopic && matchesPlatform && matchesFeatured && matchesSearch;
+    });
+
+    // Sort
+    if (sortBy === 'readTime') {
+      result.sort((a, b) => {
+        const timeA = parseInt(a.readTime) || 0;
+        const timeB = parseInt(b.readTime) || 0;
+        return timeB - timeA;
+      });
+    }
+
+    return result;
+  }, [selectedTopic, selectedPlatform, onlyFeatured, searchQuery, sortBy]);
+
   const leadPost = filteredPosts[0];
   const secondaryPosts = filteredPosts.slice(1);
 
@@ -57,6 +101,7 @@ export const BlogView: React.FC<BlogViewProps> = ({ onNavigate }) => {
 
   return (
     <div className="w-full bg-[#FAFAF7] dark:bg-[#070B14] text-[#101828] dark:text-[#F1F5F9] transition-colors duration-200">
+      
       {/* 1. Header & Curatorial Kicker */}
       <section className="relative pt-12 pb-10 sm:pt-16 sm:pb-12 border-b border-[#101828]/[0.08] dark:border-white/10 bg-gradient-to-b from-blue-50/40 via-transparent to-transparent dark:from-blue-950/20 dark:via-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -65,89 +110,138 @@ export const BlogView: React.FC<BlogViewProps> = ({ onNavigate }) => {
             <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-blue-900 dark:text-blue-400 mb-3">
               <span>Beyond AI Engineering</span>
               <span aria-hidden="true">/</span>
-              <span>Engineering Dispatches & Notes</span>
+              <span>Engineering Dispatches & Published Articles</span>
             </div>
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold tracking-tight text-[#101828] dark:text-white leading-[1.15] text-balance mb-4">
-              Technical Notes, Columns & Systems Dispatches
+              Thought Leadership, Forbes Columns & Tech Publications
             </h1>
 
             <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed font-sans max-w-2xl">
-              Field observations, production benchmarks, and thought leadership by{' '}
-              <strong className="text-slate-900 dark:text-white font-medium">Harsh Verma</strong>{' '}
-              on local model economics, Model Context Protocol (MCP), zero-trust agentic security, and the Trust Economy.
+              Complete archive of <strong>{BLOG_POSTS.length} published essays, technical research, and field notes</strong> by{' '}
+              <strong className="text-slate-900 dark:text-white font-medium">Harsh Verma</strong> across Forbes Technology Council, HackerNoon, RSA Conference, The AI Journal, and personal engineering experiments.
             </p>
           </div>
 
-          {/* Interactive Filter & Search Strip */}
-          <div className="mt-8 pt-6 border-t border-[#101828]/[0.06] dark:border-white/10 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-            {/* Category Segmented Control */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-2 md:pb-0 scrollbar-none no-scrollbar">
-              {categories.map((cat) => {
-                const isActive = selectedCategory === cat.id;
-                return (
+          {/* Interactive Dual Filter & Search Suite */}
+          <div className="mt-8 pt-6 border-t border-[#101828]/[0.06] dark:border-white/10 space-y-4">
+            
+            {/* Row 1: Main Topics Segmented Control + Search */}
+            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-2 md:pb-0 scrollbar-none no-scrollbar">
+                {topics.map((t) => {
+                  const isActive = selectedTopic === t.id;
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => setSelectedTopic(t.id)}
+                      className={`px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap shrink-0 transition-all cursor-pointer ${
+                        isActive
+                          ? 'bg-[#101828] text-white dark:bg-white dark:text-[#070B14] shadow-xs'
+                          : 'bg-white/80 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-[#101828]/[0.06] dark:border-white/10 hover:border-slate-300'
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Instant Search Bar */}
+              <div className="relative w-full md:w-80 shrink-0">
+                <Search
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"
+                  aria-hidden="true"
+                />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search 30+ publications & notes..."
+                  aria-label="Search publications and engineering notes"
+                  className="w-full pl-9 pr-3 py-1.5 text-xs bg-white dark:bg-white/5 border border-[#101828]/[0.1] dark:border-white/15 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400 transition-all"
+                />
+                {searchQuery && (
                   <button
-                    key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-3 py-1.5 text-xs font-medium rounded-lg whitespace-nowrap shrink-0 transition-all cursor-pointer ${
-                      isActive
-                        ? 'bg-[#101828] text-white dark:bg-white dark:text-[#070B14] shadow-xs'
-                        : 'bg-white/80 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-[#101828]/[0.06] dark:border-white/10 hover:border-slate-300'
-                    }`}
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                    aria-label="Clear search"
                   >
-                    {cat.label}
+                    ✕
                   </button>
-                );
-              })}
+                )}
+              </div>
             </div>
 
-            {/* Instant Search Bar */}
-            <div className="relative w-full md:w-72 shrink-0">
-              <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"
-                aria-hidden="true"
-              />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search dispatches & notes..."
-                aria-label="Search dispatches and engineering notes"
-                className="w-full pl-9 pr-3 py-1.5 text-xs bg-white dark:bg-white/5 border border-[#101828]/[0.1] dark:border-white/15 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-400 transition-all"
-              />
-              {searchQuery && (
+            {/* Row 2: Secondary Source Filters, Featured Toggle & Counter */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs text-slate-500">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 mr-1 hidden sm:inline">
+                  Source:
+                </span>
+                {platforms.map((p) => {
+                  const isActive = selectedPlatform === p.id;
+                  return (
+                    <button
+                      key={p.id}
+                      onClick={() => setSelectedPlatform(p.id)}
+                      className={`px-2.5 py-1 text-[11px] rounded-md transition-colors cursor-pointer ${
+                        isActive
+                          ? 'bg-blue-900/15 text-blue-900 dark:bg-blue-400/20 dark:text-blue-300 font-semibold border border-blue-900/20 dark:border-blue-400/30'
+                          : 'bg-transparent text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      }`}
+                    >
+                      {p.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Featured toggle & Result Counter */}
+              <div className="flex items-center gap-3 ml-auto">
                 <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
-                  aria-label="Clear search"
+                  onClick={() => setOnlyFeatured(!onlyFeatured)}
+                  className={`px-2.5 py-1 rounded-md text-[11px] font-medium flex items-center gap-1 transition-colors cursor-pointer ${
+                    onlyFeatured
+                      ? 'bg-amber-100 text-amber-900 dark:bg-amber-950/50 dark:text-amber-300 border border-amber-300 dark:border-amber-700'
+                      : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                  }`}
                 >
-                  ✕
+                  <Star className={`w-3 h-3 ${onlyFeatured ? 'fill-amber-500 text-amber-500' : ''}`} />
+                  <span>Featured Only</span>
                 </button>
-              )}
+
+                <span className="font-mono text-[11px] text-slate-400">
+                  Showing {filteredPosts.length} of {BLOG_POSTS.length}
+                </span>
+              </div>
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* 2. Main Content Grid: Posts + Sticky Author Profile Sidebar */}
+      {/* 2. Main Content Grid: Articles + Sticky Author Profile Sidebar */}
       <section className="py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             
             {/* LEFT / CENTER: Editorial Post Stream (Col 1-8) */}
-            <div className="lg:col-span-8 space-y-10">
+            <div className="lg:col-span-8 space-y-8">
               {filteredPosts.length === 0 ? (
                 <div className="py-16 text-center rounded-2xl border border-dashed border-slate-300 dark:border-slate-800 p-8">
                   <SlidersHorizontal className="w-8 h-8 mx-auto text-slate-400 mb-3" />
                   <h3 className="text-lg font-serif font-semibold text-slate-900 dark:text-white mb-1">
-                    No Dispatches Found
+                    No Publications Found
                   </h3>
                   <p className="text-xs text-slate-500 max-w-sm mx-auto mb-4">
-                    No articles matched your active filter or search query. Try clearing your search or switching categories.
+                    No articles matched your active filters or search terms. Try resetting your filters to explore all 30+ publications.
                   </p>
                   <button
                     onClick={() => {
-                      setSelectedCategory('all');
+                      setSelectedTopic('all');
+                      setSelectedPlatform('all');
+                      setOnlyFeatured(false);
                       setSearchQuery('');
                     }}
                     className="px-4 py-2 text-xs font-medium text-white bg-blue-900 hover:bg-blue-800 rounded-lg transition-colors cursor-pointer"
@@ -160,9 +254,34 @@ export const BlogView: React.FC<BlogViewProps> = ({ onNavigate }) => {
                   {/* Lead Featured Story (Salience Tier 1) */}
                   {leadPost && (
                     <article className="group relative p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#0B111E] border border-[#101828]/[0.08] dark:border-white/10 shadow-xs hover:shadow-md transition-all duration-300">
+                      
+                      {/* Thumbnail Media Container if available */}
+                      {leadPost.img && (
+                        <div className="mb-6 rounded-xl overflow-hidden aspect-[16/9] sm:aspect-[21/9] bg-slate-100 dark:bg-slate-900 border border-slate-200/50 dark:border-white/5 relative">
+                          <img
+                            src={leadPost.img}
+                            alt={leadPost.title}
+                            className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500"
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
+                            onError={(e) => {
+                              // Fallback container
+                              (e.target as HTMLElement).style.display = 'none';
+                            }}
+                          />
+                          {leadPost.isFeatured && (
+                            <span className="absolute top-3 right-3 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-amber-500 text-white rounded-md shadow-xs flex items-center gap-1">
+                              <Star className="w-2.5 h-2.5 fill-white" />
+                              Featured
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Unboxed Metadata Line */}
                       <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-3 font-sans">
                         <span className="font-semibold text-blue-900 dark:text-blue-400 uppercase tracking-wider text-[11px]">
-                          {leadPost.category}
+                          {leadPost.subCategory || leadPost.category}
                         </span>
                         <span aria-hidden="true">·</span>
                         <span>{leadPost.publishDate}</span>
@@ -174,8 +293,8 @@ export const BlogView: React.FC<BlogViewProps> = ({ onNavigate }) => {
                         {leadPost.syndicatedPlatform && (
                           <>
                             <span aria-hidden="true">·</span>
-                            <span className="text-slate-600 dark:text-slate-300 font-medium">
-                              Via {leadPost.syndicatedPlatform}
+                            <span className="text-slate-700 dark:text-slate-300 font-medium">
+                              {leadPost.syndicatedPlatform}
                             </span>
                           </>
                         )}
@@ -194,12 +313,7 @@ export const BlogView: React.FC<BlogViewProps> = ({ onNavigate }) => {
                         {leadPost.subtitle}
                       </p>
 
-                      {/* Key Quote / Pull Callout with subtle top/bottom hairline */}
-                      <blockquote className="my-5 py-3 px-4 rounded-xl bg-slate-50 dark:bg-white/[0.03] border-y border-[#101828]/[0.06] dark:border-white/10 text-xs sm:text-sm italic font-serif text-slate-700 dark:text-slate-300 leading-relaxed">
-                        “{leadPost.keyQuote}”
-                      </blockquote>
-
-                      {/* Benchmarks preview if available */}
+                      {/* Benchmarks preview if present */}
                       {leadPost.benchmarks && leadPost.benchmarks.length > 0 && (
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 my-5 p-3.5 rounded-xl bg-blue-50/40 dark:bg-blue-950/30 border border-blue-900/10 dark:border-blue-400/15">
                           {leadPost.benchmarks.map((bm, idx) => (
@@ -220,7 +334,7 @@ export const BlogView: React.FC<BlogViewProps> = ({ onNavigate }) => {
                         </div>
                       )}
 
-                      {/* Tags & Actions */}
+                      {/* Tags & Action Buttons */}
                       <div className="pt-4 mt-2 border-t border-[#101828]/[0.06] dark:border-white/10 flex flex-wrap items-center justify-between gap-3">
                         <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                           {leadPost.tags.slice(0, 3).map((tag, tIdx) => (
@@ -236,10 +350,10 @@ export const BlogView: React.FC<BlogViewProps> = ({ onNavigate }) => {
                               href={leadPost.externalUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1"
-                              title="Original Source on harshverma.me"
+                              className="text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1 font-medium transition-colors"
+                              title="Original Source on external platform"
                             >
-                              <span>Original Site</span>
+                              <span>Original Article</span>
                               <ExternalLink className="w-3 h-3" />
                             </a>
                           )}
@@ -247,7 +361,7 @@ export const BlogView: React.FC<BlogViewProps> = ({ onNavigate }) => {
                             onClick={() => handlePostClick(leadPost.slug)}
                             className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-900 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 cursor-pointer"
                           >
-                            <span>Read Full Note</span>
+                            <span>Read Full Dispatch</span>
                             <ArrowRight className="w-3.5 h-3.5" />
                           </button>
                         </div>
@@ -255,7 +369,7 @@ export const BlogView: React.FC<BlogViewProps> = ({ onNavigate }) => {
                     </article>
                   )}
 
-                  {/* Secondary Articles Grid (Salience Tier 2 & 3) */}
+                  {/* Secondary Articles Grid (2-Column Cards) */}
                   {secondaryPosts.length > 0 && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {secondaryPosts.map((post) => (
@@ -264,24 +378,45 @@ export const BlogView: React.FC<BlogViewProps> = ({ onNavigate }) => {
                           className="group flex flex-col justify-between p-6 rounded-2xl bg-white dark:bg-[#0B111E] border border-[#101828]/[0.08] dark:border-white/10 shadow-xs hover:shadow-md hover:border-blue-900/30 dark:hover:border-blue-400/30 transition-all duration-300"
                         >
                           <div>
+                            {/* Card Media Preview if available */}
+                            {post.img && (
+                              <div className="mb-4 rounded-lg overflow-hidden aspect-[16/9] bg-slate-100 dark:bg-slate-900 relative">
+                                <img
+                                  src={post.img}
+                                  alt={post.title}
+                                  className="w-full h-full object-cover group-hover:scale-104 transition-transform duration-500"
+                                  loading="lazy"
+                                  referrerPolicy="no-referrer"
+                                  onError={(e) => {
+                                    (e.target as HTMLElement).style.display = 'none';
+                                  }}
+                                />
+                                {post.isFeatured && (
+                                  <span className="absolute top-2 right-2 px-1.5 py-0.5 text-[9px] font-bold uppercase bg-amber-500 text-white rounded shadow-2xs">
+                                    Featured
+                                  </span>
+                                )}
+                              </div>
+                            )}
+
                             {/* Unboxed Metadata */}
-                            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-2.5 font-sans">
+                            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mb-2 font-sans">
                               <span className="font-semibold text-blue-900 dark:text-blue-400 uppercase tracking-wider text-[10px]">
-                                {post.category}
+                                {post.subCategory || post.category}
                               </span>
                               <span aria-hidden="true">·</span>
                               <span>{post.readTime}</span>
                               {post.syndicatedPlatform && (
                                 <>
                                   <span aria-hidden="true">·</span>
-                                  <span className="truncate max-w-[120px]">
+                                  <span className="truncate max-w-[130px] font-medium text-slate-700 dark:text-slate-300">
                                     {post.syndicatedPlatform}
                                   </span>
                                 </>
                               )}
                             </div>
 
-                            <h3 className="text-lg sm:text-xl font-serif font-bold text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors leading-snug mb-2">
+                            <h3 className="text-base sm:text-lg font-serif font-bold text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors leading-snug mb-2">
                               <button
                                 onClick={() => handlePostClick(post.slug)}
                                 className="text-left cursor-pointer focus:outline-none"
@@ -299,13 +434,26 @@ export const BlogView: React.FC<BlogViewProps> = ({ onNavigate }) => {
                             <span className="text-[11px] text-slate-400 font-mono">
                               {post.publishDate}
                             </span>
-                            <button
-                              onClick={() => handlePostClick(post.slug)}
-                              className="text-xs font-semibold text-blue-900 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 inline-flex items-center gap-1 cursor-pointer"
-                            >
-                              <span>Read</span>
-                              <ChevronRight className="w-3.5 h-3.5" />
-                            </button>
+                            <div className="flex items-center gap-2.5">
+                              {post.externalUrl && (
+                                <a
+                                  href={post.externalUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                                  title="Open external publication"
+                                >
+                                  <ExternalLink className="w-3.5 h-3.5" />
+                                </a>
+                              )}
+                              <button
+                                onClick={() => handlePostClick(post.slug)}
+                                className="text-xs font-semibold text-blue-900 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 inline-flex items-center gap-1 cursor-pointer"
+                              >
+                                <span>Read</span>
+                                <ChevronRight className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
                           </div>
                         </article>
                       ))}
@@ -318,7 +466,7 @@ export const BlogView: React.FC<BlogViewProps> = ({ onNavigate }) => {
             {/* RIGHT: Sticky Author Profile Sidebar (Col 9-12) */}
             <aside className="lg:col-span-4 lg:sticky lg:top-24 space-y-6">
               
-              {/* Author Card: Harsh Verma */}
+              {/* Author Profile Card: Harsh Verma */}
               <div className="p-6 rounded-2xl bg-white dark:bg-[#0B111E] border border-[#101828]/[0.08] dark:border-white/10 shadow-xs">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="relative w-16 h-16 rounded-2xl overflow-hidden border border-blue-900/20 dark:border-blue-400/30 shrink-0">
@@ -351,8 +499,18 @@ export const BlogView: React.FC<BlogViewProps> = ({ onNavigate }) => {
                 </div>
 
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-sans mb-4">
-                  Engineering leader at Palo Alto Networks, Forbes Technology Council member, Fellow of BCS, and IEEE Senior Member writing on agentic security, local inference, and systems judgment.
+                  Engineering leader at Palo Alto Networks, Forbes Technology Council member, Fellow of BCS, and IEEE Senior Member writing on agentic security, physical AI, and systems judgment.
                 </p>
+
+                {/* Published Publications Counter */}
+                <div className="p-3 rounded-xl bg-blue-50/50 dark:bg-blue-950/30 border border-blue-900/10 dark:border-blue-400/15 mb-4 flex items-center justify-between">
+                  <span className="text-xs font-sans text-slate-600 dark:text-slate-400">
+                    Total Published Works
+                  </span>
+                  <span className="text-sm font-mono font-bold text-blue-900 dark:text-blue-300">
+                    {BLOG_POSTS.length} Articles
+                  </span>
+                </div>
 
                 {/* Verification & Affiliations Strip */}
                 <div className="space-y-1.5 py-3 border-y border-[#101828]/[0.06] dark:border-white/10 text-[11px] text-slate-600 dark:text-slate-400 font-sans">
@@ -366,7 +524,11 @@ export const BlogView: React.FC<BlogViewProps> = ({ onNavigate }) => {
                   </div>
                   <div className="flex items-center justify-between">
                     <span>Fellowships & Honors</span>
-                    <strong className="text-slate-900 dark:text-white">FBCS · SMIEEE</strong>
+                    <strong className="text-slate-900 dark:text-white">FBCS · SMIEEE · FRSA</strong>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Ecosystem Mentorship</span>
+                    <strong className="text-slate-900 dark:text-white">Berkeley SkyDeck · Techstars</strong>
                   </div>
                 </div>
 
@@ -419,6 +581,24 @@ export const BlogView: React.FC<BlogViewProps> = ({ onNavigate }) => {
                     </button>
                   </div>
                 </div>
+              </div>
+
+              {/* Speaking Inquiry Quick Card */}
+              <div className="p-5 rounded-2xl bg-white dark:bg-[#0B111E] border border-[#101828]/[0.08] dark:border-white/10 shadow-xs flex items-center justify-between">
+                <div>
+                  <h5 className="text-xs font-serif font-bold text-slate-900 dark:text-white">
+                    Keynotes & Executive Briefings
+                  </h5>
+                  <p className="text-[11px] text-slate-500">
+                    Invite Harsh Verma to speak at your summit
+                  </p>
+                </div>
+                <button
+                  onClick={() => onNavigate('speaking')}
+                  className="px-3 py-1.5 text-xs font-medium text-blue-900 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer shrink-0"
+                >
+                  Speaking
+                </button>
               </div>
 
             </aside>

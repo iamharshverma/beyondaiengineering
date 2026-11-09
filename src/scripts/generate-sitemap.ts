@@ -55,7 +55,7 @@ function getBlogSlugs(): string[] {
     const filePath = path.resolve('src/data/blogData.ts');
     if (fs.existsSync(filePath)) {
       const content = fs.readFileSync(filePath, 'utf-8');
-      const matches = [...content.matchAll(/slug:\s*['"]([^'"]+)['"]/g)];
+      const matches = [...content.matchAll(/(?:"slug"|slug):\s*['"]([^'"]+)['"]/g)];
       return Array.from(new Set(matches.map(m => m[1])));
     }
   } catch (err) {

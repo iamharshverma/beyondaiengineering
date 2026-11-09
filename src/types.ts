@@ -146,11 +146,15 @@ export interface BlogPost {
   slug: string;
   title: string;
   subtitle: string;
-  category: 'Engineering Note' | 'Forbes Column' | 'Agentic AI' | 'Systems Judgment' | 'Architecture';
+  category: string;
+  mainCategory?: string;
+  subCategory?: string;
   readTime: string;
   publishDate: string;
-  syndicatedPlatform?: 'harshverma.me' | 'Forbes Technology Council' | 'HackerNoon' | 'RSAC' | 'Internal Note';
+  syndicatedPlatform?: string;
   externalUrl?: string;
+  isFeatured?: boolean;
+  img?: string;
   summary?: string;
   keyQuote: string;
   leadParagraph: string;
