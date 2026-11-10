@@ -17,7 +17,9 @@ import {
   Milestone,
   CheckCircle2,
   Sparkles,
+  Loader2,
 } from 'lucide-react';
+import { sendBookInquiryToAuthor } from '../utils/emailService';
 
 interface HomeViewProps {
   onNavigate: (page: PageId) => void;
@@ -35,12 +37,24 @@ export const HomeView: React.FC<HomeViewProps> = ({
   onOpenInfographicModal,
 }) => {
   const [emailInput, setEmailInput] = useState('');
+  const [emailSubmitting, setEmailSubmitting] = useState(false);
   const [emailSubmitted, setEmailSubmitted] = useState(false);
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (emailInput.trim()) {
+    if (!emailInput.trim()) return;
+    setEmailSubmitting(true);
+    try {
+      await sendBookInquiryToAuthor({
+        formType: 'Individual Book Inquiry',
+        name: 'Newsletter Reader',
+        email: emailInput.trim(),
+        notesOrMessage: 'Requested to join Beyond AI Engineering updates and receive C.A.O. field guide.',
+        sourcePage: '/',
+      });
       setEmailSubmitted(true);
+    } finally {
+      setEmailSubmitting(false);
     }
   };
 
@@ -522,9 +536,17 @@ export const HomeView: React.FC<HomeViewProps> = ({
               />
               <button
                 type="submit"
-                className="w-full sm:w-auto px-5 py-2.5 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors whitespace-nowrap cursor-pointer shadow-xs"
+                disabled={emailSubmitting}
+                className="w-full sm:w-auto px-5 py-2.5 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors whitespace-nowrap cursor-pointer shadow-xs disabled:opacity-50 flex items-center justify-center gap-1.5"
               >
-                Join Beyond AI Engineering
+                {emailSubmitting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Joining...</span>
+                  </>
+                ) : (
+                  <span>Join Beyond AI Engineering</span>
+                )}
               </button>
             </form>
           ) : (

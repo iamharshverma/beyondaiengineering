@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { X, CheckCircle2, Send, Mic } from 'lucide-react';
+import { X, CheckCircle2, Send, Mic, Loader2, Mail } from 'lucide-react';
+import { sendBookInquiryToAuthor, AUTHOR_EMAIL } from '../utils/emailService';
 
 interface SpeakingInquiryModalProps {
   isOpen: boolean;
@@ -18,13 +19,30 @@ export const SpeakingInquiryModal: React.FC<SpeakingInquiryModalProps> = ({
   const [organization, setOrganization] = useState('');
   const [eventType, setEventType] = useState('Conference Keynote');
   const [message, setMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [mailtoUrl, setMailtoUrl] = useState('');
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+    try {
+      const res = await sendBookInquiryToAuthor({
+        formType: 'Speaking & Keynote Inquiry',
+        name,
+        email,
+        organization,
+        formatOrCopies: `${eventType} (${topic})`,
+        notesOrMessage: message || 'Speaking and keynote inquiry.',
+        sourcePage: '/speaking-inquiry',
+      });
+      setMailtoUrl(res.mailtoUrl);
+      setSubmitted(true);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -163,10 +181,20 @@ export const SpeakingInquiryModal: React.FC<SpeakingInquiryModalProps> = ({
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
+                disabled={submitting}
+                className="px-5 py-2 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm disabled:opacity-50"
               >
-                <span>Submit Speaking Request</span>
-                <Send className="w-3.5 h-3.5" />
+                {submitting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Sending to {AUTHOR_EMAIL}...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Submit Speaking Request</span>
+                    <Send className="w-3.5 h-3.5" />
+                  </>
+                )}
               </button>
             </div>
           </form>
@@ -176,11 +204,22 @@ export const SpeakingInquiryModal: React.FC<SpeakingInquiryModalProps> = ({
               <CheckCircle2 className="w-6 h-6" />
             </div>
             <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white">
-              Speaking Request Received
+              Speaking Request Sent to Harsh Verma!
             </h3>
             <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 max-w-md mx-auto leading-relaxed">
-              Thank you, {name}. Harsh Verma's speaking representative will review your request for <strong>{topic}</strong> with <strong>{organization}</strong> and respond within 2 business days.
+              Thank you, {name}. Your request for <strong>{topic}</strong> with <strong>{organization}</strong> has been emailed directly to <strong>{AUTHOR_EMAIL}</strong>. Harsh Verma's office will respond to <strong>{email}</strong> within 2 business days.
             </p>
+            {mailtoUrl && (
+              <div className="pt-2">
+                <a
+                  href={mailtoUrl}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-900 dark:text-blue-400 underline hover:opacity-80"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                  <span>Send copy via your email client</span>
+                </a>
+              </div>
+            )}
             <div className="pt-4">
               <button
                 onClick={handleReset}

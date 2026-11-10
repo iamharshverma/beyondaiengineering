@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { PageId } from '../types';
 import { READER_STORIES } from '../data/storiesData';
-import { ArrowRight, Send, CheckCircle2, Sparkles, Quote } from 'lucide-react';
+import { ArrowRight, Send, CheckCircle2, Sparkles, Quote, Loader2, Mail } from 'lucide-react';
+import { sendBookInquiryToAuthor, AUTHOR_EMAIL } from '../utils/emailService';
 
 interface StoriesViewProps {
   onNavigate: (page: PageId) => void;
@@ -16,12 +17,28 @@ export const StoriesView: React.FC<StoriesViewProps> = ({
 }) => {
   const [submissionOpen, setSubmissionOpen] = useState(false);
   const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
   const [userStory, setUserStory] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [mailtoUrl, setMailtoUrl] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+    try {
+      const res = await sendBookInquiryToAuthor({
+        formType: 'Reader Transformation Story',
+        name: userName,
+        email: userEmail || 'reader@beyondaiengineering.com',
+        notesOrMessage: userStory,
+        sourcePage: '/stories',
+      });
+      setMailtoUrl(res.mailtoUrl);
+      setSubmitted(true);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -66,18 +83,33 @@ export const StoriesView: React.FC<StoriesViewProps> = ({
                 <p className="text-xs text-[#475467] dark:text-slate-300">
                   Tell us how the book or C.A.O. framework changed your projects, career altitude, or team outcomes.
                 </p>
-                <div>
-                  <label className="block text-xs font-mono uppercase tracking-wider text-[#101828] dark:text-slate-200 font-semibold mb-1">
-                    Your Name & Role
-                  </label>
-                  <input
-                    required
-                    type="text"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    placeholder="e.g. Maya Lin, Senior Distributed Systems Engineer"
-                    className="w-full text-xs sm:text-sm p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-[#101828] dark:text-slate-200 font-semibold mb-1">
+                      Your Name & Role
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      value={userName}
+                      onChange={(e) => setUserName(e.target.value)}
+                      placeholder="e.g. Maya Lin, Senior Architect"
+                      className="w-full text-xs sm:text-sm p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-[#101828] dark:text-slate-200 font-semibold mb-1">
+                      Your Email
+                    </label>
+                    <input
+                      required
+                      type="email"
+                      value={userEmail}
+                      onChange={(e) => setUserEmail(e.target.value)}
+                      placeholder="e.g. maya@company.com"
+                      className="w-full text-xs sm:text-sm p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-xs font-mono uppercase tracking-wider text-[#101828] dark:text-slate-200 font-semibold mb-1">
@@ -94,19 +126,40 @@ export const StoriesView: React.FC<StoriesViewProps> = ({
                 </div>
                 <button
                   type="submit"
-                  className="px-5 py-2 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  disabled={submitting}
+                  className="px-5 py-2.5 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs disabled:opacity-50"
                 >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>Submit Story for Publication</span>
+                  {submitting ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Sending to {AUTHOR_EMAIL}...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-3.5 h-3.5" />
+                      <span>Submit Story to {AUTHOR_EMAIL}</span>
+                    </>
+                  )}
                 </button>
               </form>
             ) : (
-              <div className="text-center py-6 space-y-2">
-                <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto" />
-                <h4 className="font-serif text-lg font-bold text-[#101828] dark:text-white">Thank You, {userName}</h4>
-                <p className="text-xs text-[#475467] dark:text-slate-300">
-                  Your story has been submitted for editorial curation on the reader showcase.
+              <div className="text-center py-6 space-y-3">
+                <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400 mx-auto" />
+                <h4 className="font-serif text-xl font-bold text-[#101828] dark:text-white">Thank You, {userName}</h4>
+                <p className="text-xs text-[#475467] dark:text-slate-300 max-w-md mx-auto">
+                  Your story has been dispatched directly to Harsh Verma (<strong>{AUTHOR_EMAIL}</strong>) for editorial review and reader showcase curation.
                 </p>
+                {mailtoUrl && (
+                  <div className="pt-1">
+                    <a
+                      href={mailtoUrl}
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-900 dark:text-blue-400 underline"
+                    >
+                      <Mail className="w-3 h-3" />
+                      <span>Send backup copy via mail client</span>
+                    </a>
+                  </div>
+                )}
               </div>
             )}
           </div>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { PageId } from '../types';
 import { BOOK_DETAILS } from '../data/bookData';
-import { ArrowUpRight, CheckCircle2, Users, ShieldCheck, Sparkles, BookOpen } from 'lucide-react';
+import { ArrowUpRight, CheckCircle2, Users, ShieldCheck, Sparkles, BookOpen, Mail, Loader2, Send } from 'lucide-react';
+import { sendBookInquiryToAuthor, AUTHOR_EMAIL } from '../utils/emailService';
 
 interface BuyViewProps {
   onNavigate: (page: PageId) => void;
@@ -10,10 +11,25 @@ interface BuyViewProps {
 
 export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) => {
   const [selectedFormat, setSelectedFormat] = useState<'hardcover' | 'paperback' | 'ebook' | 'audiobook'>('hardcover');
+  
+  // Bulk order state
   const [teamSize, setTeamSize] = useState('25-50 copies');
   const [teamEmail, setTeamEmail] = useState('');
   const [teamName, setTeamName] = useState('');
+  const [teamOrg, setTeamOrg] = useState('');
+  const [teamNotes, setTeamNotes] = useState('');
+  const [teamSubmitting, setTeamSubmitting] = useState(false);
   const [teamSubmitted, setTeamSubmitted] = useState(false);
+  const [teamMailtoUrl, setTeamMailtoUrl] = useState('');
+
+  // Direct author copy form state
+  const [showDirectForm, setShowDirectForm] = useState(false);
+  const [directName, setDirectName] = useState('');
+  const [directEmail, setDirectEmail] = useState('');
+  const [directNotes, setDirectNotes] = useState('');
+  const [directSubmitting, setDirectSubmitting] = useState(false);
+  const [directSubmitted, setDirectSubmitted] = useState(false);
+  const [directMailtoUrl, setDirectMailtoUrl] = useState('');
 
   const formats = [
     {
@@ -50,9 +66,45 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
     },
   ];
 
-  const handleBulkSubmit = (e: React.FormEvent) => {
+  const currentFmt = formats.find((f) => f.id === selectedFormat) || formats[0];
+
+  const handleBulkSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setTeamSubmitted(true);
+    setTeamSubmitting(true);
+    try {
+      const res = await sendBookInquiryToAuthor({
+        formType: 'Team & Bulk Book Order',
+        name: teamName,
+        email: teamEmail,
+        organization: teamOrg || 'Engineering Organization',
+        formatOrCopies: teamSize,
+        notesOrMessage: teamNotes || 'Requested bulk quote and information pack.',
+        sourcePage: '/book/buy',
+      });
+      setTeamMailtoUrl(res.mailtoUrl);
+      setTeamSubmitted(true);
+    } finally {
+      setTeamSubmitting(false);
+    }
+  };
+
+  const handleDirectSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setDirectSubmitting(true);
+    try {
+      const res = await sendBookInquiryToAuthor({
+        formType: 'Book Order (Direct Author Copy)',
+        name: directName,
+        email: directEmail,
+        formatOrCopies: `${currentFmt.name} (${currentFmt.price})`,
+        notesOrMessage: directNotes || `Inquiry to get a copy of ${currentFmt.name}.`,
+        sourcePage: `/book/buy (${currentFmt.name})`,
+      });
+      setDirectMailtoUrl(res.mailtoUrl);
+      setDirectSubmitted(true);
+    } finally {
+      setDirectSubmitting(false);
+    }
   };
 
   return (
@@ -93,9 +145,15 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
           {/* Right Column: Buying Options */}
           <div className="lg:col-span-7 space-y-6 text-left">
             <div>
-              <span className="text-xs uppercase tracking-widest font-mono text-blue-900 dark:text-blue-400 font-semibold block mb-1">
-                Official Book Distribution
-              </span>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs uppercase tracking-widest font-mono text-blue-900 dark:text-blue-400 font-semibold block">
+                  Official Book Distribution
+                </span>
+                <span className="inline-flex items-center gap-1 text-[11px] font-mono bg-blue-100 dark:bg-blue-950/80 text-blue-900 dark:text-blue-300 px-2 py-0.5 rounded-full">
+                  <Mail className="w-3 h-3" />
+                  <span>Direct Author: {AUTHOR_EMAIL}</span>
+                </span>
+              </div>
               <h1 className="font-serif text-fluid-hero font-bold tracking-tight text-[#101828] dark:text-white mb-2 text-balance">
                 Ready to Go Beyond AI Engineering?
               </h1>
@@ -109,7 +167,10 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
               {formats.map((fmt) => (
                 <div
                   key={fmt.id}
-                  onClick={() => setSelectedFormat(fmt.id)}
+                  onClick={() => {
+                    setSelectedFormat(fmt.id);
+                    setDirectSubmitted(false);
+                  }}
                   className={`p-4 rounded-xl border text-left transition-all cursor-pointer hover:-translate-y-0.5 duration-200 ${
                     selectedFormat === fmt.id
                       ? 'border-blue-900 dark:border-blue-400 bg-white dark:bg-[#111C35] ring-2 ring-blue-900/10 dark:ring-blue-400/20 shadow-sm'
@@ -128,20 +189,133 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
               ))}
             </div>
 
-            {/* Selected Format Retailers */}
+            {/* Selected Format Retailers & Direct Author Option */}
             <div className="bg-white dark:bg-[#0D1527] p-6 rounded-xl border border-[#101828]/10 dark:border-white/10 shadow-xs space-y-4">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-serif text-xl font-bold text-[#101828] dark:text-white">
-                    {formats.find((f) => f.id === selectedFormat)?.name}
+                    {currentFmt.name}
                   </h3>
-                  <span className="text-xs text-[#475467] dark:text-slate-400">Choose your preferred authorized bookseller:</span>
+                  <span className="text-xs text-[#475467] dark:text-slate-400">Available from authorized booksellers or direct author order:</span>
                 </div>
                 <div className="font-serif text-2xl font-bold text-[#101828] dark:text-white">
-                  {formats.find((f) => f.id === selectedFormat)?.price}
+                  {currentFmt.price}
                 </div>
               </div>
 
+              {/* Direct Author Form Toggle */}
+              <div className="p-4 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-900/50 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-blue-900 dark:text-blue-400" />
+                    <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-950 dark:text-blue-300">
+                      Request Direct Copy from Harsh Verma
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowDirectForm(!showDirectForm)}
+                    className="text-xs font-semibold text-blue-900 dark:text-blue-300 underline hover:text-blue-700 cursor-pointer"
+                  >
+                    {showDirectForm ? 'Close Form' : 'Order Direct Copy →'}
+                  </button>
+                </div>
+
+                <p className="text-xs text-[#475467] dark:text-slate-300">
+                  Submissions are emailed directly to <strong>{AUTHOR_EMAIL}</strong> for direct author distribution or invoice requests.
+                </p>
+
+                {showDirectForm && (
+                  <div className="pt-2">
+                    {!directSubmitted ? (
+                      <form onSubmit={handleDirectSubmit} className="space-y-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-[11px] font-mono uppercase text-[#101828] dark:text-slate-300 font-semibold mb-1">
+                              Your Name
+                            </label>
+                            <input
+                              required
+                              type="text"
+                              value={directName}
+                              onChange={(e) => setDirectName(e.target.value)}
+                              placeholder="Your full name"
+                              className="w-full text-xs p-2 rounded-md border border-[#101828]/20 dark:border-white/20 bg-white dark:bg-[#0A101F] text-[#101828] dark:text-white"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-mono uppercase text-[#101828] dark:text-slate-300 font-semibold mb-1">
+                              Your Email
+                            </label>
+                            <input
+                              required
+                              type="email"
+                              value={directEmail}
+                              onChange={(e) => setDirectEmail(e.target.value)}
+                              placeholder="you@domain.com"
+                              className="w-full text-xs p-2 rounded-md border border-[#101828]/20 dark:border-white/20 bg-white dark:bg-[#0A101F] text-[#101828] dark:text-white"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-mono uppercase text-[#101828] dark:text-slate-300 font-semibold mb-1">
+                            Delivery Address / Custom Request
+                          </label>
+                          <textarea
+                            rows={2}
+                            value={directNotes}
+                            onChange={(e) => setDirectNotes(e.target.value)}
+                            placeholder="Mailing address for physical books, or special notes for Harsh Verma"
+                            className="w-full text-xs p-2 rounded-md border border-[#101828]/20 dark:border-white/20 bg-white dark:bg-[#0A101F] text-[#101828] dark:text-white"
+                          />
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={directSubmitting}
+                          className="w-full py-2.5 text-xs font-semibold bg-blue-900 dark:bg-blue-600 text-white rounded-md hover:bg-blue-950 dark:hover:bg-blue-500 transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-sm disabled:opacity-50"
+                        >
+                          {directSubmitting ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              <span>Dispatching to {AUTHOR_EMAIL}...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Send className="w-3.5 h-3.5" />
+                              <span>Send Book Order to {AUTHOR_EMAIL}</span>
+                            </>
+                          )}
+                        </button>
+                      </form>
+                    ) : (
+                      <div className="bg-emerald-50 dark:bg-emerald-950/60 p-4 rounded-lg border border-emerald-200 dark:border-emerald-800 text-center space-y-2">
+                        <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto" />
+                        <div className="font-serif font-bold text-base text-emerald-950 dark:text-emerald-200">
+                          Book Request Dispatched to Harsh Verma!
+                        </div>
+                        <p className="text-xs text-emerald-800 dark:text-emerald-300">
+                          Your request for <strong>{currentFmt.name}</strong> was sent directly to <strong>{AUTHOR_EMAIL}</strong>. Harsh will follow up at <strong>{directEmail}</strong>.
+                        </p>
+                        {directMailtoUrl && (
+                          <div className="pt-1">
+                            <a
+                              href={directMailtoUrl}
+                              className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-900 dark:text-blue-300 underline"
+                            >
+                              <span>Send backup copy via mail client</span>
+                              <ArrowUpRight className="w-3 h-3" />
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Retailer Links */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                 <a
                   href="https://amazon.com"
@@ -204,7 +378,7 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                 Buying for an Engineering Team?
               </h2>
               <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed">
-                Bring the Creator–Architect–Orchestrator framework into your engineering organization. Bulk orders of 10+ copies receive tiered team discounts and a private virtual Q&A with Harsh Verma.
+                Bring the Creator–Architect–Orchestrator framework into your engineering organization. Bulk requests are dispatched directly to Harsh Verma (<strong>{AUTHOR_EMAIL}</strong>) with custom tiered discounts and a private virtual Q&A session.
               </p>
             </div>
 
@@ -239,38 +413,98 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                   </div>
                 </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-mono uppercase text-[#101828] dark:text-slate-200 font-semibold mb-1">
+                      Number of Copies Needed
+                    </label>
+                    <select
+                      value={teamSize}
+                      onChange={(e) => setTeamSize(e.target.value)}
+                      className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/20 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
+                    >
+                      <option value="10-24 copies">10–24 copies (15% discount + Lab Bundle)</option>
+                      <option value="25-50 copies">25–50 copies (25% discount + Virtual Q&A)</option>
+                      <option value="51-100 copies">51–100 copies (35% discount + Custom Workshop)</option>
+                      <option value="100+ copies">100+ copies (Enterprise Campus Licensing)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-mono uppercase text-[#101828] dark:text-slate-200 font-semibold mb-1">
+                      Company / Organization
+                    </label>
+                    <input
+                      type="text"
+                      value={teamOrg}
+                      onChange={(e) => setTeamOrg(e.target.value)}
+                      placeholder="e.g. OpenAI, Palantir, Stanford"
+                      className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/20 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-xs font-mono uppercase text-[#101828] dark:text-slate-200 font-semibold mb-1">
-                    Number of Copies Needed
+                    Timeline / Delivery Notes
                   </label>
-                  <select
-                    value={teamSize}
-                    onChange={(e) => setTeamSize(e.target.value)}
+                  <textarea
+                    rows={2}
+                    value={teamNotes}
+                    onChange={(e) => setTeamNotes(e.target.value)}
+                    placeholder="Specify target delivery timeline, physical vs digital distribution, or briefing requests."
                     className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/20 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
-                  >
-                    <option value="10-24 copies">10–24 copies (15% discount + Lab Bundle)</option>
-                    <option value="25-50 copies">25–50 copies (25% discount + Virtual Q&A)</option>
-                    <option value="51-100 copies">51–100 copies (35% discount + Custom Workshop)</option>
-                    <option value="100+ copies">100+ copies (Enterprise Campus Licensing)</option>
-                  </select>
+                  />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-3 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors cursor-pointer shadow-xs"
+                  disabled={teamSubmitting}
+                  className="w-full py-3 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors cursor-pointer shadow-xs flex items-center justify-center gap-2 disabled:opacity-50"
                 >
-                  Request Bulk Invoice & Delivery Timeline
+                  {teamSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Sending inquiry to {AUTHOR_EMAIL}...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4" />
+                      <span>Send Team Bulk Inquiry to {AUTHOR_EMAIL}</span>
+                    </>
+                  )}
                 </button>
               </form>
             ) : (
-              <div className="text-center py-6 space-y-2">
+              <div className="text-center py-6 space-y-3">
                 <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400 mx-auto" />
                 <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white">
-                  Bulk Request Received
+                  Bulk Request Dispatched to Harsh Verma!
                 </h3>
-                <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 max-w-sm mx-auto">
-                  Thank you, {teamName}. We have received your inquiry for <strong>{teamSize}</strong> and sent confirmation details to <strong>{teamEmail}</strong>.
+                <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 max-w-sm mx-auto leading-relaxed">
+                  Thank you, {teamName}. Your inquiry for <strong>{teamSize}</strong> has been transmitted directly to <strong>{AUTHOR_EMAIL}</strong>. We will send volume invoice details to <strong>{teamEmail}</strong> within 24 hours.
                 </p>
+                {teamMailtoUrl && (
+                  <div className="pt-2">
+                    <a
+                      href={teamMailtoUrl}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-900 dark:text-blue-400 underline hover:opacity-80"
+                    >
+                      <Mail className="w-3.5 h-3.5" />
+                      <span>Send a copy via your personal mail app</span>
+                    </a>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTeamSubmitted(false);
+                    setTeamEmail('');
+                    setTeamNotes('');
+                  }}
+                  className="mt-2 text-xs text-[#475467] dark:text-slate-400 underline hover:text-[#101828] dark:hover:text-white cursor-pointer block mx-auto"
+                >
+                  Submit another request
+                </button>
               </div>
             )}
           </div>

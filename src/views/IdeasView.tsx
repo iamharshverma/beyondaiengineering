@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { PageId, Article } from '../types';
 import { ARTICLES } from '../data/articlesData';
-import { Clock, ArrowRight, BookOpen, Calendar, Search } from 'lucide-react';
+import { Clock, ArrowRight, BookOpen, Calendar, Search, Loader2 } from 'lucide-react';
+import { sendBookInquiryToAuthor } from '../utils/emailService';
 
 interface IdeasViewProps {
   onNavigate: (page: PageId) => void;
@@ -14,6 +15,7 @@ export const IdeasView: React.FC<IdeasViewProps> = ({
 }) => {
   const [selectedTopic, setSelectedTopic] = useState<string>('All');
   const [emailInput, setEmailInput] = useState('');
+  const [emailSubmitting, setEmailSubmitting] = useState(false);
   const [emailSubmitted, setEmailSubmitted] = useState(false);
 
   const topics = ['All', 'Career Strategy', 'Systems Thinking', 'Agentic AI', 'Cybersecurity', 'Education'];
@@ -22,10 +24,21 @@ export const IdeasView: React.FC<IdeasViewProps> = ({
     ? ARTICLES
     : ARTICLES.filter((a) => a.topic === selectedTopic);
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (emailInput.trim()) {
+    if (!emailInput.trim()) return;
+    setEmailSubmitting(true);
+    try {
+      await sendBookInquiryToAuthor({
+        formType: 'Individual Book Inquiry',
+        name: 'Technical Notes Subscriber',
+        email: emailInput.trim(),
+        notesOrMessage: 'Subscribed to receive long-form technical dispatches from Beyond AI Engineering.',
+        sourcePage: '/ideas',
+      });
       setEmailSubmitted(true);
+    } finally {
+      setEmailSubmitting(false);
     }
   };
 
@@ -131,9 +144,17 @@ export const IdeasView: React.FC<IdeasViewProps> = ({
               />
               <button
                 type="submit"
-                className="px-5 py-2.5 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors cursor-pointer whitespace-nowrap shadow-xs"
+                disabled={emailSubmitting}
+                className="px-5 py-2.5 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors cursor-pointer whitespace-nowrap shadow-xs disabled:opacity-50 flex items-center justify-center gap-1.5"
               >
-                Join Readers
+                {emailSubmitting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Joining...</span>
+                  </>
+                ) : (
+                  <span>Join Readers</span>
+                )}
               </button>
             </form>
           ) : (
