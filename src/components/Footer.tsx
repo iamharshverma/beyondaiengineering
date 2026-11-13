@@ -4,6 +4,7 @@ import { PageId } from '../types';
 import { ArrowUpRight, BookOpen, ExternalLink } from 'lucide-react';
 import { BrandLogo } from './Navbar';
 import { SITE_CONFIG } from '../config/siteConfig';
+import { getPagePath } from '../utils/router';
 
 interface FooterProps {
   onNavigate: (page: PageId) => void;
@@ -78,82 +79,82 @@ export const Footer: React.FC<FooterProps> = ({
               </h3>
               <ul className="space-y-2.5 text-slate-300">
                 <li>
-                  <button onClick={() => handleNavigate('book')} className="hover:text-white transition-colors cursor-pointer">
+                  <a href={getPagePath('book')} onClick={(e) => { e.preventDefault(); handleNavigate('book'); }} className="hover:text-white transition-colors cursor-pointer">
                     The Book
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => handleNavigate('sample')} className="hover:text-white transition-colors cursor-pointer text-blue-300">
+                  <a href={getPagePath('sample')} onClick={(e) => { e.preventDefault(); handleNavigate('sample'); }} className="hover:text-white transition-colors cursor-pointer text-blue-300">
                     Read Sample Excerpt
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => handleNavigate('cao-framework')} className="hover:text-white transition-colors cursor-pointer">
+                  <a href={getPagePath('cao-framework')} onClick={(e) => { e.preventDefault(); handleNavigate('cao-framework'); }} className="hover:text-white transition-colors cursor-pointer">
                     C.A.O. Framework
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => handleNavigate('frameworks')} className="hover:text-white transition-colors cursor-pointer">
+                  <a href={getPagePath('frameworks')} onClick={(e) => { e.preventDefault(); handleNavigate('frameworks'); }} className="hover:text-white transition-colors cursor-pointer">
                     12 Signature Frameworks
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => handleNavigate('resources')} className="hover:text-white transition-colors cursor-pointer">
+                  <a href={getPagePath('resources')} onClick={(e) => { e.preventDefault(); handleNavigate('resources'); }} className="hover:text-white transition-colors cursor-pointer">
                     Implementation Lab
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => handleNavigate('toolkit')} className="hover:text-white transition-colors cursor-pointer">
+                  <a href={getPagePath('toolkit')} onClick={(e) => { e.preventDefault(); handleNavigate('toolkit'); }} className="hover:text-white transition-colors cursor-pointer">
                     Living AI Toolkit
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => handleNavigate('manifesto')} className="hover:text-white transition-colors cursor-pointer">
+                  <a href={getPagePath('manifesto')} onClick={(e) => { e.preventDefault(); handleNavigate('manifesto'); }} className="hover:text-white transition-colors cursor-pointer">
                     The Manifesto (8 Axioms)
-                  </button>
+                  </a>
                 </li>
               </ul>
             </div>
 
             <div>
               <h3 className="font-semibold text-xs uppercase tracking-wider font-mono text-slate-400 mb-4">
-                Pathways & Insights
+                Pathways &amp; Insights
               </h3>
               <ul className="space-y-2.5 text-slate-300">
                 <li>
-                  <button onClick={() => handleNavigate('insights')} className="hover:text-white transition-colors cursor-pointer text-blue-300 font-medium">
-                    Insights & Dispatches
-                  </button>
+                  <a href={getPagePath('insights')} onClick={(e) => { e.preventDefault(); handleNavigate('insights'); }} className="hover:text-white transition-colors cursor-pointer text-blue-300 font-medium">
+                    Insights &amp; Dispatches
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => handleNavigate('engineers')} className="hover:text-white transition-colors cursor-pointer">
+                  <a href={getPagePath('engineers')} onClick={(e) => { e.preventDefault(); handleNavigate('engineers'); }} className="hover:text-white transition-colors cursor-pointer">
                     For Engineers
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => handleNavigate('students')} className="hover:text-white transition-colors cursor-pointer">
+                  <a href={getPagePath('students')} onClick={(e) => { e.preventDefault(); handleNavigate('students'); }} className="hover:text-white transition-colors cursor-pointer">
                     For Students
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => handleNavigate('organizations')} className="hover:text-white transition-colors cursor-pointer text-amber-300">
+                  <a href={getPagePath('organizations')} onClick={(e) => { e.preventDefault(); handleNavigate('organizations'); }} className="hover:text-white transition-colors cursor-pointer text-amber-300">
                     For Organizations
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => handleNavigate('speaking')} className="hover:text-white transition-colors cursor-pointer">
-                    Speaking & Keynotes
-                  </button>
+                  <a href={getPagePath('speaking')} onClick={(e) => { e.preventDefault(); handleNavigate('speaking'); }} className="hover:text-white transition-colors cursor-pointer">
+                    Speaking &amp; Keynotes
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => handleNavigate('press')} className="hover:text-white transition-colors cursor-pointer">
-                    Press & Media Kit
-                  </button>
+                  <a href={getPagePath('press')} onClick={(e) => { e.preventDefault(); handleNavigate('press'); }} className="hover:text-white transition-colors cursor-pointer">
+                    Press &amp; Media Kit
+                  </a>
                 </li>
                 <li>
-                  <button onClick={() => handleNavigate('contact')} className="hover:text-white transition-colors cursor-pointer">
+                  <a href={getPagePath('contact')} onClick={(e) => { e.preventDefault(); handleNavigate('contact'); }} className="hover:text-white transition-colors cursor-pointer">
                     Contact
-                  </button>
+                  </a>
                 </li>
               </ul>
             </div>
@@ -241,13 +242,13 @@ export const Footer: React.FC<FooterProps> = ({
               {SITE_CONFIG.author.publicContactEmail}
             </a>
             <span aria-hidden="true">·</span>
-            <button onClick={() => handleNavigate('contact')} className="hover:text-white transition-colors cursor-pointer">
+            <a href={getPagePath('contact')} onClick={(e) => { e.preventDefault(); handleNavigate('contact'); }} className="hover:text-white transition-colors cursor-pointer">
               Contact
-            </button>
+            </a>
             <span aria-hidden="true">·</span>
-            <button onClick={() => handleNavigate('press')} className="hover:text-white transition-colors cursor-pointer">
+            <a href={getPagePath('press')} onClick={(e) => { e.preventDefault(); handleNavigate('press'); }} className="hover:text-white transition-colors cursor-pointer">
               Media Kit
-            </button>
+            </a>
           </div>
         </div>
       </div>

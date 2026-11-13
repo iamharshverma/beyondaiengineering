@@ -131,6 +131,47 @@ function routeFromPath(rawPath: string): RouteState {
   return { page: 'home', path: '/' };
 }
 
+export function getPagePath(page: PageId, param?: string): string {
+  if (param) {
+    if (page === 'frameworks' || page === 'framework-detail') {
+      return param === 'cao-framework' ? '/cao-framework' : `/frameworks/${param}`;
+    }
+    if (
+      page === 'insights' ||
+      page === 'insight-detail' ||
+      page === 'blog' ||
+      page === 'blog-detail' ||
+      page === 'ideas' ||
+      page === 'article-detail'
+    ) {
+      return `/insights/${param}`;
+    }
+    return `/${page}/${param}`;
+  }
+
+  switch (page) {
+    case 'home':
+      return '/';
+    case 'sample':
+      return '/book/sample';
+    case 'buy':
+      return '/book/buy';
+    case 'teams':
+    case 'organizations':
+      return '/organizations';
+    case 'cao-framework':
+      return '/cao-framework';
+    case 'blog':
+    case 'ideas':
+    case 'insights':
+      return '/insights';
+    case 'assessment':
+      return '/cao-framework';
+    default:
+      return `/${page}`;
+  }
+}
+
 export function navigateTo(targetPath: string) {
   if (typeof window === 'undefined') return;
 

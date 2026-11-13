@@ -1,0 +1,42 @@
+# Beyond AI Engineering: From Creator to Curator
+
+> Official site and career operating system for software engineers, architects, students, and technical organizations navigating the age of autonomous AI agents — by Harsh Verma.
+
+- Canonical Site: https://www.beyondaiengineering.com/
+- XML Sitemap: https://www.beyondaiengineering.com/sitemap.xml
+- Author: Harsh Verma (Principal AI Engineer at Palo Alto Networks, Stanford Distinguished Scholar, FRSA, FBCS, IEEE Senior Member, Forbes Technology Council)
+
+## Core Pages
+
+- [Home](https://www.beyondaiengineering.com/): Overview of *Beyond AI Engineering: From Creator to Curator*, the Paradigm Shift Explorer, and C.A.O. Diagnostic.
+- [The Book](https://www.beyondaiengineering.com/book): Complete 11 chapters across 4 parts and 15 architectural blueprints.
+- [Sample Reading Room](https://www.beyondaiengineering.com/book/sample): Free online excerpt and downloadable sample chapters.
+- [Get the Book](https://www.beyondaiengineering.com/book/buy): Editions, bulk team inquiries, and direct author requests.
+- [The Manifesto](https://www.beyondaiengineering.com/manifesto): Eight foundational axioms for engineering after code.
+
+## C.A.O. & 12 Signature Frameworks
+
+- [C.A.O. Framework](https://www.beyondaiengineering.com/cao-framework): Creator → Architect → Orchestrator operating system & 12-scenario self-assessment.
+- [12 Signature Frameworks Hub](https://www.beyondaiengineering.com/frameworks): Interactive codex of all 12 core frameworks.
+- [The Trust Economy](https://www.beyondaiengineering.com/frameworks/trust-economy)
+- [How → What Cognitive Shift](https://www.beyondaiengineering.com/frameworks/how-to-what)
+- [Prompt Empathy](https://www.beyondaiengineering.com/frameworks/prompt-empathy)
+- [Agentic Diplomacy](https://www.beyondaiengineering.com/frameworks/agentic-diplomacy)
+- [The Human API](https://www.beyondaiengineering.com/frameworks/human-api)
+- [AI Product Sense](https://www.beyondaiengineering.com/frameworks/ai-product-sense)
+- [Ethical Curation](https://www.beyondaiengineering.com/frameworks/ethical-curation)
+- [Unlearn / Relearn](https://www.beyondaiengineering.com/frameworks/unlearn-relearn)
+- [Digital Paper Trail](https://www.beyondaiengineering.com/frameworks/digital-paper-trail)
+- [The Micro-Community](https://www.beyondaiengineering.com/frameworks/micro-community)
+- [Proof of Work](https://www.beyondaiengineering.com/frameworks/proof-of-work)
+
+## Audience Pathways, Tools & Insights
+
+- [For Engineers](https://www.beyondaiengineering.com/engineers): Tactical career roadmap for mid-to-senior & staff engineers.
+- [For Students](https://www.beyondaiengineering.com/students): How CS students build verifiable proof of work.
+- [For Organizations](https://www.beyondaiengineering.com/organizations): Engineering team adoption, reading groups & keynotes.
+- [Implementation Lab](https://www.beyondaiengineering.com/resources): 15 interactive canvases, rubrics & 30/60/90-day career planner.
+- [Living AI Toolkit](https://www.beyondaiengineering.com/toolkit): Curated tools across agents, coding, evals, observability & security.
+- [Insights Archive](https://www.beyondaiengineering.com/insights): 40+ essays, Forbes Technology Council columns, RSAC & HackerNoon dispatches, and engineering benchmarks.
+- [About Harsh Verma](https://www.beyondaiengineering.com/author): Author profile, credentials & publications.
+- [Speaking & Keynotes](https://www.beyondaiengineering.com/speaking) | [Press Kit](https://www.beyondaiengineering.com/press) | [Reader Stories](https://www.beyondaiengineering.com/stories) | [Contact](https://www.beyondaiengineering.com/contact)

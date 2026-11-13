@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { PageId } from '../types';
 import { SITE_CONFIG } from '../config/siteConfig';
 import { FRAMEWORKS } from '../data/frameworksData';
-import { updatePageSeo, CANONICAL_ORIGIN, PAGE_OG_IMAGES } from '../utils/seo';
+import { updatePageSeo, CANONICAL_ORIGIN, buildDynamicFrameworkSeo } from '../utils/seo';
 import { CiteThisFramework } from '../components/CiteThisFramework';
 import { trackEvent } from '../utils/analytics';
 import {
@@ -41,20 +41,7 @@ export const FrameworkDetailView: React.FC<FrameworkDetailViewProps> = ({
   const [ethicalChecks, setEthicalChecks] = useState<boolean[]>([true, true, false, false, false]);
 
   useEffect(() => {
-    const ogImg =
-      framework.id === 'cao-framework' ? PAGE_OG_IMAGES.caoFramework : PAGE_OG_IMAGES.frameworks;
-
-    updatePageSeo({
-      title: `${framework.title} | ${SITE_CONFIG.book.title}`,
-      description: `${framework.subtitle}. ${framework.definition.slice(0, 145)}`,
-      canonicalPath: `/frameworks/${framework.id}`,
-      ogType: 'article',
-      ogImage: ogImg,
-      breadcrumbs: [
-        { name: 'Frameworks', path: '/frameworks' },
-        { name: framework.title, path: `/frameworks/${framework.id}` },
-      ],
-    });
+    updatePageSeo(buildDynamicFrameworkSeo(framework));
   }, [framework]);
 
   const relatedFrameworks = FRAMEWORKS.filter((f) => f.id !== framework.id).slice(0, 3);

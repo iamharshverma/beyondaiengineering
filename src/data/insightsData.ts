@@ -36,6 +36,7 @@ export interface InsightItem {
   relatedFrameworkId: string;
   relatedChapter: string;
   tags: string[];
+  img?: string;
   benchmarks?: { label: string; value: string; note?: string }[];
   sourceType: 'essay' | 'column' | 'field-note';
 }
@@ -164,6 +165,7 @@ const normalizedBlogPosts: InsightItem[] = BLOG_POSTS.map((post) => {
         ? 'Chapter 5 & Chapter 9'
         : 'Chapter 3 & Chapter 8',
     tags: (post.tags || []).filter((t) => t !== 'The'),
+    img: post.img,
     benchmarks: post.benchmarks,
     sourceType: isColumn ? 'column' : 'field-note',
   };

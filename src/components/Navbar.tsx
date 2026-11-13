@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { PageId } from '../types';
 import { trackEvent } from '../utils/analytics';
+import { getPagePath } from '../utils/router';
 import {
   Menu,
   X,
@@ -271,9 +272,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             {directDesktopLinks.map((item) => {
               const active = isActivePage(item.page);
               return (
-                <button
+                <a
                   key={item.page}
-                  onClick={() => handleLinkClick(item.page)}
+                  href={getPagePath(item.page)}
+                  aria-current={active ? 'page' : undefined}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleLinkClick(item.page);
+                  }}
                   className={`py-1 text-sm font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 border-b-2 ${
                     active
                       ? 'text-blue-900 dark:text-blue-300 border-blue-900 dark:border-blue-400 font-semibold'
@@ -281,7 +287,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   }`}
                 >
                   {item.label}
-                </button>
+                </a>
               );
             })}
           </nav>

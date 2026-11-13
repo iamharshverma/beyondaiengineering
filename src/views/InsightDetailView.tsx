@@ -5,7 +5,7 @@ import { FRAMEWORKS } from '../data/frameworksData';
 import { SITE_CONFIG } from '../config/siteConfig';
 import { sendBookInquiryToAuthor, AUTHOR_EMAIL } from '../utils/emailService';
 import { trackEvent } from '../utils/analytics';
-import { updatePageSeo, PAGE_OG_IMAGES } from '../utils/seo';
+import { updatePageSeo, buildDynamicInsightSeo } from '../utils/seo';
 import {
   ArrowLeft,
   ArrowRight,
@@ -51,25 +51,7 @@ export const InsightDetailView: React.FC<InsightDetailViewProps> = ({
 
   useEffect(() => {
     setDispatchStatus('idle');
-    updatePageSeo({
-      title: `${insight.title} | ${SITE_CONFIG.author.name} — ${SITE_CONFIG.book.title}`,
-      description: insight.subtitle,
-      canonicalPath: `/insights/${insight.slug}`,
-      ogType: 'article',
-      ogImage: PAGE_OG_IMAGES.insights,
-      schemaType: 'Article',
-      articleData: {
-        headline: insight.title,
-        description: insight.subtitle,
-        publishDate: insight.isoDate,
-        modifiedDate: insight.modifiedDate,
-        keyQuote: insight.keyQuote,
-      },
-      breadcrumbs: [
-        { name: 'Insights', path: '/insights' },
-        { name: insight.title, path: `/insights/${insight.slug}` },
-      ],
-    });
+    updatePageSeo(buildDynamicInsightSeo(insight));
   }, [insight]);
 
   const handleCopyUrl = () => {

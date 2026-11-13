@@ -4,6 +4,8 @@
  */
 
 import { SITE_CONFIG } from '../config/siteConfig';
+import { Framework } from '../types';
+import { INSIGHTS, InsightItem } from '../data/insightsData';
 
 export interface PageSeoConfig {
   title: string;
@@ -11,15 +13,37 @@ export interface PageSeoConfig {
   canonicalPath: string;
   ogType?: 'website' | 'book' | 'article' | 'profile';
   ogImage?: string;
+  imageAlt?: string;
+  keywords?: string[];
   breadcrumbs?: { name: string; path: string }[];
-  schemaType?: 'WebSite' | 'Book' | 'ProfilePage' | 'Article' | 'ItemPage';
+  schemaType?:
+    | 'WebSite'
+    | 'WebPage'
+    | 'CollectionPage'
+    | 'ContactPage'
+    | 'Book'
+    | 'ProfilePage'
+    | 'Article'
+    | 'TechArticle'
+    | 'ItemPage';
   articleData?: {
     headline: string;
     description: string;
     publishDate: string;
     modifiedDate?: string;
     keyQuote?: string;
+    section?: string;
+    keywords?: string[];
   };
+  frameworkData?: {
+    id: string;
+    name: string;
+    subtitle: string;
+    category: string;
+    caoPhase: string;
+    definition: string;
+  };
+  twitterLabels?: { label: string; value: string }[];
 }
 
 export const CANONICAL_ORIGIN = SITE_CONFIG.canonicalOrigin;
@@ -403,6 +427,15 @@ export const PAGE_SEO_CONFIGS: Record<string, PageSeoConfig> = {
     canonicalPath: '/frameworks',
     ogType: 'website',
     ogImage: PAGE_OG_IMAGES.frameworks,
+    schemaType: 'CollectionPage',
+    keywords: [
+      'AI Engineering Frameworks',
+      'C.A.O. Framework',
+      'Trust Economy',
+      'Human API',
+      'Prompt Empathy',
+      'Agentic Diplomacy',
+    ],
     breadcrumbs: [{ name: 'Frameworks', path: '/frameworks' }],
   },
   manifesto: {
@@ -422,6 +455,7 @@ export const PAGE_SEO_CONFIGS: Record<string, PageSeoConfig> = {
     canonicalPath: '/resources',
     ogType: 'website',
     ogImage: PAGE_OG_IMAGES.resources,
+    schemaType: 'CollectionPage',
     breadcrumbs: [{ name: 'Resources', path: '/resources' }],
   },
   toolkit: {
@@ -431,6 +465,7 @@ export const PAGE_SEO_CONFIGS: Record<string, PageSeoConfig> = {
     canonicalPath: '/toolkit',
     ogType: 'website',
     ogImage: PAGE_OG_IMAGES.toolkit,
+    schemaType: 'CollectionPage',
     breadcrumbs: [
       { name: 'Resources', path: '/resources' },
       { name: 'Toolkit', path: '/toolkit' },
@@ -443,6 +478,7 @@ export const PAGE_SEO_CONFIGS: Record<string, PageSeoConfig> = {
     canonicalPath: '/speaking',
     ogType: 'website',
     ogImage: PAGE_OG_IMAGES.speaking,
+    schemaType: 'WebPage',
     breadcrumbs: [{ name: 'Speaking', path: '/speaking' }],
   },
   press: {
@@ -452,6 +488,7 @@ export const PAGE_SEO_CONFIGS: Record<string, PageSeoConfig> = {
     canonicalPath: '/press',
     ogType: 'website',
     ogImage: PAGE_OG_IMAGES.press,
+    schemaType: 'WebPage',
     breadcrumbs: [{ name: 'Press', path: '/press' }],
   },
   insights: {
@@ -461,6 +498,14 @@ export const PAGE_SEO_CONFIGS: Record<string, PageSeoConfig> = {
     canonicalPath: '/insights',
     ogType: 'website',
     ogImage: PAGE_OG_IMAGES.insights,
+    schemaType: 'CollectionPage',
+    keywords: [
+      'AI Engineering Blog',
+      'Forbes Technology Council',
+      'MCP Architecture',
+      'Local LLM Benchmarks',
+      'Agentic Security',
+    ],
     breadcrumbs: [{ name: 'Insights', path: '/insights' }],
   },
   ideas: {
@@ -470,6 +515,7 @@ export const PAGE_SEO_CONFIGS: Record<string, PageSeoConfig> = {
     canonicalPath: '/insights',
     ogType: 'website',
     ogImage: PAGE_OG_IMAGES.insights,
+    schemaType: 'CollectionPage',
     breadcrumbs: [{ name: 'Insights', path: '/insights' }],
   },
   blog: {
@@ -479,6 +525,7 @@ export const PAGE_SEO_CONFIGS: Record<string, PageSeoConfig> = {
     canonicalPath: '/insights',
     ogType: 'website',
     ogImage: PAGE_OG_IMAGES.insights,
+    schemaType: 'CollectionPage',
     breadcrumbs: [{ name: 'Insights', path: '/insights' }],
   },
   stories: {
@@ -488,6 +535,7 @@ export const PAGE_SEO_CONFIGS: Record<string, PageSeoConfig> = {
     canonicalPath: '/stories',
     ogType: 'website',
     ogImage: PAGE_OG_IMAGES.stories,
+    schemaType: 'CollectionPage',
     breadcrumbs: [{ name: 'Stories', path: '/stories' }],
   },
   contact: {
@@ -497,15 +545,276 @@ export const PAGE_SEO_CONFIGS: Record<string, PageSeoConfig> = {
     canonicalPath: '/contact',
     ogType: 'website',
     ogImage: PAGE_OG_IMAGES.contact,
+    schemaType: 'ContactPage',
     breadcrumbs: [{ name: 'Contact', path: '/contact' }],
   },
 };
+
+export const FRAMEWORK_OG_IMAGES: Record<string, string> = {
+  'cao-framework': `${CANONICAL_ORIGIN}/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_04_PM-1_cab3095f.png`,
+  'trust-economy': `${CANONICAL_ORIGIN}/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-3_0750658f.png`,
+  'agentic-diplomacy': `${CANONICAL_ORIGIN}/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-4_ef9211f1.png`,
+  'human-api': `${CANONICAL_ORIGIN}/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-4_ef9211f1.png`,
+  'ethical-curation': `${CANONICAL_ORIGIN}/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-4_ef9211f1.png`,
+  'digital-paper-trail': `${CANONICAL_ORIGIN}/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-5_dbbc71eb.png`,
+  'proof-of-work': `${CANONICAL_ORIGIN}/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-5_dbbc71eb.png`,
+  'micro-community': `${CANONICAL_ORIGIN}/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-5_dbbc71eb.png`,
+};
+
+function normalizeWhitespace(value: string): string {
+  return String(value || '').replace(/\s+/g, ' ').trim();
+}
+
+export function truncateToWordBoundary(text: string, maxLength: number): string {
+  const clean = normalizeWhitespace(text);
+  if (clean.length <= maxLength) return clean;
+  const sliced = clean.slice(0, maxLength - 1);
+  const lastSentenceEnd = Math.max(
+    sliced.lastIndexOf('. '),
+    sliced.lastIndexOf('! '),
+    sliced.lastIndexOf('? ')
+  );
+  if (lastSentenceEnd >= Math.floor(maxLength * 0.68)) {
+    return sliced.slice(0, lastSentenceEnd + 1).trim();
+  }
+  const lastSpace = sliced.lastIndexOf(' ');
+  const trimmed = lastSpace > 40 ? sliced.slice(0, lastSpace) : sliced;
+  return `${trimmed.replace(/[,:;—–-]+$/, '').trim()}…`;
+}
+
+export function buildSeoDescription(
+  primary: string,
+  secondary?: string,
+  fallback?: string,
+  maxLength = 158
+): string {
+  const first = normalizeWhitespace(primary);
+  const second = normalizeWhitespace(secondary || '');
+  const third = normalizeWhitespace(fallback || '');
+
+  if (first.length >= 120 && first.length <= maxLength) {
+    return first;
+  }
+  if (first.length > maxLength) {
+    return truncateToWordBoundary(first, maxLength);
+  }
+
+  const withPunctuation = /[.!?]$/.test(first) ? first : `${first}.`;
+  let combined = withPunctuation;
+
+  if (second && !first.toLowerCase().includes(second.slice(0, 24).toLowerCase())) {
+    combined = `${withPunctuation} ${second}`;
+  } else if (third && !first.toLowerCase().includes(third.slice(0, 24).toLowerCase())) {
+    combined = `${withPunctuation} ${third}`;
+  }
+
+  if (combined.length < 110 && third && combined !== `${withPunctuation} ${third}`) {
+    combined = `${/\.|\?|!$/.test(combined) ? combined : `${combined}.`} ${third}`;
+  }
+
+  return truncateToWordBoundary(combined, maxLength);
+}
+
+function buildFrameworkSeoTitle(framework: Framework): string {
+  const stageLabel =
+    framework.caoPhase === 'All' ? 'Creator to Orchestrator' : `${framework.caoPhase} Stage`;
+  const candidate = `${framework.title} (${stageLabel}) | ${SITE_CONFIG.book.title}`;
+  if (candidate.length <= 72) return candidate;
+  const hasFrameworkWord = /framework/i.test(framework.title);
+  const fallback = hasFrameworkWord
+    ? `${framework.title} | ${SITE_CONFIG.book.title}`
+    : `${framework.title} Framework | ${SITE_CONFIG.book.title}`;
+  if (fallback.length <= 72) return fallback;
+  return `${framework.title} | Harsh Verma`;
+}
+
+function buildInsightSeoTitle(insight: InsightItem): string {
+  const withVenue =
+    insight.syndicatedPlatform && insight.syndicatedPlatform !== 'Beyond AI Engineering'
+      ? `${insight.title} | ${insight.syndicatedPlatform} — ${SITE_CONFIG.author.name}`
+      : `${insight.title} | ${SITE_CONFIG.author.name}`;
+  if (withVenue.length <= 74) return withVenue;
+  const standard = `${insight.title} | ${SITE_CONFIG.author.name}`;
+  if (standard.length <= 74) return standard;
+  return truncateToWordBoundary(insight.title, 70);
+}
+
+export function buildDynamicFrameworkSeo(framework: Framework): PageSeoConfig {
+  const canonicalPath =
+    framework.id === 'cao-framework' ? '/cao-framework' : `/frameworks/${framework.id}`;
+  const ogImage = FRAMEWORK_OG_IMAGES[framework.id] || PAGE_OG_IMAGES.frameworks;
+  const description = buildSeoDescription(
+    `${framework.subtitle}: ${framework.definition}`,
+    framework.whyItMatters,
+    `Explored in ${framework.relatedChapter} of ${SITE_CONFIG.book.title} by ${SITE_CONFIG.author.name}.`
+  );
+  const title = buildFrameworkSeoTitle(framework);
+  const keywords = Array.from(
+    new Set([
+      framework.title,
+      `${framework.caoPhase} Stage`,
+      framework.category,
+      framework.relatedChapter,
+      'Beyond AI Engineering',
+      'Harsh Verma',
+      'AI Engineering Framework',
+    ])
+  );
+
+  return {
+    title,
+    description,
+    canonicalPath,
+    ogType: 'article',
+    ogImage,
+    imageAlt: `${framework.title} — ${framework.subtitle} | Beyond AI Engineering`,
+    schemaType: 'TechArticle',
+    keywords,
+    articleData: {
+      headline: `${framework.title}: ${framework.subtitle}`,
+      description,
+      publishDate: '2026-10-01',
+      modifiedDate: '2026-11-13',
+      section: `${framework.caoPhase} · ${framework.category}`,
+      keywords,
+    },
+    frameworkData: {
+      id: framework.id,
+      name: framework.title,
+      subtitle: framework.subtitle,
+      category: framework.category,
+      caoPhase: framework.caoPhase,
+      definition: framework.definition,
+    },
+    twitterLabels: [
+      {
+        label: 'C.A.O. Tier',
+        value: framework.caoPhase === 'All' ? 'Creator · Architect · Orchestrator' : framework.caoPhase,
+      },
+      {
+        label: 'Book Chapter',
+        value: framework.relatedChapter,
+      },
+    ],
+    breadcrumbs: [
+      { name: '12 Signature Frameworks', path: '/frameworks' },
+      { name: framework.title, path: canonicalPath },
+    ],
+  };
+}
+
+export function buildDynamicInsightSeo(insight: InsightItem): PageSeoConfig {
+  const canonicalPath = `/insights/${insight.slug}`;
+  const resolvedImage = insight.img
+    ? insight.img.startsWith('/')
+      ? `${CANONICAL_ORIGIN}${insight.img}`
+      : insight.img
+    : PAGE_OG_IMAGES.insights;
+
+  const description = buildSeoDescription(
+    insight.subtitle,
+    insight.leadParagraph,
+    `${insight.keyQuote} (${insight.pillar} · ${insight.readTime})`
+  );
+  const title = buildInsightSeoTitle(insight);
+  const keywords = Array.from(
+    new Set([
+      insight.pillar,
+      insight.syndicatedPlatform,
+      ...insight.tags,
+      insight.relatedChapter,
+      SITE_CONFIG.author.name,
+      SITE_CONFIG.book.title,
+    ])
+  );
+
+  return {
+    title,
+    description,
+    canonicalPath,
+    ogType: 'article',
+    ogImage: resolvedImage,
+    imageAlt: `${insight.title} — ${insight.pillar} by ${SITE_CONFIG.author.name}`,
+    schemaType:
+      insight.pillar === 'Systems & Architecture' || insight.pillar === 'Governance & Ethics'
+        ? 'TechArticle'
+        : 'Article',
+    keywords,
+    articleData: {
+      headline: insight.title,
+      description,
+      publishDate: insight.isoDate,
+      modifiedDate: insight.modifiedDate,
+      keyQuote: insight.keyQuote,
+      section: insight.pillar,
+      keywords,
+    },
+    twitterLabels: [
+      { label: 'Reading Time', value: insight.readTime },
+      { label: 'Publication', value: insight.syndicatedPlatform },
+    ],
+    breadcrumbs: [
+      { name: 'Insights', path: '/insights' },
+      { name: insight.title, path: canonicalPath },
+    ],
+  };
+}
+
+function buildInsightsArticleSchemaNode(insight: InsightItem) {
+  const articleUrl = `${CANONICAL_ORIGIN}/insights/${insight.slug}`;
+  const imageUrl = insight.img
+    ? insight.img.startsWith('/')
+      ? `${CANONICAL_ORIGIN}${insight.img}`
+      : insight.img
+    : PAGE_OG_IMAGES.insights;
+
+  return {
+    '@type': 'Article',
+    '@id': `${articleUrl}#article`,
+    url: articleUrl,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${articleUrl}#webpage`,
+    },
+    headline: insight.title,
+    alternativeHeadline: insight.subtitle,
+    description: buildSeoDescription(insight.subtitle, insight.leadParagraph, insight.keyQuote),
+    image: imageUrl,
+    datePublished: insight.isoDate,
+    dateModified: insight.modifiedDate,
+    articleSection: insight.pillar,
+    keywords: Array.from(new Set([insight.pillar, insight.syndicatedPlatform, ...insight.tags])).join(
+      ', '
+    ),
+    inLanguage: 'en-US',
+    isAccessibleForFree: true,
+    isPartOf: {
+      '@id': `${CANONICAL_ORIGIN}/insights#blog`,
+    },
+    author: {
+      '@id': ENTITY_IDS.author,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_CONFIG.siteName,
+      url: CANONICAL_ORIGIN,
+      founder: {
+        '@id': ENTITY_IDS.author,
+      },
+    },
+  };
+}
 
 export function updatePageSeo(config: PageSeoConfig) {
   if (typeof document === 'undefined') return;
 
   const fullCanonicalUrl = `${CANONICAL_ORIGIN}${config.canonicalPath}`;
   const ogImage = config.ogImage || DEFAULT_OG_IMAGE;
+  const imageAlt = config.imageAlt || `${config.title} — ${SITE_CONFIG.siteName}`;
+  const keywordsContent =
+    config.keywords && config.keywords.length > 0
+      ? config.keywords.join(', ')
+      : 'Beyond AI Engineering, Harsh Verma, C.A.O. Framework, Trust Economy, Agentic AI, Software Engineering';
 
   document.title = config.title;
 
@@ -519,7 +828,14 @@ export function updatePageSeo(config: PageSeoConfig) {
     el.setAttribute('content', content);
   };
 
+  const removeMeta = (nameAttr: string, key: string) => {
+    document.querySelectorAll(`meta[${nameAttr}="${key}"]`).forEach((el) => el.remove());
+  };
+
   setMeta('name', 'description', config.description);
+  setMeta('name', 'robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
+  setMeta('name', 'author', SITE_CONFIG.author.name);
+  setMeta('name', 'keywords', keywordsContent);
 
   let canonicalEl = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
   if (!canonicalEl) {
@@ -529,22 +845,77 @@ export function updatePageSeo(config: PageSeoConfig) {
   }
   canonicalEl.setAttribute('href', fullCanonicalUrl);
 
+  setMeta('property', 'og:locale', 'en_US');
   setMeta('property', 'og:title', config.title);
   setMeta('property', 'og:description', config.description);
   setMeta('property', 'og:url', fullCanonicalUrl);
   setMeta('property', 'og:image', ogImage);
+  setMeta('property', 'og:image:alt', imageAlt);
   setMeta('property', 'og:type', config.ogType || 'website');
   setMeta('property', 'og:site_name', SITE_CONFIG.siteName);
+
+  // Clean previous article:tag entries before applying current route's tags
+  removeMeta('property', 'article:tag');
+
+  if (config.ogType === 'article' && config.articleData) {
+    setMeta('property', 'article:published_time', config.articleData.publishDate);
+    setMeta(
+      'property',
+      'article:modified_time',
+      config.articleData.modifiedDate || config.articleData.publishDate
+    );
+    setMeta('property', 'article:author', SITE_CONFIG.author.name);
+    if (config.articleData.section) {
+      setMeta('property', 'article:section', config.articleData.section);
+    } else {
+      removeMeta('property', 'article:section');
+    }
+    if (config.articleData.keywords && config.articleData.keywords.length > 0) {
+      config.articleData.keywords.slice(0, 6).forEach((tag) => {
+        const tagMeta = document.createElement('meta');
+        tagMeta.setAttribute('property', 'article:tag');
+        tagMeta.setAttribute('content', tag);
+        document.head.appendChild(tagMeta);
+      });
+    }
+  } else {
+    removeMeta('property', 'article:published_time');
+    removeMeta('property', 'article:modified_time');
+    removeMeta('property', 'article:author');
+    removeMeta('property', 'article:section');
+  }
 
   setMeta('name', 'twitter:card', 'summary_large_image');
   setMeta('name', 'twitter:title', config.title);
   setMeta('name', 'twitter:description', config.description);
   setMeta('name', 'twitter:image', ogImage);
+  setMeta('name', 'twitter:image:alt', imageAlt);
+
+  if (config.twitterLabels && config.twitterLabels.length > 0) {
+    const firstLabel = config.twitterLabels[0];
+    setMeta('name', 'twitter:label1', firstLabel.label);
+    setMeta('name', 'twitter:data1', firstLabel.value);
+    if (config.twitterLabels[1]) {
+      setMeta('name', 'twitter:label2', config.twitterLabels[1].label);
+      setMeta('name', 'twitter:data2', config.twitterLabels[1].value);
+    } else {
+      removeMeta('name', 'twitter:label2');
+      removeMeta('name', 'twitter:data2');
+    }
+  } else {
+    removeMeta('name', 'twitter:label1');
+    removeMeta('name', 'twitter:data1');
+    removeMeta('name', 'twitter:label2');
+    removeMeta('name', 'twitter:data2');
+  }
 
   updateSchemaGraph(config, fullCanonicalUrl);
 }
 
 function updateSchemaGraph(config: PageSeoConfig, canonicalUrl: string) {
+  document.getElementById('beyond-route-schema')?.remove();
+  document.getElementById('prerender-breadcrumb-jsonld')?.remove();
+
   let scriptEl = document.getElementById('beyond-schema-graph');
   if (!scriptEl) {
     scriptEl = document.createElement('script');
@@ -552,6 +923,46 @@ function updateSchemaGraph(config: PageSeoConfig, canonicalUrl: string) {
     scriptEl.setAttribute('type', 'application/ld+json');
     document.head.appendChild(scriptEl);
   }
+
+  const webPageType =
+    config.schemaType === 'CollectionPage'
+      ? 'CollectionPage'
+      : config.schemaType === 'ContactPage'
+      ? 'ContactPage'
+      : config.schemaType === 'ProfilePage'
+      ? 'ProfilePage'
+      : 'WebPage';
+
+  const articleNodes = INSIGHTS.map(buildInsightsArticleSchemaNode);
+
+  const siteBreadcrumbList = {
+    '@type': 'BreadcrumbList',
+    '@id': `${CANONICAL_ORIGIN}/#breadcrumb`,
+    name: 'Beyond AI Engineering Primary Navigation',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: `${CANONICAL_ORIGIN}/` },
+      { '@type': 'ListItem', position: 2, name: 'Insights', item: `${CANONICAL_ORIGIN}/insights` },
+    ],
+  };
+
+  const insightsBlogEntity = {
+    '@type': 'Blog',
+    '@id': `${CANONICAL_ORIGIN}/insights#blog`,
+    url: `${CANONICAL_ORIGIN}/insights`,
+    name: 'Beyond AI Engineering Insights & Technical Essays',
+    description:
+      'Forbes Technology Council columns, MCP & local inference benchmarks, RSAC security briefings, and systems engineering essays by Harsh Verma.',
+    inLanguage: 'en-US',
+    isPartOf: { '@id': ENTITY_IDS.website },
+    author: { '@id': ENTITY_IDS.author },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_CONFIG.siteName,
+      url: CANONICAL_ORIGIN,
+      founder: { '@id': ENTITY_IDS.author },
+    },
+    blogPost: articleNodes.map((node) => ({ '@id': node['@id'] })),
+  };
 
   const graphItems: Record<string, unknown>[] = [
     {
@@ -562,38 +973,71 @@ function updateSchemaGraph(config: PageSeoConfig, canonicalUrl: string) {
       alternateName: 'Beyond AI Engineering by Harsh Verma',
       publisher: { '@id': ENTITY_IDS.author },
     },
+    {
+      '@type': webPageType,
+      '@id': `${canonicalUrl}#webpage`,
+      url: canonicalUrl,
+      name: config.title,
+      description: config.description,
+      inLanguage: 'en-US',
+      isPartOf: { '@id': ENTITY_IDS.website },
+      breadcrumb: {
+        '@id':
+          config.canonicalPath !== '/' ? `${canonicalUrl}#breadcrumb` : `${CANONICAL_ORIGIN}/#breadcrumb`,
+      },
+      primaryImageOfPage: {
+        '@type': 'ImageObject',
+        url: config.ogImage || DEFAULT_OG_IMAGE,
+      },
+      ...(webPageType === 'ProfilePage' ? { mainEntity: { '@id': ENTITY_IDS.author } } : {}),
+    },
     GLOBAL_BOOK_ENTITY,
     GLOBAL_AUTHOR_PERSON,
     GLOBAL_FRAMEWORKS_SET,
     GLOBAL_FAQ_PAGE,
   ];
 
-  if (config.schemaType === 'ProfilePage' || config.canonicalPath === '/author') {
-    graphItems.push({
-      '@type': 'ProfilePage',
-      '@id': ENTITY_IDS.authorProfile,
-      url: canonicalUrl,
-      mainEntity: { '@id': ENTITY_IDS.author },
-    });
+  // Include BreadcrumbList + Blog + all Article rich snippets on root and Insights hub
+  if (config.canonicalPath === '/' || config.canonicalPath === '/insights') {
+    graphItems.push(siteBreadcrumbList, insightsBlogEntity, ...articleNodes);
   }
 
-  if (config.schemaType === 'Article' && config.articleData) {
+  if (
+    (config.schemaType === 'Article' || config.schemaType === 'TechArticle') &&
+    config.articleData
+  ) {
     graphItems.push({
-      '@type': 'Article',
+      '@type': config.schemaType,
       '@id': `${canonicalUrl}#article`,
       url: canonicalUrl,
       headline: config.articleData.headline,
       description: config.articleData.description,
-      mainEntityOfPage: canonicalUrl,
+      mainEntityOfPage: { '@id': `${canonicalUrl}#webpage` },
       author: { '@id': ENTITY_IDS.author },
       publisher: {
         '@type': 'Organization',
         name: SITE_CONFIG.siteName,
         url: CANONICAL_ORIGIN,
+        founder: { '@id': ENTITY_IDS.author },
       },
       datePublished: config.articleData.publishDate,
       dateModified: config.articleData.modifiedDate || config.articleData.publishDate,
       image: config.ogImage || DEFAULT_OG_IMAGE,
+      ...(config.articleData.section ? { articleSection: config.articleData.section } : {}),
+      ...(config.articleData.keywords && config.articleData.keywords.length > 0
+        ? { keywords: config.articleData.keywords.join(', ') }
+        : {}),
+    });
+  }
+
+  if (config.frameworkData) {
+    graphItems.push({
+      '@type': 'DefinedTerm',
+      '@id': `${canonicalUrl}#term`,
+      name: config.frameworkData.name,
+      description: config.frameworkData.definition,
+      url: canonicalUrl,
+      inDefinedTermSet: { '@id': `${CANONICAL_ORIGIN}/frameworks#terms` },
     });
   }
 

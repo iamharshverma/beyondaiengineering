@@ -43,10 +43,22 @@ import { INSIGHTS } from './data/insightsData';
 
 export default function App() {
   const [currentRoute, setCurrentRoute] = useState<RouteState>(() => parseCurrentRoute());
-  const [currentFrameworkId, setCurrentFrameworkId] = useState<string>('trust-economy');
-  const [currentInsightSlug, setCurrentInsightSlug] = useState<string>(
-    () => INSIGHTS[0]?.slug || 'whole-articles-local-model-accurate-15x-slow'
+  const [currentFrameworkId, setCurrentFrameworkId] = useState<string>(() =>
+    currentRoute.page === 'framework-detail' && currentRoute.param
+      ? currentRoute.param
+      : 'trust-economy'
   );
+  const [currentInsightSlug, setCurrentInsightSlug] = useState<string>(() => {
+    if (
+      (currentRoute.page === 'insight-detail' ||
+        currentRoute.page === 'blog-detail' ||
+        currentRoute.page === 'article-detail') &&
+      currentRoute.param
+    ) {
+      return currentRoute.param;
+    }
+    return INSIGHTS[0]?.slug || 'whole-articles-local-model-accurate-15x-slow';
+  });
 
   // Modals
   const [isAssessmentOpen, setIsAssessmentOpen] = useState(false);

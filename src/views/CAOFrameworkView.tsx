@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { PageId } from '../types';
 import { SITE_CONFIG } from '../config/siteConfig';
-import { updatePageSeo, CANONICAL_ORIGIN } from '../utils/seo';
+import { updatePageSeo, CANONICAL_ORIGIN, buildDynamicFrameworkSeo } from '../utils/seo';
+import { FRAMEWORKS } from '../data/frameworksData';
 import { trackEvent } from '../utils/analytics';
 import { CAOInteractiveFramework } from '../components/CAOInteractiveFramework';
 import { CAOBenchmark } from '../components/CAOBenchmark';
@@ -85,13 +86,25 @@ export const CAOFrameworkView: React.FC<CAOFrameworkViewProps> = ({
   }, [isTriadAutoPlaying, isTriadHovered]);
 
   useEffect(() => {
+    const caoFramework = FRAMEWORKS.find((f) => f.id === 'cao-framework');
+    if (caoFramework) {
+      updatePageSeo(buildDynamicFrameworkSeo(caoFramework));
+      return;
+    }
     updatePageSeo({
       title: `Creator Architect Orchestrator (C.A.O.) Framework | ${SITE_CONFIG.book.title}`,
       description:
         'The C.A.O. Framework by Harsh Verma maps the three evolutionary stages of engineering in the AI era: Creator (Build), Architect (Design), and Orchestrator (Govern).',
       canonicalPath: '/cao-framework',
-      ogType: 'website',
-      breadcrumbs: [{ name: 'C.A.O. Framework', path: '/cao-framework' }],
+      ogType: 'article',
+      schemaType: 'TechArticle',
+      keywords: [
+        'C.A.O. Framework',
+        'Creator Architect Orchestrator',
+        'Beyond AI Engineering',
+        'Harsh Verma',
+        'AI Agent Governance',
+      ],
     });
   }, []);
 

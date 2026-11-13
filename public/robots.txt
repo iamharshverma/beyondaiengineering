@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+Allow: /llms.txt
+Allow: /sitemap.xml
 
 # Disallow admin areas
 Disallow: /admin
@@ -14,7 +16,6 @@ Disallow: /temp/
 Disallow: /staging/
 Disallow: /preview/
 Disallow: /private/
-Disallow: /*.json$
 
 # Canonical XML Sitemap
 Sitemap: https://www.beyondaiengineering.com/sitemap.xml
