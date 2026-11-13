@@ -393,6 +393,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </section>
 
+      {/* 2. SCROLL STORY: FUNDAMENTAL ECONOMIC SHIFT */}
+      <ScrollStory onNavigate={onNavigate} />
+
       {/* 2.5. WHY EVERYTHING CHANGED / INTERACTIVE PARADIGM SHIFT EXPLORER */}
       <section
         className="py-20 bg-white dark:bg-[#070B14] border-b border-[#101828]/[0.08] dark:border-white/10 transition-colors"
@@ -1363,8 +1366,6 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
       </section>
 
-      {/* SCROLL STORY */}
-      <ScrollStory onNavigate={onNavigate} />
     </div>
   );
 };
