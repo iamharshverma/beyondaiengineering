@@ -309,6 +309,16 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Hide scrollbars cleanly in horizontal swipe containers */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Reduced Motion Accessibility Compliance */
 @media (prefers-reduced-motion: reduce) {
   html.scroll-smooth {

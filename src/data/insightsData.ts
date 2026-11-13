@@ -35,6 +35,7 @@ export interface InsightItem {
   externalUrl?: string;
   relatedFrameworkId: string;
   relatedChapter: string;
+  tags: string[];
   benchmarks?: { label: string; value: string; note?: string }[];
   sourceType: 'essay' | 'column' | 'field-note';
 }
@@ -126,6 +127,7 @@ const normalizedArticles: InsightItem[] = ARTICLES.map((art, index) => {
     isFeatured: index < 2,
     relatedFrameworkId: mapping.frameworkId,
     relatedChapter: mapping.chapter,
+    tags: [art.topic, 'Beyond AI Engineering'],
     sourceType: 'essay',
   };
 });
@@ -161,6 +163,7 @@ const normalizedBlogPosts: InsightItem[] = BLOG_POSTS.map((post) => {
       post.category === 'Cybersecurity'
         ? 'Chapter 5 & Chapter 9'
         : 'Chapter 3 & Chapter 8',
+    tags: (post.tags || []).filter((t) => t !== 'The'),
     benchmarks: post.benchmarks,
     sourceType: isColumn ? 'column' : 'field-note',
   };
@@ -174,6 +177,95 @@ export const INSIGHT_VENUES: string[] = [
   'All Venues',
   ...Array.from(new Set(INSIGHTS.map((item) => item.syndicatedPlatform))),
 ];
+
+export interface FeaturedTopicItem {
+  id: string;
+  label: string;
+  matcher: (item: InsightItem) => boolean;
+}
+
+export const FEATURED_TOPICS: FeaturedTopicItem[] = [
+  {
+    id: 'all',
+    label: 'All Topics',
+    matcher: () => true,
+  },
+  {
+    id: 'agentic-ai',
+    label: 'Agentic AI',
+    matcher: (item) =>
+      item.pillar === 'Agentic AI' ||
+      /agent|mcp|autonomous/i.test(`${item.title} ${item.subtitle} ${item.tags.join(' ')}`),
+  },
+  {
+    id: 'cybersecurity',
+    label: 'Cybersecurity & Defense',
+    matcher: (item) =>
+      item.tags.some((t) => /cybersecurity|security|rsac|privacy/i.test(t)) ||
+      /security|attack|threat|rsac/i.test(`${item.title} ${item.subtitle}`),
+  },
+  {
+    id: 'systems-architecture',
+    label: 'Systems & Architecture',
+    matcher: (item) =>
+      item.pillar === 'Systems & Architecture' ||
+      item.tags.some((t) => /architecture|system|benchmark|latency/i.test(t)),
+  },
+  {
+    id: 'mcp-local-inference',
+    label: 'MCP & Local Inference',
+    matcher: (item) =>
+      /mcp|local model|ollama|rag|latency|inference|durable/i.test(
+        `${item.title} ${item.subtitle} ${item.tags.join(' ')}`
+      ),
+  },
+  {
+    id: 'ai-research',
+    label: 'AI Research',
+    matcher: (item) =>
+      item.tags.some((t) => t.toLowerCase() === 'ai research') ||
+      /research|eval|benchmark|model/i.test(`${item.title} ${item.subtitle}`),
+  },
+  {
+    id: 'forbes-columns',
+    label: 'Forbes & Media',
+    matcher: (item) =>
+      item.pillar === 'Forbes & Media' ||
+      item.syndicatedPlatform.includes('Forbes') ||
+      item.tags.some((t) => /forbes|interviews/i.test(t)),
+  },
+  {
+    id: 'governance-ethics',
+    label: 'Governance & Trust',
+    matcher: (item) =>
+      item.pillar === 'Governance & Ethics' ||
+      /governance|trust|authority|ethical|policy/i.test(
+        `${item.title} ${item.subtitle} ${item.tags.join(' ')}`
+      ),
+  },
+  {
+    id: 'careers-after-code',
+    label: 'Careers After Code',
+    matcher: (item) =>
+      item.pillar === 'Careers After Code' ||
+      /career|engineer|student|leadership|judgment|curator/i.test(
+        `${item.title} ${item.subtitle} ${item.tags.join(' ')}`
+      ),
+  },
+  {
+    id: 'hackernoon-rsac',
+    label: 'HackerNoon & RSAC',
+    matcher: (item) =>
+      item.syndicatedPlatform === 'HackerNoon' ||
+      item.syndicatedPlatform === 'RSAC' ||
+      item.tags.some((t) => /hackernoon|rsac/i.test(t)),
+  },
+];
+
+export function matchesFeaturedTopic(item: InsightItem, topicId: string): boolean {
+  const topic = FEATURED_TOPICS.find((t) => t.id === topicId);
+  return topic ? topic.matcher(item) : true;
+}
 
 export const LEGACY_SLUG_ALIASES: Record<string, string> = {
   'from-builder-to-curator': 'engineer-after-code',

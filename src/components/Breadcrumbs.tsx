@@ -4,11 +4,13 @@ import { ChevronRight, Home } from 'lucide-react';
 import { PageId } from '../types';
 import { FRAMEWORKS } from '../data/frameworksData';
 import { findInsightBySlug } from '../data/insightsData';
+import { CANONICAL_ORIGIN } from '../utils/seo';
 
 interface BreadcrumbNode {
   label: string;
   page?: PageId;
   path: string;
+  url: string;
 }
 
 interface BreadcrumbsProps {
@@ -16,6 +18,11 @@ interface BreadcrumbsProps {
   frameworkId?: string;
   insightSlug?: string;
   onNavigate: (pageOrPath: PageId | string, param?: string) => void;
+}
+
+function buildCanonicalUrl(path: string): string {
+  const normalized = path === '/' ? '/' : path.startsWith('/') ? path : `/${path}`;
+  return `${CANONICAL_ORIGIN}${normalized}`;
 }
 
 export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
@@ -29,98 +36,152 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
   const items = useMemo<BreadcrumbNode[]>(() => {
     if (currentPage === 'home') return [];
 
-    const trail: BreadcrumbNode[] = [{ label: 'Home', page: 'home', path: '/' }];
+    const nodes: Array<{ label: string; page?: PageId; path: string }> = [
+      { label: 'Home', page: 'home', path: '/' },
+    ];
 
     switch (currentPage) {
       case 'book':
-        trail.push({ label: 'The Book', page: 'book', path: '/book' });
+        nodes.push({ label: 'The Book', page: 'book', path: '/book' });
         break;
       case 'sample':
-        trail.push({ label: 'The Book', page: 'book', path: '/book' });
-        trail.push({ label: 'Sample Reading Room', page: 'sample', path: '/book/sample' });
+        nodes.push({ label: 'The Book', page: 'book', path: '/book' });
+        nodes.push({ label: 'Sample Reading Room', page: 'sample', path: '/book/sample' });
         break;
       case 'buy':
-        trail.push({ label: 'The Book', page: 'book', path: '/book' });
-        trail.push({ label: 'Get the Book', page: 'buy', path: '/book/buy' });
+        nodes.push({ label: 'The Book', page: 'book', path: '/book' });
+        nodes.push({ label: 'Get the Book', page: 'buy', path: '/book/buy' });
         break;
       case 'frameworks':
-        trail.push({ label: '12 Signature Frameworks', page: 'frameworks', path: '/frameworks' });
+        nodes.push({
+          label: '12 Signature Frameworks',
+          page: 'frameworks',
+          path: '/frameworks',
+        });
         break;
       case 'cao-framework':
-        trail.push({ label: '12 Signature Frameworks', page: 'frameworks', path: '/frameworks' });
-        trail.push({ label: 'C.A.O. Framework', page: 'cao-framework', path: '/cao-framework' });
+        nodes.push({
+          label: '12 Signature Frameworks',
+          page: 'frameworks',
+          path: '/frameworks',
+        });
+        nodes.push({
+          label: 'C.A.O. Framework',
+          page: 'cao-framework',
+          path: '/cao-framework',
+        });
         break;
       case 'framework-detail': {
-        const fw = FRAMEWORKS.find((f) => f.id === frameworkId);
-        trail.push({ label: '12 Signature Frameworks', page: 'frameworks', path: '/frameworks' });
-        trail.push({
+        const fw = FRAMEWORKS.find((f) => f.id === frameworkId) || FRAMEWORKS[0];
+        nodes.push({
+          label: '12 Signature Frameworks',
+          page: 'frameworks',
+          path: '/frameworks',
+        });
+        nodes.push({
           label: fw?.title || 'Framework Detail',
-          path: `/frameworks/${frameworkId || fw?.id || ''}`,
+          page: 'framework-detail',
+          path: `/frameworks/${fw?.id || frameworkId || 'trust-economy'}`,
         });
         break;
       }
       case 'insights':
       case 'blog':
       case 'ideas':
-        trail.push({ label: 'Insights', page: 'insights', path: '/insights' });
+        nodes.push({ label: 'Insights', page: 'insights', path: '/insights' });
         break;
       case 'insight-detail':
       case 'blog-detail':
       case 'article-detail': {
-        const insight = insightSlug ? findInsightBySlug(insightSlug) : undefined;
-        trail.push({ label: 'Insights', page: 'insights', path: '/insights' });
-        trail.push({
+        const insight = findInsightBySlug(insightSlug || '');
+        nodes.push({ label: 'Insights', page: 'insights', path: '/insights' });
+        nodes.push({
           label: insight?.title || 'Insight',
-          path: `/insights/${insightSlug || insight?.slug || ''}`,
+          page: 'insight-detail',
+          path: `/insights/${insight?.slug || insightSlug || ''}`,
         });
         break;
       }
       case 'resources':
-        trail.push({ label: 'Implementation Lab', page: 'resources', path: '/resources' });
+        nodes.push({ label: 'Implementation Lab', page: 'resources', path: '/resources' });
         break;
       case 'toolkit':
-        trail.push({ label: 'Implementation Lab', page: 'resources', path: '/resources' });
-        trail.push({ label: 'Living AI Toolkit', page: 'toolkit', path: '/toolkit' });
+        nodes.push({ label: 'Implementation Lab', page: 'resources', path: '/resources' });
+        nodes.push({ label: 'Living AI Toolkit', page: 'toolkit', path: '/toolkit' });
         break;
       case 'engineers':
-        trail.push({ label: 'For Engineers', page: 'engineers', path: '/engineers' });
+        nodes.push({ label: 'For Engineers', page: 'engineers', path: '/engineers' });
         break;
       case 'students':
-        trail.push({ label: 'For Students', page: 'students', path: '/students' });
+        nodes.push({ label: 'For Students', page: 'students', path: '/students' });
         break;
       case 'organizations':
       case 'teams':
-        trail.push({ label: 'For Organizations', page: 'organizations', path: '/organizations' });
+        nodes.push({
+          label: 'For Organizations',
+          page: 'organizations',
+          path: '/organizations',
+        });
         break;
       case 'manifesto':
-        trail.push({ label: 'The Manifesto', page: 'manifesto', path: '/manifesto' });
+        nodes.push({ label: 'The Manifesto', page: 'manifesto', path: '/manifesto' });
         break;
       case 'author':
-        trail.push({ label: 'About Harsh Verma', page: 'author', path: '/author' });
+        nodes.push({ label: 'About Harsh Verma', page: 'author', path: '/author' });
         break;
       case 'speaking':
-        trail.push({ label: 'About Harsh Verma', page: 'author', path: '/author' });
-        trail.push({ label: 'Speaking & Keynotes', page: 'speaking', path: '/speaking' });
+        nodes.push({ label: 'About Harsh Verma', page: 'author', path: '/author' });
+        nodes.push({ label: 'Speaking & Keynotes', page: 'speaking', path: '/speaking' });
         break;
       case 'press':
-        trail.push({ label: 'About Harsh Verma', page: 'author', path: '/author' });
-        trail.push({ label: 'Press & Media Kit', page: 'press', path: '/press' });
+        nodes.push({ label: 'About Harsh Verma', page: 'author', path: '/author' });
+        nodes.push({ label: 'Press & Media Kit', page: 'press', path: '/press' });
         break;
       case 'stories':
-        trail.push({ label: 'Reader Stories', page: 'stories', path: '/stories' });
+        nodes.push({ label: 'Reader Stories', page: 'stories', path: '/stories' });
         break;
       case 'contact':
-        trail.push({ label: 'Contact', page: 'contact', path: '/contact' });
+        nodes.push({ label: 'Contact', page: 'contact', path: '/contact' });
         break;
       case 'assessment':
-        trail.push({ label: 'C.A.O. Assessment', page: 'assessment', path: '/cao-framework' });
+        nodes.push({
+          label: '12 Signature Frameworks',
+          page: 'frameworks',
+          path: '/frameworks',
+        });
+        nodes.push({
+          label: 'C.A.O. Assessment',
+          page: 'cao-framework',
+          path: '/cao-framework',
+        });
         break;
       default:
         break;
     }
 
-    return trail;
+    return nodes.map((node) => ({
+      ...node,
+      url: buildCanonicalUrl(node.path),
+    }));
   }, [currentPage, frameworkId, insightSlug]);
+
+  const breadcrumbSchema = useMemo(() => {
+    if (items.length <= 1) return null;
+    const currentNode = items[items.length - 1];
+
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      '@id': `${currentNode.url}#breadcrumb`,
+      name: `${currentNode.label} Breadcrumb Trail`,
+      itemListElement: items.map((node, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: node.label,
+        item: node.url,
+      })),
+    };
+  }, [items]);
 
   if (items.length <= 1) return null;
 
@@ -128,6 +189,14 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
 
   return (
     <div className="bg-[#FAFAF7]/90 dark:bg-[#070B14]/90 border-b border-[#101828]/[0.06] dark:border-white/[0.06] no-print">
+      {breadcrumbSchema && (
+        <script
+          id="breadcrumb-jsonld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        />
+      )}
+
       <motion.nav
         key={routeKey}
         aria-label="Breadcrumb"
@@ -147,7 +216,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
 
             return (
               <li
-                key={`${item.path}-${idx}`}
+                key={`${item.url}-${idx}`}
                 itemProp="itemListElement"
                 itemScope
                 itemType="https://schema.org/ListItem"
@@ -188,6 +257,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
                   </a>
                 )}
 
+                {isLast && <link itemProp="item" href={item.url} />}
                 <meta itemProp="position" content={String(idx + 1)} />
               </li>
             );

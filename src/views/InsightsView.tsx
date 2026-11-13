@@ -1,6 +1,13 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { PageId } from '../types';
-import { INSIGHTS, INSIGHT_PILLARS, INSIGHT_VENUES, InsightItem } from '../data/insightsData';
+import {
+  INSIGHTS,
+  INSIGHT_PILLARS,
+  INSIGHT_VENUES,
+  FEATURED_TOPICS,
+  matchesFeaturedTopic,
+  InsightItem,
+} from '../data/insightsData';
 import { SITE_CONFIG } from '../config/siteConfig';
 import { sendBookInquiryToAuthor, AUTHOR_EMAIL } from '../utils/emailService';
 import { trackEvent } from '../utils/analytics';
@@ -15,6 +22,9 @@ import {
   CheckCircle2,
   AlertCircle,
   Loader2,
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
 } from 'lucide-react';
 
 interface InsightsViewProps {
@@ -26,9 +36,11 @@ export const InsightsView: React.FC<InsightsViewProps> = ({
   onNavigate,
   onSelectInsight,
 }) => {
+  const [selectedFeaturedTopic, setSelectedFeaturedTopic] = useState<string>('all');
   const [selectedPillar, setSelectedPillar] = useState<string>('All');
   const [selectedVenue, setSelectedVenue] = useState<string>('All Venues');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const topicsScrollRef = useRef<HTMLDivElement | null>(null);
 
   // Newsletter dispatch state
   const [subscriberEmail, setSubscriberEmail] = useState('');
@@ -49,9 +61,18 @@ export const InsightsView: React.FC<InsightsViewProps> = ({
     });
   }, []);
 
+  const topicCounts = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const topic of FEATURED_TOPICS) {
+      map[topic.id] = INSIGHTS.filter((item) => topic.matcher(item)).length;
+    }
+    return map;
+  }, []);
+
   const filteredInsights = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     return INSIGHTS.filter((item) => {
+      const matchesTopic = matchesFeaturedTopic(item, selectedFeaturedTopic);
       const matchesPillar = selectedPillar === 'All' || item.pillar === selectedPillar;
       const matchesVenue =
         selectedVenue === 'All Venues' || item.syndicatedPlatform === selectedVenue;
@@ -60,14 +81,34 @@ export const InsightsView: React.FC<InsightsViewProps> = ({
         item.title.toLowerCase().includes(q) ||
         item.subtitle.toLowerCase().includes(q) ||
         item.syndicatedPlatform.toLowerCase().includes(q) ||
-        item.pillar.toLowerCase().includes(q);
-      return matchesPillar && matchesVenue && matchesQuery;
+        item.pillar.toLowerCase().includes(q) ||
+        item.tags.some((t) => t.toLowerCase().includes(q));
+      return matchesTopic && matchesPillar && matchesVenue && matchesQuery;
     });
-  }, [selectedPillar, selectedVenue, searchQuery]);
+  }, [selectedFeaturedTopic, selectedPillar, selectedVenue, searchQuery]);
 
   const leadItem: InsightItem | null = filteredInsights[0] || null;
-  const secondaryItems: InsightItem[] = filteredInsights.slice(1, 3);
-  const remainingItems: InsightItem[] = filteredInsights.slice(3);
+  const masonryItems: InsightItem[] = filteredInsights.slice(1);
+
+  const hasActiveFilters =
+    selectedFeaturedTopic !== 'all' ||
+    selectedPillar !== 'All' ||
+    selectedVenue !== 'All Venues' ||
+    searchQuery.trim().length > 0;
+
+  const resetAllFilters = () => {
+    setSelectedFeaturedTopic('all');
+    setSelectedPillar('All');
+    setSelectedVenue('All Venues');
+    setSearchQuery('');
+  };
+
+  const scrollTopics = (direction: 'left' | 'right') => {
+    const container = topicsScrollRef.current;
+    if (!container) return;
+    const offset = direction === 'left' ? -280 : 280;
+    container.scrollBy({ left: offset, behavior: 'smooth' });
+  };
 
   const handleDispatchSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,6 +129,12 @@ export const InsightsView: React.FC<InsightsViewProps> = ({
     } finally {
       setSubmittingDispatch(false);
     }
+  };
+
+  const formatSourceType = (sourceType: InsightItem['sourceType']) => {
+    if (sourceType === 'column') return 'Column';
+    if (sourceType === 'field-note') return 'Field Note';
+    return 'Essay';
   };
 
   return (
@@ -127,7 +174,71 @@ export const InsightsView: React.FC<InsightsViewProps> = ({
           </div>
         </div>
 
-        {/* Full-Width Top Control Bar */}
+        {/* 1A. FEATURED TOPICS HORIZONTAL SCROLL BAR */}
+        <div className="mb-5 bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-xl p-3.5 sm:p-4">
+          <div className="flex items-center justify-between gap-4 mb-2.5">
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-widest text-blue-900 dark:text-blue-400 font-semibold">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Featured Topics</span>
+            </div>
+
+            <div className="hidden sm:flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => scrollTopics('left')}
+                aria-label="Scroll featured topics left"
+                className="p-1 rounded-md border border-[#101828]/10 dark:border-white/10 text-[#475467] dark:text-slate-300 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollTopics('right')}
+                aria-label="Scroll featured topics right"
+                className="p-1 rounded-md border border-[#101828]/10 dark:border-white/10 text-[#475467] dark:text-slate-300 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+
+          <div
+            ref={topicsScrollRef}
+            role="region"
+            aria-label="Featured Topics filter rail"
+            className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth snap-x py-0.5"
+          >
+            {FEATURED_TOPICS.map((topic) => {
+              const isSelected = selectedFeaturedTopic === topic.id;
+              return (
+                <button
+                  key={topic.id}
+                  type="button"
+                  onClick={() => setSelectedFeaturedTopic(topic.id)}
+                  aria-pressed={isSelected}
+                  className={`snap-start shrink-0 inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-md border transition-colors cursor-pointer whitespace-nowrap ${
+                    isSelected
+                      ? 'bg-[#101828] dark:bg-white text-white dark:text-[#070B14] border-[#101828] dark:border-white font-semibold'
+                      : 'bg-[#FAFAF7] dark:bg-[#11192E] border-[#101828]/10 dark:border-white/10 text-[#475467] dark:text-slate-300 hover:border-blue-900/40 dark:hover:border-blue-400/40 hover:text-[#101828] dark:hover:text-white'
+                  }`}
+                >
+                  <span>{topic.label}</span>
+                  <span
+                    className={`font-mono text-[10px] tabular-nums ${
+                      isSelected
+                        ? 'text-white/80 dark:text-[#070B14]/75'
+                        : 'text-[#667085] dark:text-slate-400'
+                    }`}
+                  >
+                    {topicCounts[topic.id] ?? 0}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* 1B. SEARCH, VENUE & PILLAR CONTROLS */}
         <div className="bg-[#FAF9F5] dark:bg-[#0D1527] p-4 sm:p-5 rounded-xl border border-[#101828]/10 dark:border-white/10 space-y-4">
           <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
             {/* Search Input */}
@@ -145,7 +256,10 @@ export const InsightsView: React.FC<InsightsViewProps> = ({
 
             {/* Venue Dropdown */}
             <div className="flex items-center gap-2">
-              <label htmlFor="venue-select" className="text-xs font-mono text-[#475467] dark:text-slate-400 whitespace-nowrap">
+              <label
+                htmlFor="venue-select"
+                className="text-xs font-mono text-[#475467] dark:text-slate-400 whitespace-nowrap"
+              >
                 Venue:
               </label>
               <select
@@ -183,20 +297,20 @@ export const InsightsView: React.FC<InsightsViewProps> = ({
         </div>
       </section>
 
-      {/* 3. RESULTS COUNT & EMPTY STATE */}
-      <section className="pt-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      {/* 2. RESULTS COUNT & MASONRY EDITORIAL ARCHIVE */}
+      <section className="pt-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         <div className="flex items-center justify-between text-xs font-mono text-[#475467] dark:text-slate-400 pb-3 border-b border-[#101828]/[0.08] dark:border-white/10">
           <span>
-            Displaying <strong className="text-[#101828] dark:text-white tabular-nums">{filteredInsights.length}</strong> insights
+            Displaying{' '}
+            <strong className="text-[#101828] dark:text-white tabular-nums">
+              {filteredInsights.length}
+            </strong>{' '}
+            insights
           </span>
-          {(selectedPillar !== 'All' || selectedVenue !== 'All Venues' || searchQuery) && (
+          {hasActiveFilters && (
             <button
               type="button"
-              onClick={() => {
-                setSelectedPillar('All');
-                setSelectedVenue('All Venues');
-                setSearchQuery('');
-              }}
+              onClick={resetAllFilters}
               className="text-blue-900 dark:text-blue-400 hover:underline cursor-pointer"
             >
               Clear filters
@@ -210,15 +324,11 @@ export const InsightsView: React.FC<InsightsViewProps> = ({
               No insights match your search criteria
             </h2>
             <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-400 mb-6">
-              Try resetting your topic pillar, publication venue, or search term.
+              Try resetting your featured topic, pillar, publication venue, or search term.
             </p>
             <button
               type="button"
-              onClick={() => {
-                setSelectedPillar('All');
-                setSelectedVenue('All Venues');
-                setSearchQuery('');
-              }}
+              onClick={resetAllFilters}
               className="px-4 py-2 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md cursor-pointer"
             >
               Show All {INSIGHTS.length} Insights
@@ -272,103 +382,114 @@ export const InsightsView: React.FC<InsightsViewProps> = ({
               </button>
             )}
 
-            {/* TIER 2: TWO SECONDARY SPOTLIGHTS */}
-            {secondaryItems.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {secondaryItems.map((item) => (
-                  <button
-                    key={item.slug}
-                    type="button"
-                    onClick={() => onSelectInsight(item.slug)}
-                    className="bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-2xl p-7 hover:border-blue-900 dark:hover:border-blue-400/60 hover:-translate-y-1 transition-all duration-300 shadow-2xs text-left flex flex-col justify-between cursor-pointer group"
-                  >
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-[#475467] dark:text-slate-400 mb-3">
-                        <span className="font-semibold text-blue-900 dark:text-blue-400 uppercase tracking-wider">
-                          {item.pillar}
-                        </span>
-                        <span aria-hidden="true">·</span>
-                        <span>{item.syndicatedPlatform}</span>
-                        <span aria-hidden="true">·</span>
-                        <span>{item.publishDate}</span>
-                      </div>
-                      <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-300 transition-colors mb-2 leading-snug">
-                        {item.title}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed line-clamp-3 mb-4">
-                        {item.subtitle}
-                      </p>
-                    </div>
-                    <div className="pt-3 border-t border-[#101828]/[0.06] dark:border-white/10 flex items-center justify-between text-xs">
-                      <span className="font-mono text-[#475467] dark:text-slate-400 tabular-nums">
-                        {item.readTime}
-                      </span>
-                      <span className="font-semibold text-blue-900 dark:text-blue-400 inline-flex items-center gap-1">
-                        <span>Read Insight</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {/* TIER 3: FULL CHRONOLOGICAL ARCHIVE GRID */}
-            {remainingItems.length > 0 && (
+            {/* TIER 2: RESPONSIVE EDITORIAL MASONRY GRID */}
+            {masonryItems.length > 0 && (
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <h2 className="font-serif text-2xl font-bold text-[#101828] dark:text-white">
-                    Complete Publication & Field Note Archive
+                    Publication & Field Note Archive
                   </h2>
                   <span className="text-xs font-mono text-[#475467] dark:text-slate-400 tabular-nums">
-                    {remainingItems.length} entries
+                    {masonryItems.length} entries
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {remainingItems.map((item) => (
-                    <button
-                      key={item.slug}
-                      type="button"
-                      onClick={() => onSelectInsight(item.slug)}
-                      className="bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-xl p-6 hover:border-blue-900 dark:hover:border-blue-400/60 hover:-translate-y-1 transition-all duration-300 shadow-2xs text-left flex flex-col justify-between cursor-pointer group"
-                    >
-                      <div>
-                        <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-mono text-[#475467] dark:text-slate-400 mb-3">
-                          <span className="font-semibold text-blue-900 dark:text-blue-400">
-                            {item.pillar}
-                          </span>
-                          <span aria-hidden="true">·</span>
-                          <span>{item.syndicatedPlatform}</span>
-                        </div>
+                <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
+                  {masonryItems.map((item, idx) => {
+                    const showQuote =
+                      Boolean(item.keyQuote) &&
+                      (item.isFeatured || idx % 3 === 0 || (item.benchmarks?.length ?? 0) === 0 && idx % 2 === 0);
+                    const showExcerpt = item.isFeatured || idx % 4 === 1;
+                    const compactBenchmarks = item.benchmarks?.slice(0, 2);
 
-                        <h3 className="font-serif text-xl font-bold text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-300 transition-colors mb-2 leading-snug">
-                          {item.title}
-                        </h3>
+                    return (
+                      <article
+                        key={item.slug}
+                        className="break-inside-avoid mb-6"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => onSelectInsight(item.slug)}
+                          className="w-full text-left bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-xl p-6 hover:border-blue-900 dark:hover:border-blue-400/60 hover:-translate-y-0.5 transition-all duration-300 shadow-2xs hover:shadow-md flex flex-col gap-3.5 cursor-pointer group"
+                        >
+                          {/* Meta Line */}
+                          <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-[#475467] dark:text-slate-400">
+                            <span className="font-semibold text-blue-900 dark:text-blue-400 truncate max-w-[180px]">
+                              {item.pillar}
+                            </span>
+                            <span className="uppercase tracking-wider text-[10px] text-[#667085] dark:text-slate-500">
+                              {formatSourceType(item.sourceType)} · {item.syndicatedPlatform}
+                            </span>
+                          </div>
 
-                        <p className="text-xs text-[#475467] dark:text-slate-300 leading-relaxed line-clamp-3 mb-4">
-                          {item.subtitle}
-                        </p>
-                      </div>
+                          {/* Title */}
+                          <h3
+                            className={`font-serif font-bold text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-300 transition-colors leading-snug ${
+                              item.isFeatured ? 'text-2xl' : 'text-xl'
+                            }`}
+                          >
+                            {item.title}
+                          </h3>
 
-                      <div className="pt-3 border-t border-[#101828]/[0.06] dark:border-white/10 flex items-center justify-between text-xs">
-                        <span className="text-[11px] font-mono text-[#475467] dark:text-slate-400 tabular-nums">
-                          {item.publishDate} · {item.readTime}
-                        </span>
-                        <span className="font-semibold text-blue-900 dark:text-blue-400 inline-flex items-center gap-1">
-                          <span>Open</span>
-                          <ArrowRight className="w-3 h-3" />
-                        </span>
-                      </div>
-                    </button>
-                  ))}
+                          {/* Subtitle */}
+                          <p className="text-xs sm:text-[13px] text-[#475467] dark:text-slate-300 leading-relaxed">
+                            {item.subtitle}
+                          </p>
+
+                          {/* Benchmarks Strip (creates variable density on empirical notes) */}
+                          {compactBenchmarks && compactBenchmarks.length > 0 && (
+                            <div className="grid grid-cols-2 gap-2 pt-1">
+                              {compactBenchmarks.map((bm, bIdx) => (
+                                <div
+                                  key={bIdx}
+                                  className="px-2.5 py-2 rounded-md bg-[#FAFAF7] dark:bg-[#11192E] border border-[#101828]/[0.06] dark:border-white/[0.08]"
+                                >
+                                  <div className="text-[10px] font-mono uppercase text-[#667085] dark:text-slate-400 truncate">
+                                    {bm.label}
+                                  </div>
+                                  <div className="font-mono text-xs font-bold text-[#101828] dark:text-white tabular-nums mt-0.5">
+                                    {bm.value}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Optional Pull Quote for Editorial Masonry Rhythm */}
+                          {showQuote && (
+                            <blockquote className="font-serif italic text-xs text-[#475467] dark:text-slate-300 leading-relaxed border-l-2 border-blue-900/35 dark:border-blue-400/40 pl-3">
+                              “{item.keyQuote}”
+                            </blockquote>
+                          )}
+
+                          {/* Optional Lead Snippet */}
+                          {showExcerpt && !showQuote && (
+                            <p className="text-xs text-[#667085] dark:text-slate-400 leading-relaxed line-clamp-3">
+                              {item.leadParagraph}
+                            </p>
+                          )}
+
+                          {/* Subtle Footer Metadata */}
+                          <div className="pt-3 border-t border-[#101828]/[0.06] dark:border-white/10 flex items-center justify-between text-xs">
+                            <span className="text-[11px] font-mono text-[#475467] dark:text-slate-400 tabular-nums">
+                              {item.publishDate} · {item.readTime}
+                            </span>
+                            <span className="font-semibold text-blue-900 dark:text-blue-400 inline-flex items-center gap-1 group-hover:underline">
+                              <span>Read</span>
+                              <ArrowRight className="w-3 h-3" />
+                            </span>
+                          </div>
+                        </button>
+                      </article>
+                    );
+                  })}
                 </div>
               </div>
             )}
           </>
         )}
 
-        {/* 4. NEWSLETTER DISPATCH & AUTHOR CONVERSION BLOCK */}
+        {/* 3. NEWSLETTER DISPATCH & AUTHOR CONVERSION BLOCK */}
         <div className="mt-12 bg-[#FAF9F5] dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-2xl p-8 sm:p-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-6 space-y-3">

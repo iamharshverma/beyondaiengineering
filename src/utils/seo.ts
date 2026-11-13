@@ -597,29 +597,6 @@ function updateSchemaGraph(config: PageSeoConfig, canonicalUrl: string) {
     });
   }
 
-  if (config.breadcrumbs && config.breadcrumbs.length > 0) {
-    const itemListElement = [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: `${CANONICAL_ORIGIN}/`,
-      },
-      ...config.breadcrumbs.map((b, idx) => ({
-        '@type': 'ListItem',
-        position: idx + 2,
-        name: b.name,
-        item: `${CANONICAL_ORIGIN}${b.path}`,
-      })),
-    ];
-
-    graphItems.push({
-      '@type': 'BreadcrumbList',
-      '@id': `${canonicalUrl}#breadcrumbs`,
-      itemListElement,
-    });
-  }
-
   scriptEl.textContent = JSON.stringify(
     {
       '@context': 'https://schema.org',
