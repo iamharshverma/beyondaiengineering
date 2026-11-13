@@ -3,7 +3,7 @@ import { PageId } from '../types';
 import { SITE_CONFIG } from '../config/siteConfig';
 import { trackEvent } from '../utils/analytics';
 import { updatePageSeo, PAGE_OG_IMAGES } from '../utils/seo';
-import { Download, Copy, Check, FileText, Image as ImageIcon, HelpCircle, ChevronRight } from 'lucide-react';
+import { Download, Copy, Check, FileText, Image as ImageIcon, HelpCircle } from 'lucide-react';
 
 interface PressViewProps {
   onNavigate: (page: PageId) => void;
@@ -86,23 +86,8 @@ Contact Form: ${SITE_CONFIG.canonicalOrigin}/contact`;
 
   return (
     <div className="space-y-0">
-      {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-mono text-[#475467] dark:text-slate-400">
-          <button
-            type="button"
-            onClick={() => onNavigate('home')}
-            className="hover:text-[#101828] dark:hover:text-white transition-colors cursor-pointer"
-          >
-            Home
-          </button>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-blue-900 dark:text-blue-400 font-semibold">Media & Press Kit</span>
-        </nav>
-      </div>
-
       {/* 1. HERO */}
-      <section className="pt-8 sm:pt-14 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
+      <section className="pt-10 sm:pt-14 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
         <div className="max-w-4xl mx-auto text-center space-y-4">
           <span className="text-xs uppercase tracking-widest font-mono text-blue-900 dark:text-blue-400 font-semibold block">
             Media, Press & Reviewers

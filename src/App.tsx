@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { PageId, LabResource, Article } from './types';
 import { Navbar } from './components/Navbar';
+import { Breadcrumbs } from './components/Breadcrumbs';
 import { Footer } from './components/Footer';
 import { HomeView } from './views/HomeView';
 import { BookView } from './views/BookView';
@@ -211,6 +212,15 @@ export default function App() {
 
       {/* 2. Main Page Views */}
       <main className="flex-1">
+        {currentPage !== 'home' && (
+          <Breadcrumbs
+            currentPage={currentPage}
+            frameworkId={currentFrameworkId}
+            insightSlug={currentInsightSlug}
+            onNavigate={handleNavigate}
+          />
+        )}
+
         {currentPage === 'home' && (
           <HomeView
             onNavigate={handleNavigate}

@@ -6,7 +6,6 @@ import { updatePageSeo, CANONICAL_ORIGIN, PAGE_OG_IMAGES } from '../utils/seo';
 import { CiteThisFramework } from '../components/CiteThisFramework';
 import { trackEvent } from '../utils/analytics';
 import {
-  ChevronRight,
   ArrowRight,
   Layers,
   Compass,
@@ -357,31 +356,8 @@ Reference: ${SITE_CONFIG.book.title} by ${SITE_CONFIG.author.name} (${CANONICAL_
 
   return (
     <div className="space-y-0 pb-20">
-      {/* 1. BREADCRUMBS */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-mono text-[#475467] dark:text-slate-400">
-          <button
-            type="button"
-            onClick={() => onNavigate('home')}
-            className="hover:text-[#101828] dark:hover:text-white transition-colors cursor-pointer"
-          >
-            Home
-          </button>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-          <button
-            type="button"
-            onClick={() => onNavigate('frameworks')}
-            className="hover:text-[#101828] dark:hover:text-white transition-colors cursor-pointer"
-          >
-            Frameworks
-          </button>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-blue-900 dark:text-blue-400 font-semibold">{framework.title}</span>
-        </nav>
-      </div>
-
-      {/* 2. HERO */}
-      <section className="pt-8 sm:pt-14 pb-14 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
+      {/* 1. HERO */}
+      <section className="pt-10 sm:pt-14 pb-14 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
         <div className="max-w-4xl mx-auto space-y-4">
           <div className="flex flex-wrap items-center gap-2 text-xs font-mono uppercase tracking-wider text-blue-900 dark:text-blue-400 font-semibold">
             <span>{framework.category} Framework</span>

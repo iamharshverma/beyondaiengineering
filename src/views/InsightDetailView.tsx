@@ -7,7 +7,6 @@ import { sendBookInquiryToAuthor, AUTHOR_EMAIL } from '../utils/emailService';
 import { trackEvent } from '../utils/analytics';
 import { updatePageSeo, PAGE_OG_IMAGES } from '../utils/seo';
 import {
-  ChevronRight,
   ArrowLeft,
   ArrowRight,
   ExternalLink,
@@ -103,33 +102,8 @@ export const InsightDetailView: React.FC<InsightDetailViewProps> = ({
 
   return (
     <div className="space-y-0 pb-20">
-      {/* 1. BREADCRUMBS */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-xs font-mono text-[#475467] dark:text-slate-400">
-          <button
-            type="button"
-            onClick={() => onNavigate('home')}
-            className="hover:text-[#101828] dark:hover:text-white transition-colors cursor-pointer"
-          >
-            Home
-          </button>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-          <button
-            type="button"
-            onClick={() => onNavigate('insights')}
-            className="hover:text-[#101828] dark:hover:text-white transition-colors cursor-pointer"
-          >
-            Insights
-          </button>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-blue-900 dark:text-blue-400 font-semibold truncate max-w-[240px] sm:max-w-md">
-            {insight.title}
-          </span>
-        </nav>
-      </div>
-
-      {/* 2. ARTICLE HEADER */}
-      <header className="pt-8 sm:pt-12 pb-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
+      {/* 1. ARTICLE HEADER */}
+      <header className="pt-10 sm:pt-14 pb-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
         <div className="space-y-5">
           <button
             type="button"

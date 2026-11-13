@@ -11,7 +11,6 @@ import {
   BookOpen,
   Layers,
   CheckCircle2,
-  ChevronRight,
   Activity,
   Download,
   AlertTriangle,
@@ -139,22 +138,7 @@ CORE INVARIANTS:
 
   return (
     <div className="space-y-0 pb-20">
-      {/* 1. BREADCRUMBS */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-mono text-[#475467] dark:text-slate-400">
-          <button
-            type="button"
-            onClick={() => onNavigate('home')}
-            className="hover:text-[#101828] dark:hover:text-white transition-colors cursor-pointer"
-          >
-            Home
-          </button>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-blue-900 dark:text-blue-400 font-semibold">C.A.O. Framework</span>
-        </nav>
-      </div>
-
-      {/* 2. HERO */}
+      {/* 1. HERO */}
       <section className="pt-10 sm:pt-16 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
         <div className="max-w-4xl mx-auto text-center space-y-4">
           <div className="inline-flex items-center gap-2 text-blue-900 dark:text-blue-400 text-xs font-mono font-semibold uppercase tracking-widest">

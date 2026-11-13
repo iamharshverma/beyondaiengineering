@@ -183,13 +183,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   const directDesktopLinks: Array<{ label: string; page: PageId }> = [
-    { label: 'Home', page: 'home' },
     { label: 'The Book', page: 'book' },
     { label: 'C.A.O. Framework', page: 'cao-framework' },
     { label: 'Resources', page: 'resources' },
     { label: 'Insights', page: 'insights' },
     { label: 'About Author', page: 'author' },
-    { label: 'For Organizations', page: 'organizations' },
   ];
 
   const navCategories = useMemo(
@@ -252,15 +250,15 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       <header className="sticky top-0 z-40 w-full bg-[#FAFAF7]/95 dark:bg-[#070B14]/95 backdrop-blur-md border-b border-[#101828]/[0.08] dark:border-white/10 transition-colors duration-200">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between gap-3 xl:gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between gap-4 sm:gap-6">
           {/* ZONE 1: BRAND WORDMARK */}
           <button
             onClick={() => handleLinkClick('home')}
-            className="text-left group rounded-lg shrink-0 cursor-pointer flex items-center gap-2 whitespace-nowrap"
+            className="text-left group rounded-lg shrink-0 cursor-pointer flex items-center gap-2.5 whitespace-nowrap"
             aria-label="Beyond AI Engineering Home"
           >
             <BrandLogo size="md" />
-            <span className="hidden sm:inline-block font-serif text-base font-bold tracking-tight text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap">
+            <span className="hidden sm:inline-block font-serif text-base lg:text-lg font-bold tracking-tight text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap">
               Beyond AI Engineering
             </span>
           </button>
@@ -268,7 +266,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* ZONE 2: SINGLE-ROW DESKTOP LINKS */}
           <nav
             aria-label="Primary navigation"
-            className="hidden xl:flex items-center gap-3.5 shrink-0"
+            className="hidden xl:flex items-center gap-5 shrink-0"
           >
             {directDesktopLinks.map((item) => {
               const active = isActivePage(item.page);
@@ -276,7 +274,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   key={item.page}
                   onClick={() => handleLinkClick(item.page)}
-                  className={`py-1 text-[13px] font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 border-b-2 ${
+                  className={`py-1 text-sm font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 border-b-2 ${
                     active
                       ? 'text-blue-900 dark:text-blue-300 border-blue-900 dark:border-blue-400 font-semibold'
                       : 'text-[#344054] dark:text-slate-300 border-transparent hover:text-[#101828] dark:hover:text-white hover:border-[#101828]/25 dark:hover:border-white/25'

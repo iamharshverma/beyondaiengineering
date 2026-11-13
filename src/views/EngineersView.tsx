@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PageId } from '../types';
 import { updatePageSeo, PAGE_OG_IMAGES } from '../utils/seo';
-import { ArrowRight, ChevronRight, Layers, ShieldCheck, Compass } from 'lucide-react';
+import { ArrowRight, Layers, ShieldCheck, Compass } from 'lucide-react';
 
 interface EngineersViewProps {
   onNavigate: (page: PageId | string, param?: string) => void;
@@ -72,23 +72,8 @@ export const EngineersView: React.FC<EngineersViewProps> = ({
 
   return (
     <div className="space-y-0 pb-20">
-      {/* 1. BREADCRUMBS */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-mono text-[#475467] dark:text-slate-400">
-          <button
-            type="button"
-            onClick={() => onNavigate('home')}
-            className="hover:text-[#101828] dark:hover:text-white transition-colors cursor-pointer"
-          >
-            Home
-          </button>
-          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-blue-900 dark:text-blue-400 font-semibold">For Engineers</span>
-        </nav>
-      </div>
-
-      {/* 2. HERO */}
-      <section className="pt-8 sm:pt-14 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
+      {/* 1. HERO */}
+      <section className="pt-10 sm:pt-14 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
         <div className="max-w-4xl mx-auto text-center space-y-5">
           <span className="text-xs uppercase tracking-widest font-mono text-blue-900 dark:text-blue-400 font-semibold block">
             Career Operating System · Mid-to-Senior & Staff Engineers
