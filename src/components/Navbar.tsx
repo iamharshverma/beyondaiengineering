@@ -187,7 +187,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { label: 'C.A.O. Framework', page: 'cao-framework' },
     { label: 'Resources', page: 'resources' },
     { label: 'Insights', page: 'insights' },
-    { label: 'About Author', page: 'author' },
+    { label: 'Author', page: 'author' },
   ];
 
   const navCategories = useMemo(
