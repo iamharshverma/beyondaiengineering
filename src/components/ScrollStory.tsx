@@ -39,9 +39,9 @@ export const ScrollStory: React.FC<ScrollStoryProps> = ({ onNavigate }) => {
               key={item.label}
               className="bg-white dark:bg-[#0D1527] border border-[#101828]/[0.08] dark:border-white/10 p-6 rounded-xl shadow-xs hover:border-blue-900/40 dark:hover:border-blue-400/40 hover:-translate-y-1 hover:shadow-lg transition-all duration-300 text-left"
             >
-              <div className="flex items-center justify-between mb-3">
-                <span className="font-mono text-xs text-[#98A2B3] dark:text-slate-500">0{index + 1}</span>
-                <span className="text-xs uppercase tracking-wider font-semibold text-blue-700 dark:text-blue-300 bg-blue-50/80 dark:bg-blue-950/80 border border-blue-100 dark:border-blue-900/60 px-2 py-0.5 rounded">
+              <div className="flex items-center justify-between mb-3 text-xs font-mono">
+                <span className="text-[#98A2B3] dark:text-slate-500 tabular-nums">0{index + 1}</span>
+                <span className="uppercase tracking-wider font-semibold text-blue-800 dark:text-blue-300">
                   Abundant
                 </span>
               </div>

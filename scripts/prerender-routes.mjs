@@ -13,283 +13,308 @@ const baseIndexHtml = fs.readFileSync(path.join(distDir, 'index.html'), 'utf-8')
 const DEFAULT_IMAGE = 'https://www.beyondaiengineering.com/assets/images/book_hardcover_mockup_1793842329740.jpg';
 const AUTHOR_IMAGE = 'https://www.beyondaiengineering.com/assets/aistudio/harsh_verma_87a0217e.jpg';
 
+function escapeAttr(val) {
+  return String(val || '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
 const routes = [
   {
     path: '/book',
     title: 'The Book | Beyond AI Engineering — Harsh Verma',
-    description: 'Read Beyond AI Engineering: From Creator to Curator by Harsh Verma. The practical career operating system for engineers navigating AI agents, code generation, and systems orchestration.',
+    description:
+      'Explore all 11 chapters, 4 parts, and 15 visual blueprints of Beyond AI Engineering: From Creator to Curator by Harsh Verma.',
     ogImage: DEFAULT_IMAGE,
   },
   {
     path: '/book/sample',
     title: 'Read a Sample Chapter | Beyond AI Engineering — Harsh Verma',
-    description: 'Read an exclusive excerpt from Beyond AI Engineering by Harsh Verma, including Preface, Introduction (The Engineer After Code), and Chapter 1.',
+    description:
+      'Read an excerpt from Beyond AI Engineering by Harsh Verma, including Escaping the Tyranny of Syntax and The Engineer After Code.',
     ogImage: DEFAULT_IMAGE,
   },
   {
     path: '/book/buy',
-    title: 'Buy Beyond AI Engineering | Hardcover, Paperback & Digital',
-    description: 'Order Beyond AI Engineering by Harsh Verma from Amazon, Barnes & Noble, Bookshop.org, and direct digital retailers globally.',
+    title: 'Get Beyond AI Engineering | Editions & Direct Author Inquiry',
+    description:
+      'Request Hardcover, Paperback, Digital, or bulk organizational editions of Beyond AI Engineering by Harsh Verma.',
     ogImage: DEFAULT_IMAGE,
   },
   {
-    path: '/teams',
-    title: 'Team & University Bulk Orders | Beyond AI Engineering',
-    description: 'Bring the Creator-Architect-Orchestrator operating system to your engineering organization or university with tiered bulk pricing, reading syllabi, and author sessions.',
+    path: '/engineers',
+    title: 'For Engineers | Build Your Next Chapter — Beyond AI Engineering',
+    description:
+      'Practical pathways for mid-to-senior software engineers moving from code output to systems design, judgment, and agent orchestration.',
+    ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_04_PM-2_73d3bcaa.png',
+  },
+  {
+    path: '/organizations',
+    title: 'For Organizations & Engineering Teams | Beyond AI Engineering',
+    description:
+      'Bulk book adoption, leadership reading groups, workshops, and keynotes to prepare engineering organizations for the agentic AI era.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_07_PM-8_c9db1dc2.png',
   },
   {
     path: '/author',
     title: 'Harsh Verma | Author of Beyond AI Engineering',
-    description: 'Harsh Verma is the author of Beyond AI Engineering, Principal AI Engineer at Palo Alto Networks, Fellow of BCS, IEEE Senior Member, and Forbes Technology Council Member.',
+    description:
+      'Harsh Verma is a Principal AI Engineer at Palo Alto Networks, Stanford Distinguished Scholar, Fellow of RSA, BCS & IFGICT, and Forbes Technology Council Member.',
     ogImage: AUTHOR_IMAGE,
   },
   {
     path: '/cao-framework',
     title: 'The C.A.O. Framework (Creator → Architect → Orchestrator) | Beyond AI Engineering',
-    description: 'The defining three-phase operating system for software engineers navigating the age of autonomous AI agents by Harsh Verma: Creator (Build), Architect (Design), Orchestrator (Lead).',
+    description:
+      'The three-phase operating system for software engineers navigating the age of autonomous AI agents by Harsh Verma, including the 12-scenario diagnostic.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_04_PM-1_cab3095f.png',
   },
   {
     path: '/frameworks',
-    title: '10 Proprietary Frameworks for the Agentic Era | Beyond AI Engineering',
-    description: 'Explore the 10 proprietary frameworks from Beyond AI Engineering by Harsh Verma: Trust Economy, How to What, Prompt Empathy, Agentic Diplomacy, and more.',
+    title: '12 Signature Frameworks for the Agentic Era | Beyond AI Engineering',
+    description:
+      'Explore all 12 signature frameworks from Beyond AI Engineering by Harsh Verma: C.A.O. Framework, Trust Economy, How to What, Human API, and Ethical Curation.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_04_PM-2_73d3bcaa.png',
   },
   {
     path: '/frameworks/trust-economy',
     title: 'The Trust Economy Framework | Beyond AI Engineering',
-    description: 'When generation is free, trust is the only scarce commodity. Discover the Trust Economy framework from Beyond AI Engineering by Harsh Verma.',
+    description:
+      'When output is abundant, verified human judgment is scarce. Explore the Trust Economy framework from Beyond AI Engineering by Harsh Verma.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-3_0750658f.png',
   },
   {
     path: '/frameworks/how-to-what',
     title: 'The How-to-What Cognitive Shift | Beyond AI Engineering',
-    description: 'Moving from syntax execution to problem formulation, specification, and architectural judgment in the age of AI agents.',
+    description:
+      'Moving from syntax execution to problem selection, specification, and architectural judgment in the age of AI agents.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_04_PM-2_73d3bcaa.png',
   },
   {
     path: '/frameworks/prompt-empathy',
     title: 'Prompt Empathy Framework | Beyond AI Engineering',
-    description: 'Designing prompts from the model and agent perspective to produce deterministic, verified systems outcomes.',
+    description:
+      'Designing context budgets and structured contracts from the model perspective to produce deterministic systems outcomes.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_04_PM-2_73d3bcaa.png',
   },
   {
     path: '/frameworks/agentic-diplomacy',
     title: 'Agentic Diplomacy Framework | Beyond AI Engineering',
-    description: 'Orchestrating multi-agent systems with explicit authority boundaries, permissions, and escalation policies.',
+    description:
+      'Orchestrating multi-agent systems with explicit authority boundaries, permissions, and human escalation policies.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-4_ef9211f1.png',
   },
   {
     path: '/frameworks/ethical-curation',
     title: 'Ethical Curation Framework | Beyond AI Engineering',
-    description: 'Building transparent, responsible, and bias-resistant AI systems that respect human agency and privacy.',
+    description:
+      'Building transparent, accountable, and bias-resistant AI systems with human ownership over deployed outcomes.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_04_PM-2_73d3bcaa.png',
   },
   {
     path: '/frameworks/ai-product-sense',
     title: 'AI Product Sense Framework | Beyond AI Engineering',
-    description: 'Bridging engineering feasibility and genuine user value with generative and autonomous technology.',
+    description:
+      'Bridging engineering feasibility, token unit economics, and genuine user value in autonomous software.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_04_PM-2_73d3bcaa.png',
   },
   {
     path: '/frameworks/unlearn-relearn',
     title: 'Unlearn / Relearn Cycle | Beyond AI Engineering',
-    description: 'The continuous cycle of discarding deprecated engineering habits and adopting high-leverage agent workflows.',
+    description:
+      'Continually discarding deprecated coding rituals in favor of high-leverage agentic workflows.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_04_PM-2_73d3bcaa.png',
   },
   {
     path: '/frameworks/digital-paper-trail',
     title: 'Digital Paper Trail Framework | Beyond AI Engineering',
-    description: 'Creating auditable, human-inspectable records of AI-assisted engineering decisions and outputs.',
+    description:
+      'Creating auditable, inspectable records of AI-assisted engineering decisions, ADRs, and post-mortems.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-4_ef9211f1.png',
   },
   {
     path: '/frameworks/micro-community',
-    title: 'Micro-Community Engine | Beyond AI Engineering',
-    description: 'Building deep peer trust networks and professional moats in an era of automated, low-signal networking.',
+    title: 'The Micro-Community Engine | Beyond AI Engineering',
+    description:
+      'Building deep peer trust networks of domain practitioners rather than pursuing low-signal follower vanity metrics.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_04_PM-2_73d3bcaa.png',
   },
   {
     path: '/frameworks/proof-of-work',
     title: 'Proof of Work Framework | Beyond AI Engineering',
-    description: 'Demonstrating irreplaceable technical judgment and systems authority beyond raw code volume.',
+    description:
+      'Demonstrating irreplaceable technical judgment and systems authority through verifiable deployments and benchmarks.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_04_PM-2_73d3bcaa.png',
   },
   {
     path: '/frameworks/human-api',
-    title: 'Human API Framework | Beyond AI Engineering',
-    description: 'How senior engineers structure their judgment and communication interface for agents, leadership, and cross-functional teams.',
+    title: 'The Human API Framework | Beyond AI Engineering',
+    description:
+      'How engineers structure their judgment and governance interface between human stakeholders and multi-agent systems.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_04_PM-2_73d3bcaa.png',
   },
   {
     path: '/manifesto',
     title: 'The Engineer After Code Manifesto | Beyond AI Engineering',
-    description: 'The 10 foundational theses for software engineers building resilient, high-leverage careers in the era of generative models and autonomous agents.',
+    description:
+      'Eight foundational axioms for software engineers building resilient careers around judgment, boundaries, and trust.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_06_PM-7_54b9a7c1.png',
   },
   {
     path: '/resources',
-    title: 'Interactive Engineering Lab & Canvases | Beyond AI Engineering',
-    description: 'Interactive strategy canvases, ethical AI audit rubrics, and the 30-60-90 day engineering leadership transition planner.',
+    title: 'Implementation Lab & 15 Companion Resources | Beyond AI Engineering',
+    description:
+      '15 interactive canvases, evaluation checklists, governance matrices, and the 30/60/90-day career transition planner.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-4_ef9211f1.png',
   },
   {
     path: '/toolkit',
     title: 'The Living AI Engineering Toolkit | Beyond AI Engineering',
-    description: 'Curated agentic coding tools, prompt architectures, evaluation harnesses, and observability suites for modern AI orchestrators.',
+    description:
+      'Curated agentic coding tools, evaluation harnesses, observability suites, and security frameworks across 11 categories.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-5_dbbc71eb.png',
   },
   {
     path: '/students',
-    title: 'Student & New Grad Guide | Beyond AI Engineering',
-    description: 'How computer science students and early-career engineers can thrive when LLMs write syntax: proof of work, product judgment, and systems thinking.',
+    title: 'For Students & Early-Career Engineers | Beyond AI Engineering',
+    description:
+      'How computer science students build verifiable proof of work, core CS fundamentals, and engineering judgment when AI writes syntax.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_06_PM-6_eb2b1261.png',
   },
   {
     path: '/speaking',
     title: 'Keynotes & Speaking | Harsh Verma — Beyond AI Engineering',
-    description: 'Book Harsh Verma for keynotes, executive briefings, and engineering all-hands on the future of engineering, autonomous agents, and trust.',
+    description:
+      'Invite Harsh Verma for keynotes, executive offsites, university talks, and engineering department masterclasses.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_07_PM-8_c9db1dc2.png',
   },
   {
     path: '/press',
     title: 'Press Kit & Media Assets | Beyond AI Engineering',
-    description: 'Official press kit, high-resolution author portraits, book covers, approved author bio, and media inquiry contacts for Harsh Verma.',
+    description:
+      'Official press kit, high-resolution author portraits, book covers, verified author biographies, and media contacts.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_07_PM-9_aa999379.png',
   },
   {
-    path: '/ideas',
-    title: 'Ideas Beyond the Book | Essays & Research by Harsh Verma',
-    description: 'In-depth essays, technical commentary, and ongoing research on the transition from code-centric to judgment-centric engineering.',
-    ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_08_PM-10_e9c069eb.png',
-  },
-  {
-    path: '/ideas/from-builder-to-curator',
-    title: 'From Builder to Curator: The New Engineering Career Currency | Beyond AI Engineering',
-    description: 'Why the era of code volume is ending, and how systems judgment, taste, and orchestration become the only enduring career assets.',
-    ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_08_PM-10_e9c069eb.png',
-  },
-  {
-    path: '/ideas/ai-agent-diplomacy',
-    title: 'The Architecture of Agentic Diplomacy | Beyond AI Engineering',
-    description: 'When autonomous agents talk to other autonomous agents, software engineering looks less like writing algorithms and more like diplomacy.',
-    ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-4_ef9211f1.png',
-  },
-  {
-    path: '/ideas/death-of-junior-developer',
-    title: 'The Myth of the Dying Junior Engineer | Beyond AI Engineering',
-    description: 'Why AI coding tools are not killing early-career engineers, but dramatically altering the skills they must master to become indispensable.',
-    ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_06_PM-6_eb2b1261.png',
-  },
-  {
-    path: '/ideas/trust-economy-software',
-    title: 'Navigating the Trust Economy in Enterprise Software | Beyond AI Engineering',
-    description: 'How enterprise tech stacks shift from paying for capability to paying for verification, safety, and accountability.',
-    ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-3_0750658f.png',
-  },
-  {
-    path: '/ideas/unlearning-code-habits',
-    title: 'The 5 Code Habits Engineers Must Unlearn in 2026 | Beyond AI Engineering',
-    description: 'From perfectionism in raw syntax to ticket-hoarding: the behavioral debt that prevents engineers from becoming orchestrators.',
-    ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_08_PM-10_e9c069eb.png',
-  },
-  {
-    path: '/ideas/enterprise-agent-governance',
-    title: 'Autonomous Agents in Production: The Missing Governance Layer | Beyond AI Engineering',
-    description: 'A blueprint for engineering leaders implementing agentic systems with deterministic rollback, human oversight, and auditability.',
-    ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-4_ef9211f1.png',
-  },
-  {
     path: '/stories',
-    title: 'Reader Stories & Field Reports | Beyond AI Engineering',
-    description: 'Real-world accounts from engineers, managers, and architects putting the C.A.O. framework and trust economy principles into practice.',
+    title: 'Transformation Archetypes & Reader Stories | Beyond AI Engineering',
+    description:
+      'Illustrative C.A.O. transition profiles showing how engineers and leaders apply the operating system, plus story submissions.',
     ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_04_PM-2_73d3bcaa.png',
   },
   {
-    path: '/blog',
-    title: 'Engineering Blog & Technical Dispatches | Harsh Verma — Beyond AI Engineering',
-    description: 'Archive of 30+ publications, field experiments, local model benchmarks, Model Context Protocol (MCP) implementations, Forbes columns, and systems engineering notes by Harsh Verma.',
+    path: '/contact',
+    title: 'Contact Harsh Verma | Beyond AI Engineering',
+    description:
+      'Reach Harsh Verma directly for individual book inquiries, bulk orders, speaking engagements, media requests, and engineering partnerships.',
     ogImage: AUTHOR_IMAGE,
+  },
+  {
+    path: '/insights',
+    title: 'Insights: Articles, Forbes Columns & Engineering Notes | Harsh Verma',
+    description:
+      'Ideas beyond the book: Forbes Technology Council columns, MCP & local inference benchmarks, RSAC & HackerNoon essays, and systems notes.',
+    ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_08_PM-10_e9c069eb.png',
   },
 ];
 
-// Dynamically read and register all blog post canonical routes
+// Dynamically read and register all /insights/:slug canonical routes from blogData.ts + articlesData.ts
+const registeredSlugs = new Set();
 try {
   const blogDataContent = fs.readFileSync(path.resolve('src/data/blogData.ts'), 'utf-8');
-  const postMatches = [...blogDataContent.matchAll(/"slug":\s*"([^"]+)"[\s\S]*?"title":\s*"([^"]+)"[\s\S]*?"subtitle":\s*"([^"]+)"/g)];
+  const postMatches = [
+    ...blogDataContent.matchAll(/"slug":\s*"([^"]+)"[\s\S]*?"title":\s*"([^"]+)"[\s\S]*?"subtitle":\s*"([^"]+)"/g),
+  ];
   for (const match of postMatches) {
     const slug = match[1];
-    const title = match[2];
-    const subtitle = match[3];
-    routes.push({
-      path: `/blog/${slug}`,
-      title: `${title} | Harsh Verma — Beyond AI Engineering`,
-      description: subtitle,
-      ogImage: AUTHOR_IMAGE,
-    });
+    if (!registeredSlugs.has(slug)) {
+      registeredSlugs.add(slug);
+      routes.push({
+        path: `/insights/${slug}`,
+        title: `${match[2]} | Harsh Verma — Beyond AI Engineering`,
+        description: match[3],
+        ogImage: AUTHOR_IMAGE,
+      });
+    }
   }
 } catch (e) {
-  console.warn('Could not dynamically extract blog posts for prerender:', e);
+  console.warn('Could not dynamically extract blogData posts for prerender:', e);
 }
 
-console.log(`Prerendering ${routes.length} canonical static pages for GitHub Pages with unique OpenGraph images...`);
+try {
+  const articlesContent = fs.readFileSync(path.resolve('src/data/articlesData.ts'), 'utf-8');
+  const articleMatches = [
+    ...articlesContent.matchAll(/id:\s*'([^']+)'[\s\S]*?title:\s*'([^']+)'[\s\S]*?subtitle:\s*'([^']+)'/g),
+  ];
+  for (const match of articleMatches) {
+    const slug = match[1];
+    if (!registeredSlugs.has(slug)) {
+      registeredSlugs.add(slug);
+      routes.push({
+        path: `/insights/${slug}`,
+        title: `${match[2]} | Harsh Verma — Beyond AI Engineering`,
+        description: match[3],
+        ogImage: 'https://www.beyondaiengineering.com/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_08_PM-10_e9c069eb.png',
+      });
+    }
+  }
+} catch (e) {
+  console.warn('Could not dynamically extract articlesData essays for prerender:', e);
+}
+
+console.log(`Prerendering ${routes.length} canonical static pages with OpenGraph tags...`);
 
 for (const r of routes) {
   const canonicalUrl = `https://www.beyondaiengineering.com${r.path}`;
   const ogImg = r.ogImage || DEFAULT_IMAGE;
-  
+  const safeTitle = escapeAttr(r.title);
+  const safeDesc = escapeAttr(r.description);
+
   let html = baseIndexHtml;
-  
-  // Replace title
-  html = html.replace(/<title>.*?<\/title>/, `<title>${r.title}</title>`);
-  
-  // Replace meta description
+
+  html = html.replace(/<title>.*?<\/title>/, `<title>${safeTitle}</title>`);
   html = html.replace(
     /<meta name="description" content=".*?" \/>/,
-    `<meta name="description" content="${r.description}" />`
+    `<meta name="description" content="${safeDesc}" />`
   );
-  
-  // Replace canonical link
   html = html.replace(
     /<link rel="canonical" href=".*?" \/>/,
     `<link rel="canonical" href="${canonicalUrl}" />`
   );
-  
-  // Replace og:title
   html = html.replace(
     /<meta property="og:title" content=".*?" \/>/,
-    `<meta property="og:title" content="${r.title}" />`
+    `<meta property="og:title" content="${safeTitle}" />`
   );
-  
-  // Replace og:description
   html = html.replace(
     /<meta property="og:description" content=".*?" \/>/,
-    `<meta property="og:description" content="${r.description}" />`
+    `<meta property="og:description" content="${safeDesc}" />`
   );
-  
-  // Replace og:url
   html = html.replace(
     /<meta property="og:url" content=".*?" \/>/,
     `<meta property="og:url" content="${canonicalUrl}" />`
   );
-
-  // Replace og:image
   html = html.replace(
     /<meta property="og:image" content=".*?" \/>/,
     `<meta property="og:image" content="${ogImg}" />`
   );
-
-  // Replace twitter:image
+  html = html.replace(
+    /<meta name="twitter:title" content=".*?" \/>/,
+    `<meta name="twitter:title" content="${safeTitle}" />`
+  );
+  html = html.replace(
+    /<meta name="twitter:description" content=".*?" \/>/,
+    `<meta name="twitter:description" content="${safeDesc}" />`
+  );
   html = html.replace(
     /<meta name="twitter:image" content=".*?" \/>/,
     `<meta name="twitter:image" content="${ogImg}" />`
   );
 
-  // Determine target directory
   const relativeDir = r.path.replace(/^\//, '');
   const targetDir = path.join(distDir, relativeDir);
-  
+
   fs.mkdirSync(targetDir, { recursive: true });
   fs.writeFileSync(path.join(targetDir, 'index.html'), html, 'utf-8');
 }

@@ -107,26 +107,27 @@ export const CAOInteractiveFramework: React.FC<CAOInteractiveFrameworkProps> = (
             const Icon = stage.icon;
             const isSelected = selectedStage === stage.id;
             return (
-              <div
+              <button
+                type="button"
                 key={stage.id}
                 onClick={() => handleStageChange(stage.id)}
-                className={`p-6 sm:p-8 rounded-xl border transition-all cursor-pointer relative flex flex-col justify-between hover:-translate-y-1 duration-300 ${
+                className={`text-left p-6 sm:p-8 rounded-xl border transition-all cursor-pointer relative flex flex-col justify-between hover:-translate-y-0.5 duration-200 ${
                   isSelected
                     ? 'border-blue-900 dark:border-blue-400 shadow-md ring-2 ring-blue-900/10 dark:ring-blue-400/20 bg-white dark:bg-[#111C35]'
                     : 'border-[#101828]/10 dark:border-white/10 hover:border-[#101828]/30 dark:hover:border-white/20 shadow-xs bg-white dark:bg-[#0D1527]'
                 }`}
               >
                 {/* Connecting step indicator */}
-                <div className="flex items-center justify-between mb-4">
-                  <span className="font-mono text-xs font-semibold text-[#98A2B3] dark:text-slate-500">
-                    STAGE 0{idx + 1}
+                <div className="flex items-center justify-between mb-4 w-full text-xs font-mono">
+                  <span className="font-semibold text-[#667085] dark:text-slate-400 tabular-nums">
+                    Stage 0{idx + 1}
                   </span>
-                  <span className={`text-[11px] font-semibold tracking-wider uppercase px-2.5 py-0.5 rounded border ${stage.badgeClass}`}>
+                  <span className="font-semibold text-blue-900 dark:text-blue-300 uppercase tracking-wider">
                     {stage.actionVerb}
                   </span>
                 </div>
 
-                <div>
+                <div className="w-full">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-10 h-10 rounded-lg bg-[#FAFAF7] dark:bg-[#131F3A] border border-[#101828]/10 dark:border-white/10 flex items-center justify-center text-[#101828] dark:text-white">
                       <Icon className="w-5 h-5" />
@@ -155,11 +156,13 @@ export const CAOInteractiveFramework: React.FC<CAOInteractiveFrameworkProps> = (
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-[#101828]/[0.06] dark:border-white/10 text-[11px] text-[#475467] dark:text-slate-400 flex items-center justify-between">
+                <div className="w-full mt-4 pt-3 border-t border-[#101828]/[0.06] dark:border-white/10 text-xs text-[#475467] dark:text-slate-400 flex items-center justify-between gap-2">
                   <span>{stage.careerAltitude}</span>
-                  <span className="font-medium text-blue-900 dark:text-blue-400 underline">Details</span>
+                  <span className="font-semibold text-blue-900 dark:text-blue-400 underline shrink-0">
+                    {isSelected ? 'Selected' : 'Inspect'}
+                  </span>
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>

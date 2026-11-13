@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { X, Book, Sparkles, CheckCircle2, ArrowUpRight, Users, Mail, Loader2, Send } from 'lucide-react';
-import { BOOK_DETAILS } from '../data/bookData';
+import { X, CheckCircle2, ArrowUpRight, Users, Mail, Loader2, Send, AlertCircle } from 'lucide-react';
+import { SITE_CONFIG } from '../config/siteConfig';
 import { sendBookInquiryToAuthor, AUTHOR_EMAIL } from '../utils/emailService';
+import { trackEvent, buildUtmUrl } from '../utils/analytics';
 
 interface BuyModalProps {
   isOpen: boolean;
@@ -15,64 +16,31 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   onOpenSample,
 }) => {
   const [selectedFormat, setSelectedFormat] = useState<'hardcover' | 'paperback' | 'ebook' | 'audiobook' | 'bulk'>('hardcover');
-  
-  // Bulk form state
+
   const [teamSize, setTeamSize] = useState('25-50 copies');
   const [teamContactName, setTeamContactName] = useState('');
   const [teamEmail, setTeamEmail] = useState('');
   const [teamOrg, setTeamOrg] = useState('');
   const [teamNotes, setTeamNotes] = useState('');
   const [teamSubmitting, setTeamSubmitting] = useState(false);
-  const [teamSubmitted, setTeamSubmitted] = useState(false);
+  const [teamStatus, setTeamStatus] = useState<'idle' | 'sent' | 'fallback'>('idle');
+  const [teamStatusMsg, setTeamStatusMsg] = useState('');
   const [teamMailtoUrl, setTeamMailtoUrl] = useState('');
 
-  // Direct author copy form state
-  const [showDirectForm, setShowDirectForm] = useState(false);
+  const [showDirectForm, setShowDirectForm] = useState(true);
   const [directName, setDirectName] = useState('');
   const [directEmail, setDirectEmail] = useState('');
   const [directNotes, setDirectNotes] = useState('');
   const [directSubmitting, setDirectSubmitting] = useState(false);
-  const [directSubmitted, setDirectSubmitted] = useState(false);
+  const [directStatus, setDirectStatus] = useState<'idle' | 'sent' | 'fallback'>('idle');
+  const [directStatusMsg, setDirectStatusMsg] = useState('');
   const [directMailtoUrl, setDirectMailtoUrl] = useState('');
 
   if (!isOpen) return null;
 
-  const formats = [
-    {
-      id: 'hardcover' as const,
-      name: 'Hardcover Edition',
-      subtitle: 'Embossed Navy Cloth & Archival Paper',
-      price: '$34.00',
-      description: 'The definitive collector’s edition. Includes companion digital lab worksheets and author architectural diagrams.',
-      availability: 'Available worldwide via major booksellers & direct author copies',
-    },
-    {
-      id: 'paperback' as const,
-      name: 'Paperback Edition',
-      subtitle: 'Everyday Field Manual',
-      price: '$24.00',
-      description: 'The portable desk companion for working engineers, university courses, and technical reading groups.',
-      availability: 'Ships globally with next-day dispatch',
-    },
-    {
-      id: 'ebook' as const,
-      name: 'Digital eBook',
-      subtitle: 'ePub, Kindle & DRM-Free PDF Bundle',
-      price: '$16.99',
-      description: 'Instant download with hyperlinked footnotes, interactive code references, and high-resolution diagrams.',
-      availability: 'Immediate digital delivery',
-    },
-    {
-      id: 'audiobook' as const,
-      name: 'Audiobook Edition',
-      subtitle: 'Unabridged Author-Narrated Audio',
-      price: '$26.00',
-      description: 'Full 10-hour author narration with supplementary audio commentary on enterprise agent governance.',
-      availability: 'Audible, Apple Books & Spotify',
-    },
-  ];
-
-  const currentFmt = formats.find((f) => f.id === selectedFormat) || formats[0];
+  const editions = SITE_CONFIG.book.editions;
+  const currentFmt = editions.find((e) => e.id === selectedFormat) || editions[0];
+  const configuredRetailers = SITE_CONFIG.book.retailers.filter((r) => r.isConfigured && r.url);
 
   const handleBulkSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,11 +52,13 @@ export const BuyModal: React.FC<BuyModalProps> = ({
         email: teamEmail,
         organization: teamOrg || 'Engineering Team',
         formatOrCopies: teamSize,
-        notesOrMessage: teamNotes || 'Requested team bulk licensing and information pack.',
+        notesOrMessage: teamNotes || 'Requested organizational bulk licensing and team copies.',
         sourcePage: '/buy-modal (Team Order)',
       });
       setTeamMailtoUrl(res.mailtoUrl);
-      setTeamSubmitted(true);
+      setTeamStatusMsg(res.message);
+      setTeamStatus(res.success ? 'sent' : 'fallback');
+      trackEvent('organization_inquiry', { source: 'buy_modal', copies: teamSize, delivered: res.success });
     } finally {
       setTeamSubmitting(false);
     }
@@ -102,12 +72,14 @@ export const BuyModal: React.FC<BuyModalProps> = ({
         formType: 'Book Order (Direct Author Copy)',
         name: directName,
         email: directEmail,
-        formatOrCopies: `${currentFmt.name} (${currentFmt.price})`,
-        notesOrMessage: directNotes || `Inquiry to get a direct copy of ${currentFmt.name}.`,
-        sourcePage: `/buy-modal (${currentFmt.name})`,
+        formatOrCopies: currentFmt.format,
+        notesOrMessage: directNotes || `Inquiry regarding ${currentFmt.format} of Beyond AI Engineering.`,
+        sourcePage: `/buy-modal (${currentFmt.format})`,
       });
       setDirectMailtoUrl(res.mailtoUrl);
-      setDirectSubmitted(true);
+      setDirectStatusMsg(res.message);
+      setDirectStatus(res.success ? 'sent' : 'fallback');
+      trackEvent('book_purchase_click', { edition: currentFmt.id, channel: 'direct_author', delivered: res.success });
     } finally {
       setDirectSubmitting(false);
     }
@@ -116,127 +88,106 @@ export const BuyModal: React.FC<BuyModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/75 backdrop-blur-xs overflow-y-auto">
       <div className="relative w-full max-w-2xl bg-[#FAFAF7] dark:bg-[#0D1527] rounded-2xl border border-[#101828]/10 dark:border-white/10 shadow-2xl p-6 sm:p-8 my-8 text-[#101828] dark:text-slate-100 max-h-[92vh] flex flex-col transition-colors">
-        
-        {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 text-[#475467] dark:text-slate-400 hover:text-[#101828] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors cursor-pointer"
+          className="absolute top-5 right-5 p-2 text-[#475467] dark:text-slate-400 hover:text-[#101828] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded-md transition-colors cursor-pointer"
           aria-label="Close modal"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Header */}
-        <div className="mb-6 pb-4 border-b border-[#101828]/10 dark:border-white/10 shrink-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-mono uppercase tracking-widest text-blue-900 dark:text-blue-400 font-semibold block">
-              Official Book Editions & Direct Inquiries
-            </span>
-            <span className="inline-flex items-center gap-1 text-[11px] font-mono bg-blue-100 dark:bg-blue-950/80 text-blue-900 dark:text-blue-300 px-2 py-0.5 rounded-full">
-              <Mail className="w-3 h-3" />
-              <span>Direct Author Dispatch: {AUTHOR_EMAIL}</span>
-            </span>
+        <div className="mb-5 pb-4 border-b border-[#101828]/10 dark:border-white/10 shrink-0">
+          <div className="text-xs font-mono text-blue-900 dark:text-blue-400 mb-1">
+            Beyond AI Engineering · Direct & Organizational Inquiries ({AUTHOR_EMAIL})
           </div>
           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#101828] dark:text-white">
             Get Beyond AI Engineering
           </h2>
           <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 mt-1">
-            Choose your preferred retailer or submit an inquiry directly to author Harsh Verma ({AUTHOR_EMAIL}).
+            Select an edition or organizational tier to submit a direct request to Harsh Verma ({AUTHOR_EMAIL}).
           </p>
         </div>
 
-        {/* Format Selector Pills / Segmented Controls */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-6 shrink-0">
-          {formats.map((fmt) => (
+        {/* Format Selector */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-5 shrink-0">
+          {editions.map((fmt) => (
             <button
               key={fmt.id}
               onClick={() => {
                 setSelectedFormat(fmt.id);
-                setDirectSubmitted(false);
+                setDirectStatus('idle');
               }}
-              className={`p-2.5 rounded-lg border text-xs font-semibold text-center transition-all cursor-pointer ${
+              className={`p-2.5 rounded-lg border text-xs font-semibold text-center transition-colors cursor-pointer ${
                 selectedFormat === fmt.id
-                  ? 'bg-[#101828] dark:bg-white text-white dark:text-[#070B14] border-[#101828] dark:border-white shadow-xs'
+                  ? 'bg-[#101828] dark:bg-white text-white dark:text-[#070B14] border-[#101828] dark:border-white'
                   : 'bg-white dark:bg-[#11192E] text-[#475467] dark:text-slate-300 border-[#101828]/10 dark:border-white/10 hover:border-[#101828]/30 dark:hover:border-white/30'
               }`}
             >
-              <div className="truncate">{fmt.name.split(' ')[0]}</div>
-              <div className="text-[10px] opacity-80">{fmt.price}</div>
+              <div className="truncate">{fmt.format.split(' ')[0]}</div>
+              <div className="text-[11px] opacity-80">{fmt.price !== null ? `$${fmt.price.toFixed(2)}` : 'Direct Inquiry'}</div>
             </button>
           ))}
           <button
             onClick={() => setSelectedFormat('bulk')}
-            className={`col-span-2 sm:col-span-1 p-2.5 rounded-lg border text-xs font-semibold text-center transition-all cursor-pointer flex flex-col items-center justify-center ${
+            className={`col-span-2 sm:col-span-1 p-2.5 rounded-lg border text-xs font-semibold text-center transition-colors cursor-pointer flex flex-col items-center justify-center ${
               selectedFormat === 'bulk'
-                ? 'bg-blue-900 dark:bg-blue-600 text-white border-blue-900 dark:border-blue-600 shadow-xs'
+                ? 'bg-blue-900 dark:bg-blue-600 text-white border-blue-900 dark:border-blue-600'
                 : 'bg-white dark:bg-[#11192E] text-[#475467] dark:text-slate-300 border-[#101828]/10 dark:border-white/10 hover:border-[#101828]/30 dark:hover:border-white/30'
             }`}
           >
             <div className="truncate flex items-center gap-1">
               <Users className="w-3 h-3" />
-              <span>Team Orders</span>
+              <span>Teams</span>
             </div>
-            <div className="text-[10px] opacity-80">Tiered Pricing</div>
+            <div className="text-[11px] opacity-80">Bulk Orders</div>
           </button>
         </div>
 
-        {/* Active Format Content */}
+        {/* Content */}
         <div className="overflow-y-auto pr-1 flex-1">
           {selectedFormat !== 'bulk' ? (
-            <div className="space-y-6">
-              <div className="bg-white dark:bg-[#11192E] p-6 rounded-xl border border-[#101828]/10 dark:border-white/10 shadow-xs space-y-4">
-                <div className="flex items-start justify-between gap-4">
+            <div className="space-y-5">
+              <div className="bg-white dark:bg-[#11192E] p-5 sm:p-6 rounded-xl border border-[#101828]/10 dark:border-white/10 space-y-4">
+                <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
                     <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white">
-                      {currentFmt.name}
+                      {currentFmt.format}
                     </h3>
-                    <p className="text-xs font-mono uppercase text-blue-900 dark:text-blue-400 font-semibold tracking-wider">
-                      {currentFmt.subtitle}
+                    <p className="text-xs font-mono text-blue-900 dark:text-blue-400">
+                      {currentFmt.subtitle} · {currentFmt.specLabel}
                     </p>
                   </div>
                   <div className="text-right">
-                    <span className="font-serif text-2xl font-bold text-[#101828] dark:text-white">{currentFmt.price}</span>
-                    <span className="block text-[11px] text-[#475467] dark:text-slate-400">USD MSRP</span>
+                    <span className="font-mono text-xs font-semibold text-[#101828] dark:text-slate-200">
+                      {currentFmt.price !== null ? `$${currentFmt.price.toFixed(2)} USD` : currentFmt.priceLabel}
+                    </span>
                   </div>
                 </div>
 
-                <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed">
-                  {currentFmt.description}
-                </p>
-
-                <div className="text-xs text-[#101828] dark:text-slate-200 font-mono pt-2 border-t border-[#101828]/[0.08] dark:border-white/10">
-                  Status: <span className="text-emerald-700 dark:text-emerald-400 font-semibold">{currentFmt.availability}</span>
-                </div>
-
                 {/* Direct Author Request Section */}
-                <div className="p-4 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-900/50 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-blue-900 dark:text-blue-400" />
-                      <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-950 dark:text-blue-300">
-                        Inquire / Request Direct Author Copy
-                      </span>
+                <div className="p-4 rounded-xl bg-blue-50/60 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-900/50 space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-blue-950 dark:text-blue-300">
+                      <Mail className="w-4 h-4" />
+                      <span>Direct Request to Harsh Verma</span>
                     </div>
                     <button
                       type="button"
                       onClick={() => setShowDirectForm(!showDirectForm)}
-                      className="text-xs font-semibold text-blue-900 dark:text-blue-300 underline hover:text-blue-700 cursor-pointer"
+                      className="text-xs font-semibold text-blue-900 dark:text-blue-300 underline cursor-pointer"
                     >
-                      {showDirectForm ? 'Hide Form' : 'Fill Direct Request Form →'}
+                      {showDirectForm ? 'Hide Form' : 'Open Form'}
                     </button>
                   </div>
 
-                  <p className="text-xs text-[#475467] dark:text-slate-300">
-                    Want an author copy, invoice inquiry, or personalized delivery? Submit your details directly to <strong>{AUTHOR_EMAIL}</strong>.
-                  </p>
-
                   {showDirectForm && (
-                    <div className="pt-2">
-                      {!directSubmitted ? (
+                    <div className="pt-1">
+                      {directStatus === 'idle' ? (
                         <form onSubmit={handleDirectSubmit} className="space-y-3">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                             <div>
-                              <label className="block text-[11px] font-mono uppercase text-[#101828] dark:text-slate-300 font-semibold mb-1">
+                              <label className="block text-xs font-medium text-[#101828] dark:text-slate-300 mb-1">
                                 Your Name
                               </label>
                               <input
@@ -244,12 +195,12 @@ export const BuyModal: React.FC<BuyModalProps> = ({
                                 type="text"
                                 value={directName}
                                 onChange={(e) => setDirectName(e.target.value)}
-                                placeholder="Your full name"
-                                className="w-full text-xs p-2 rounded-md border border-[#101828]/20 dark:border-white/20 bg-white dark:bg-[#0A101F] text-[#101828] dark:text-white"
+                                placeholder="Full name"
+                                className="w-full text-xs p-2.5 rounded-md border border-[#101828]/20 dark:border-white/20 bg-white dark:bg-[#0A101F] text-[#101828] dark:text-white"
                               />
                             </div>
                             <div>
-                              <label className="block text-[11px] font-mono uppercase text-[#101828] dark:text-slate-300 font-semibold mb-1">
+                              <label className="block text-xs font-medium text-[#101828] dark:text-slate-300 mb-1">
                                 Your Email
                               </label>
                               <input
@@ -258,59 +209,67 @@ export const BuyModal: React.FC<BuyModalProps> = ({
                                 value={directEmail}
                                 onChange={(e) => setDirectEmail(e.target.value)}
                                 placeholder="you@domain.com"
-                                className="w-full text-xs p-2 rounded-md border border-[#101828]/20 dark:border-white/20 bg-white dark:bg-[#0A101F] text-[#101828] dark:text-white"
+                                className="w-full text-xs p-2.5 rounded-md border border-[#101828]/20 dark:border-white/20 bg-white dark:bg-[#0A101F] text-[#101828] dark:text-white"
                               />
                             </div>
                           </div>
 
                           <div>
-                            <label className="block text-[11px] font-mono uppercase text-[#101828] dark:text-slate-300 font-semibold mb-1">
-                              Shipping Address / Notes / Questions
+                            <label className="block text-xs font-medium text-[#101828] dark:text-slate-300 mb-1">
+                              Shipping Location / Request Notes
                             </label>
                             <textarea
                               rows={2}
                               value={directNotes}
                               onChange={(e) => setDirectNotes(e.target.value)}
-                              placeholder="e.g. Shipping address for physical copy, or custom questions for Harsh Verma"
-                              className="w-full text-xs p-2 rounded-md border border-[#101828]/20 dark:border-white/20 bg-white dark:bg-[#0A101F] text-[#101828] dark:text-white"
+                              placeholder={`Request ${currentFmt.format}, release updates, or signed copy details`}
+                              className="w-full text-xs p-2.5 rounded-md border border-[#101828]/20 dark:border-white/20 bg-white dark:bg-[#0A101F] text-[#101828] dark:text-white"
                             />
                           </div>
 
                           <button
                             type="submit"
                             disabled={directSubmitting}
-                            className="w-full py-2.5 text-xs font-semibold bg-blue-900 dark:bg-blue-600 text-white rounded-md hover:bg-blue-950 dark:hover:bg-blue-500 transition-colors cursor-pointer flex items-center justify-center gap-1.5 shadow-sm disabled:opacity-50"
+                            className="w-full py-2.5 text-xs font-semibold bg-blue-900 dark:bg-blue-600 text-white rounded-md hover:bg-blue-950 dark:hover:bg-blue-500 transition-colors cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50"
                           >
                             {directSubmitting ? (
                               <>
                                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                <span>Sending to {AUTHOR_EMAIL}...</span>
+                                <span>Sending...</span>
                               </>
                             ) : (
                               <>
                                 <Send className="w-3.5 h-3.5" />
-                                <span>Send Book Inquiry to {AUTHOR_EMAIL}</span>
+                                <span>{currentFmt.directRequestLabel}</span>
                               </>
                             )}
                           </button>
                         </form>
                       ) : (
-                        <div className="bg-emerald-50 dark:bg-emerald-950/60 p-4 rounded-lg border border-emerald-200 dark:border-emerald-800 text-center space-y-2">
-                          <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto" />
-                          <div className="font-serif font-bold text-base text-emerald-950 dark:text-emerald-200">
-                            Book Inquiry Sent to Harsh Verma!
+                        <div
+                          className={`p-4 rounded-lg border text-center space-y-2 ${
+                            directStatus === 'sent'
+                              ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200 dark:border-emerald-800'
+                              : 'bg-amber-50 dark:bg-amber-950/50 border-amber-200 dark:border-amber-800'
+                          }`}
+                        >
+                          {directStatus === 'sent' ? (
+                            <CheckCircle2 className="w-7 h-7 text-emerald-600 dark:text-emerald-400 mx-auto" />
+                          ) : (
+                            <AlertCircle className="w-7 h-7 text-amber-600 dark:text-amber-400 mx-auto" />
+                          )}
+                          <div className="font-serif font-bold text-base text-[#101828] dark:text-white">
+                            {directStatus === 'sent' ? 'Inquiry Sent to Harsh Verma' : 'Complete Request via Email App'}
                           </div>
-                          <p className="text-xs text-emerald-800 dark:text-emerald-300">
-                            Your request for <strong>{currentFmt.name}</strong> has been emailed directly to <strong>{AUTHOR_EMAIL}</strong>. Harsh will respond to <strong>{directEmail}</strong> shortly.
-                          </p>
+                          <p className="text-xs text-[#475467] dark:text-slate-300">{directStatusMsg}</p>
                           {directMailtoUrl && (
-                            <div className="pt-2">
+                            <div className="pt-1">
                               <a
                                 href={directMailtoUrl}
-                                className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-blue-900 dark:text-blue-300 underline hover:opacity-80"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-blue-900 text-white text-xs font-semibold hover:bg-blue-950"
                               >
-                                <span>Open a copy in your mail app</span>
-                                <ArrowUpRight className="w-3 h-3" />
+                                <Mail className="w-3.5 h-3.5" />
+                                <span>Send via Email Client</span>
                               </a>
                             </div>
                           )}
@@ -320,85 +279,67 @@ export const BuyModal: React.FC<BuyModalProps> = ({
                   )}
                 </div>
 
-                {/* Retailer Options */}
-                <div className="pt-2 space-y-2">
-                  <span className="text-xs font-mono uppercase tracking-wider text-[#475467] dark:text-slate-400 block">
-                    Or Buy via Authorized Retailer
+                {/* Retailer Links */}
+                <div className="pt-1 space-y-2">
+                  <span className="text-xs font-mono text-[#475467] dark:text-slate-400 block">
+                    Authorized Retail Channels
                   </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                    <a
-                      href="https://amazon.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-3 bg-[#FAFAF7] dark:bg-[#17233E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors group"
-                    >
-                      <span>Amazon Worldwide</span>
-                      <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-900 dark:group-hover:text-blue-400" />
-                    </a>
-                    <a
-                      href="https://barnesandnoble.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-3 bg-[#FAFAF7] dark:bg-[#17233E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors group"
-                    >
-                      <span>Barnes & Noble</span>
-                      <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-900 dark:group-hover:text-blue-400" />
-                    </a>
-                    <a
-                      href="https://bookshop.org"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-3 bg-[#FAFAF7] dark:bg-[#17233E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors group"
-                    >
-                      <span>Bookshop.org (Indie Booksellers)</span>
-                      <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-900 dark:group-hover:text-blue-400" />
-                    </a>
-                    <a
-                      href="https://audible.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-3 bg-[#FAFAF7] dark:bg-[#17233E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors group"
-                    >
-                      <span>Audible & Apple Books</span>
-                      <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-900 dark:group-hover:text-blue-400" />
-                    </a>
-                  </div>
+                  {configuredRetailers.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                      {configuredRetailers.map((retailer) => (
+                        <a
+                          key={retailer.id}
+                          href={buildUtmUrl(retailer.url!, 'buy_modal', 'retailer', retailer.id)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => trackEvent('retailer_click', { retailer: retailer.name })}
+                          className="p-3 bg-[#FAFAF7] dark:bg-[#17233E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors"
+                        >
+                          <span>{retailer.name}</span>
+                          <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
+                        </a>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-[#475467] dark:text-slate-400 p-3 rounded-lg border border-[#101828]/10 dark:border-white/10 bg-[#FAFAF7] dark:bg-[#0A101F]">
+                      Direct storefront links (Amazon, Barnes & Noble, Bookshop.org, Audible) will appear here once edition URLs are finalized. Use the direct request form above to reserve or inquire now.
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
           ) : (
-            /* Bulk Team Order Form */
-            <div className="bg-white dark:bg-[#11192E] p-6 rounded-xl border border-[#101828]/10 dark:border-white/10 shadow-xs">
-              {!teamSubmitted ? (
+            <div className="bg-white dark:bg-[#11192E] p-6 rounded-xl border border-[#101828]/10 dark:border-white/10">
+              {teamStatus === 'idle' ? (
                 <form onSubmit={handleBulkSubmit} className="space-y-4">
                   <div className="flex items-center gap-2">
                     <Users className="w-5 h-5 text-blue-900 dark:text-blue-400" />
                     <h3 className="font-serif text-xl font-bold text-[#101828] dark:text-white">
-                      Team & Institutional Bulk Licensing
+                      Team & Institutional Bulk Orders
                     </h3>
                   </div>
                   <p className="text-xs text-[#475467] dark:text-slate-300 leading-relaxed">
-                    Bring the Creator–Architect–Orchestrator framework to your entire engineering organization or computer science department. Submissions are delivered directly to <strong>{AUTHOR_EMAIL}</strong> with volume pricing and custom invoicing.
+                    Equip your engineering organization, leadership team, or university course with cohorts of 10–100+ copies. Inquiries go directly to <strong>{AUTHOR_EMAIL}</strong>.
                   </p>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     <div>
-                      <label className="block text-xs font-mono uppercase tracking-wider font-semibold text-[#101828] dark:text-slate-200 mb-1">
-                        Team Size / Copies
+                      <label className="block text-xs font-medium text-[#101828] dark:text-slate-200 mb-1">
+                        Estimated Quantity
                       </label>
                       <select
                         value={teamSize}
                         onChange={(e) => setTeamSize(e.target.value)}
-                        className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#0A101F] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
+                        className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#0A101F] text-[#101828] dark:text-white"
                       >
-                        <option value="10-24 copies">10–24 copies (15% discount)</option>
-                        <option value="25-50 copies">25–50 copies (25% discount)</option>
-                        <option value="51-100 copies">51–100 copies (35% discount)</option>
-                        <option value="100+ copies">100+ copies / Enterprise Campus</option>
+                        <option value="10-24 copies">10–24 copies</option>
+                        <option value="25-50 copies">25–50 copies</option>
+                        <option value="51-100 copies">51–100 copies</option>
+                        <option value="100+ copies">100+ copies / Organization-wide</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-mono uppercase tracking-wider font-semibold text-[#101828] dark:text-slate-200 mb-1">
+                      <label className="block text-xs font-medium text-[#101828] dark:text-slate-200 mb-1">
                         Contact Name
                       </label>
                       <input
@@ -406,15 +347,15 @@ export const BuyModal: React.FC<BuyModalProps> = ({
                         type="text"
                         value={teamContactName}
                         onChange={(e) => setTeamContactName(e.target.value)}
-                        placeholder="e.g. Marcus Vance"
-                        className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#0A101F] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
+                        placeholder="Full name"
+                        className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#0A101F] text-[#101828] dark:text-white"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-mono uppercase tracking-wider font-semibold text-[#101828] dark:text-slate-200 mb-1">
+                      <label className="block text-xs font-medium text-[#101828] dark:text-slate-200 mb-1">
                         Work Email
                       </label>
                       <input
@@ -423,82 +364,85 @@ export const BuyModal: React.FC<BuyModalProps> = ({
                         value={teamEmail}
                         onChange={(e) => setTeamEmail(e.target.value)}
                         placeholder="lead@company.com"
-                        className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#0A101F] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
+                        className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#0A101F] text-[#101828] dark:text-white"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-mono uppercase tracking-wider font-semibold text-[#101828] dark:text-slate-200 mb-1">
-                        Company / Organization
+                      <label className="block text-xs font-medium text-[#101828] dark:text-slate-200 mb-1">
+                        Organization / University
                       </label>
                       <input
                         type="text"
                         value={teamOrg}
                         onChange={(e) => setTeamOrg(e.target.value)}
-                        placeholder="e.g. Stripe, MIT, AWS"
-                        className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#0A101F] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
+                        placeholder="Organization name"
+                        className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#0A101F] text-[#101828] dark:text-white"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-mono uppercase tracking-wider font-semibold text-[#101828] dark:text-slate-200 mb-1">
-                      Target Delivery Date / Notes
+                    <label className="block text-xs font-medium text-[#101828] dark:text-slate-200 mb-1">
+                      Target Dates & Format Preferences
                     </label>
                     <textarea
                       rows={2}
                       value={teamNotes}
                       onChange={(e) => setTeamNotes(e.target.value)}
-                      placeholder="Specify preferred formats (hardcover/eBook), international shipping, or author briefing requests."
-                      className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#0A101F] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
+                      placeholder="Preferred editions, shipping region, or optional author session."
+                      className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#0A101F] text-[#101828] dark:text-white"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={teamSubmitting}
-                    className="w-full py-3 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors cursor-pointer shadow-sm mt-3 flex items-center justify-center gap-2 disabled:opacity-50"
+                    className="w-full py-3 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
                   >
                     {teamSubmitting ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Dispatching to {AUTHOR_EMAIL}...</span>
+                        <span>Dispatching...</span>
                       </>
                     ) : (
                       <>
                         <Send className="w-4 h-4" />
-                        <span>Send Bulk Order Request to {AUTHOR_EMAIL}</span>
+                        <span>Submit Bulk Order Inquiry</span>
                       </>
                     )}
                   </button>
                 </form>
               ) : (
                 <div className="text-center py-6 space-y-3">
-                  <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400 mx-auto" />
+                  {teamStatus === 'sent' ? (
+                    <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400 mx-auto" />
+                  ) : (
+                    <AlertCircle className="w-10 h-10 text-amber-600 dark:text-amber-400 mx-auto" />
+                  )}
                   <h4 className="font-serif text-xl font-bold text-[#101828] dark:text-white">
-                    Bulk Inquiry Dispatched to Harsh Verma!
+                    {teamStatus === 'sent' ? 'Bulk Inquiry Sent to Harsh Verma' : 'Complete Dispatch via Email Client'}
                   </h4>
                   <p className="text-xs text-[#475467] dark:text-slate-300 max-w-sm mx-auto leading-relaxed">
-                    Your request for <strong>{teamSize}</strong> has been transmitted to <strong>{AUTHOR_EMAIL}</strong>. Harsh Verma and our publishing liaison will reach out to <strong>{teamEmail}</strong> within 24 hours.
+                    {teamStatusMsg}
                   </p>
                   {teamMailtoUrl && (
                     <div className="pt-2">
                       <a
                         href={teamMailtoUrl}
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-900 dark:text-blue-400 underline hover:opacity-80"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-blue-900 text-white text-xs font-semibold hover:bg-blue-950"
                       >
                         <Mail className="w-3.5 h-3.5" />
-                        <span>Send copy via your email client</span>
+                        <span>Open in Email Client</span>
                       </a>
                     </div>
                   )}
                   <button
                     type="button"
                     onClick={() => {
-                      setTeamSubmitted(false);
-                      setTeamEmail('');
+                      setTeamStatus('idle');
                       setTeamNotes('');
                     }}
-                    className="mt-2 text-xs text-[#475467] dark:text-slate-400 underline hover:text-[#101828] dark:hover:text-white cursor-pointer"
+                    className="block mx-auto mt-2 text-xs text-[#475467] dark:text-slate-400 underline hover:text-[#101828] dark:hover:text-white cursor-pointer"
                   >
                     Submit another inquiry
                   </button>
@@ -508,9 +452,9 @@ export const BuyModal: React.FC<BuyModalProps> = ({
           )}
         </div>
 
-        {/* Footer / Sample Link */}
-        <div className="pt-4 border-t border-[#101828]/10 dark:border-white/10 mt-6 flex items-center justify-between text-xs text-[#475467] dark:text-slate-400 shrink-0">
-          <span>ISBN: {BOOK_DETAILS.isbn}</span>
+        {/* Modal Footer */}
+        <div className="pt-4 border-t border-[#101828]/10 dark:border-white/10 mt-5 flex flex-wrap items-center justify-between gap-2 text-xs text-[#475467] dark:text-slate-400 shrink-0">
+          <span>{SITE_CONFIG.book.isbn ? `ISBN: ${SITE_CONFIG.book.isbn}` : SITE_CONFIG.book.editionNote}</span>
           {onOpenSample && (
             <button
               onClick={() => {
@@ -519,11 +463,10 @@ export const BuyModal: React.FC<BuyModalProps> = ({
               }}
               className="text-blue-900 dark:text-blue-400 font-semibold hover:underline cursor-pointer"
             >
-              Want to read a chapter first? Click here →
+              Read a sample chapter first →
             </button>
           )}
         </div>
-
       </div>
     </div>
   );

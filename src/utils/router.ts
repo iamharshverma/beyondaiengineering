@@ -1,10 +1,13 @@
 import { PageId } from '../types';
+import { FRAMEWORKS } from '../data/frameworksData';
 
 export interface RouteState {
   page: PageId;
   param?: string;
   path: string;
 }
+
+const VALID_FRAMEWORK_IDS = new Set(FRAMEWORKS.map((f) => f.id));
 
 export function parseCurrentRoute(): RouteState {
   if (typeof window === 'undefined') {
@@ -15,18 +18,17 @@ export function parseCurrentRoute(): RouteState {
   const urlParams = new URLSearchParams(window.location.search);
   const redirectPath = urlParams.get('p');
   if (redirectPath) {
-    const cleanUrl = window.location.pathname + redirectPath.replace(/^\//, '');
     window.history.replaceState(null, '', redirectPath);
     return routeFromPath(redirectPath);
   }
 
-  // Check path first
+  // Check pathname first
   const pathname = window.location.pathname.replace(/\/+$/, '') || '/';
   if (pathname !== '/') {
     return routeFromPath(pathname);
   }
 
-  // Check hash fallback (e.g. #cao-framework or #frameworks/trust-economy)
+  // Check hash fallback
   const hash = window.location.hash.replace(/^#\/?/, '').replace(/\/+$/, '');
   if (hash) {
     return routeFromPath('/' + hash);
@@ -43,23 +45,45 @@ function routeFromPath(rawPath: string): RouteState {
     return { page: 'home', path: '/' };
   }
 
-  // 2. Book
+  // 2. Book Core
   if (clean === '/book') return { page: 'book', path: '/book' };
   if (clean === '/book/sample' || clean === '/sample') return { page: 'sample', path: '/book/sample' };
   if (clean === '/book/buy' || clean === '/buy') return { page: 'buy', path: '/book/buy' };
-  if (clean === '/teams' || clean === '/book/teams') return { page: 'teams', path: '/teams' };
 
-  // 3. Author
-  if (clean === '/author') return { page: 'author', path: '/author' };
+  // 3. Pathways: Engineers, Students, Organizations (and legacy /teams alias)
+  if (clean === '/engineers' || clean === '/for-engineers') {
+    return { page: 'engineers', path: '/engineers' };
+  }
+  if (clean === '/students' || clean === '/for-students') {
+    return { page: 'students', path: '/students' };
+  }
+  if (
+    clean === '/organizations' ||
+    clean === '/for-organizations' ||
+    clean === '/teams' ||
+    clean === '/book/teams'
+  ) {
+    return { page: 'organizations', path: clean === '/teams' ? '/organizations' : clean };
+  }
 
-  // 4. C.A.O. Framework
+  // 4. Author, Speaking, Press, Contact
+  if (clean === '/author' || clean === '/about') return { page: 'author', path: '/author' };
+  if (clean === '/speaking') return { page: 'speaking', path: '/speaking' };
+  if (clean === '/press') return { page: 'press', path: '/press' };
+  if (clean === '/contact') return { page: 'contact', path: '/contact' };
+
+  // 5. C.A.O. Framework & Signature Frameworks
   if (clean === '/cao-framework') return { page: 'cao-framework', path: '/cao-framework' };
-
-  // 5. Frameworks Directory & Detail
   if (clean === '/frameworks') return { page: 'frameworks', path: '/frameworks' };
   if (clean.startsWith('/frameworks/')) {
     const slug = clean.replace('/frameworks/', '');
-    return { page: 'framework-detail', param: slug, path: clean };
+    if (slug === 'cao-framework') {
+      return { page: 'cao-framework', path: '/cao-framework' };
+    }
+    if (VALID_FRAMEWORK_IDS.has(slug)) {
+      return { page: 'framework-detail', param: slug, path: clean };
+    }
+    return { page: 'frameworks', path: '/frameworks' };
   }
 
   // 6. Manifesto
@@ -67,38 +91,42 @@ function routeFromPath(rawPath: string): RouteState {
 
   // 7. Resources & Toolkit
   if (clean === '/resources') return { page: 'resources', path: '/resources' };
-  if (clean.startsWith('/resources/ethical-ai-audit')) return { page: 'resources', param: 'ethical-ai-audit', path: clean };
-  if (clean.startsWith('/resources/ai-workflow-canvas')) return { page: 'resources', param: 'ai-workflow-canvas', path: clean };
-  if (clean.startsWith('/resources/30-60-90-plan')) return { page: 'resources', param: '30-60-90-career-plan', path: clean };
+  if (clean.startsWith('/resources/ethical-ai-audit')) {
+    return { page: 'resources', param: 'ethical-ai-audit', path: clean };
+  }
+  if (clean.startsWith('/resources/ai-workflow-canvas')) {
+    return { page: 'resources', param: 'ai-workflow-canvas', path: clean };
+  }
+  if (clean.startsWith('/resources/30-60-90-plan')) {
+    return { page: 'resources', param: '30-60-90-career-plan', path: clean };
+  }
   if (clean === '/toolkit' || clean === '/resources/toolkit') return { page: 'toolkit', path: '/toolkit' };
 
-  // 8. Students
-  if (clean === '/students') return { page: 'students', path: '/students' };
-
-  // 9. Speaking
-  if (clean === '/speaking') return { page: 'speaking', path: '/speaking' };
-
-  // 10. Press
-  if (clean === '/press') return { page: 'press', path: '/press' };
-
-  // 11. Ideas Directory & Article Detail
-  if (clean === '/ideas') return { page: 'ideas', path: '/ideas' };
-  if (clean.startsWith('/ideas/')) {
-    const slug = clean.replace('/ideas/', '');
-    return { page: 'article-detail', param: slug, path: clean };
+  // 8. Unified Insights (consolidating /insights, /blog, /ideas)
+  if (
+    clean === '/insights' ||
+    clean === '/blog' ||
+    clean === '/ideas' ||
+    clean === '/posts' ||
+    clean === '/articles'
+  ) {
+    return { page: 'insights', path: clean };
   }
-
-  // 12. Stories
-  if (clean === '/stories') return { page: 'stories', path: '/stories' };
-
-  // 13. Blog & Engineering Dispatches
-  if (clean === '/blog' || clean === '/posts' || clean === '/articles') {
-    return { page: 'blog', path: '/blog' };
+  if (clean.startsWith('/insights/')) {
+    const slug = clean.replace('/insights/', '');
+    return { page: 'insight-detail', param: slug, path: clean };
   }
   if (clean.startsWith('/blog/')) {
     const slug = clean.replace('/blog/', '');
-    return { page: 'blog-detail', param: slug, path: clean };
+    return { page: 'insight-detail', param: slug, path: clean };
   }
+  if (clean.startsWith('/ideas/')) {
+    const slug = clean.replace('/ideas/', '');
+    return { page: 'insight-detail', param: slug, path: clean };
+  }
+
+  // 9. Reader Stories
+  if (clean === '/stories') return { page: 'stories', path: '/stories' };
 
   return { page: 'home', path: '/' };
 }
@@ -109,5 +137,10 @@ export function navigateTo(targetPath: string) {
   const clean = targetPath.startsWith('/') ? targetPath : '/' + targetPath;
   window.history.pushState(null, '', clean);
   window.dispatchEvent(new PopStateEvent('popstate'));
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const prefersReducedMotion =
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
 }

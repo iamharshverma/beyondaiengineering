@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PageId } from '../types';
-import { Share2, Download, Printer, ArrowRight, Check } from 'lucide-react';
+import { SITE_CONFIG } from '../config/siteConfig';
+import { trackEvent } from '../utils/analytics';
+import { updatePageSeo, PAGE_OG_IMAGES } from '../utils/seo';
+import { Share2, Download, Printer } from 'lucide-react';
 
 interface ManifestoViewProps {
   onNavigate: (page: PageId) => void;
@@ -12,6 +15,20 @@ export const ManifestoView: React.FC<ManifestoViewProps> = ({
   onOpenBuyModal,
 }) => {
   const [copiedQuote, setCopiedQuote] = useState<string | null>(null);
+  const [downloadedManifesto, setDownloadedManifesto] = useState(false);
+
+  useEffect(() => {
+    updatePageSeo({
+      title: 'The Engineer After Code Manifesto | Beyond AI Engineering',
+      description:
+        'Eight foundational axioms for software engineers building resilient, high-leverage careers around judgment, boundaries, and trust.',
+      canonicalPath: '/manifesto',
+      ogType: 'article',
+      ogImage: PAGE_OG_IMAGES.manifesto,
+      schemaType: 'Article',
+      breadcrumbs: [{ name: 'Manifesto', path: '/manifesto' }],
+    });
+  }, []);
 
   const principles = [
     {
@@ -57,14 +74,44 @@ export const ManifestoView: React.FC<ManifestoViewProps> = ({
   ];
 
   const handleShareQuote = (quote: string) => {
+    trackEvent('manifesto_share', { quote });
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(`"${quote}" — The Beyond AI Engineering Manifesto by Harsh Verma. https://www.beyondaiengineering.com/manifesto`);
+      navigator.clipboard.writeText(
+        `"${quote}" — The Beyond AI Engineering Manifesto by ${SITE_CONFIG.author.name}. ${SITE_CONFIG.canonicalOrigin}/manifesto`
+      );
       setCopiedQuote(quote);
       setTimeout(() => setCopiedQuote(null), 2500);
     }
   };
 
+  const handleDownloadManifesto = () => {
+    trackEvent('manifesto_download', { format: 'txt' });
+    const text = `THE BEYOND AI ENGINEERING MANIFESTO: THE ENGINEER AFTER CODE
+By ${SITE_CONFIG.author.name} (${SITE_CONFIG.book.fullTitle})
+
+${principles.map((p) => `AXIOM ${p.num} — ${p.title}\n${p.desc}\n`).join('\n')}
+---
+CREATOR. ARCHITECT. ORCHESTRATOR.
+Build the system. Design what matters. Orchestrate the outcome.
+
+"The future of engineering will not be determined by AI alone. It will be determined by the people who decide how AI should be used."
+Read more at ${SITE_CONFIG.canonicalOrigin}/manifesto`;
+
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'Beyond-AI-Engineering-Manifesto.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setDownloadedManifesto(true);
+    setTimeout(() => setDownloadedManifesto(false), 3000);
+  };
+
   const handlePrint = () => {
+    trackEvent('manifesto_download', { format: 'print' });
     window.print();
   };
 
@@ -75,39 +122,53 @@ export const ManifestoView: React.FC<ManifestoViewProps> = ({
         <span className="text-xs font-mono uppercase tracking-widest text-blue-900 dark:text-blue-400 font-semibold block mb-2">
           The Beyond AI Engineering Manifesto
         </span>
-        <h1 className="font-serif text-4xl sm:text-7xl font-bold tracking-tight text-[#101828] dark:text-white mb-6">
-          The Engineer After Code
+        <h1 className="font-serif text-4xl sm:text-7xl font-bold tracking-tight text-[#101828] dark:text-white mb-6 text-balance">
+          The Engineering After Code
         </h1>
         <p className="font-serif text-xl sm:text-2xl text-[#475467] dark:text-slate-300 italic max-w-2xl mx-auto leading-relaxed">
           Eight guiding axioms for technical professionals navigating the generative AI and autonomous agent revolution.
         </p>
 
-        <div className="pt-8 flex justify-center gap-3 no-print">
+        <div className="pt-8 flex flex-wrap justify-center gap-3 no-print">
           <button
-            onClick={handlePrint}
+            type="button"
+            onClick={handleDownloadManifesto}
             className="px-4 py-2 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
           >
-            <Printer className="w-3.5 h-3.5" />
-            <span>Print / Save Manifesto</span>
+            <Download className="w-3.5 h-3.5" />
+            <span>{downloadedManifesto ? 'Downloaded TXT!' : 'Download Manifesto (.txt)'}</span>
           </button>
           <button
-            onClick={() => handleShareQuote("The future of engineering will not be determined by AI alone. It will be determined by the people who decide how AI should be used.")}
+            type="button"
+            onClick={handlePrint}
+            className="px-4 py-2 text-xs font-semibold bg-white dark:bg-[#0D1527] border border-[#101828]/20 dark:border-white/20 rounded-md text-[#101828] dark:text-slate-200 hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex items-center gap-1.5 cursor-pointer"
+          >
+            <Printer className="w-3.5 h-3.5" />
+            <span>Print / Save PDF</span>
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              handleShareQuote(
+                'The future of engineering will not be determined by AI alone. It will be determined by the people who decide how AI should be used.'
+              )
+            }
             className="px-4 py-2 text-xs font-semibold bg-white dark:bg-[#0D1527] border border-[#101828]/20 dark:border-white/20 rounded-md text-[#101828] dark:text-slate-200 hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             <Share2 className="w-3.5 h-3.5" />
-            <span>{copiedQuote ? 'Copied Axiom!' : 'Share Manifesto'}</span>
+            <span>{copiedQuote ? 'Copied Axiom!' : 'Share Quote'}</span>
           </button>
         </div>
       </section>
 
-      {/* 2. THE EDITORIAL PRINCIPLES SCROLL */}
-      <section className="py-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24">
+      {/* 2. THE EDITORIAL PRINCIPLES SCROLL (hairline top dividers, no thick left borders) */}
+      <section className="py-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         {principles.map((item) => (
           <div
             key={item.num}
-            className="text-left border-l-2 border-[#101828]/20 dark:border-blue-500/40 pl-6 sm:pl-10 py-2 relative group"
+            className="text-left border-t border-[#101828]/12 dark:border-white/10 pt-8 group"
           >
-            <div className="font-mono text-xs font-semibold text-blue-900 dark:text-blue-400 tracking-wider mb-2">
+            <div className="font-mono text-xs font-semibold text-blue-900 dark:text-blue-400 tracking-wider mb-2 tabular-nums">
               AXIOM {item.num}
             </div>
 
@@ -120,11 +181,12 @@ export const ManifestoView: React.FC<ManifestoViewProps> = ({
             </p>
 
             <button
+              type="button"
               onClick={() => handleShareQuote(item.title)}
-              className="mt-4 text-xs text-[#98A2B3] dark:text-slate-500 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors flex items-center gap-1 cursor-pointer no-print"
+              className="mt-4 text-xs text-[#475467] dark:text-slate-400 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors flex items-center gap-1 cursor-pointer no-print"
             >
               <Share2 className="w-3 h-3" />
-              <span>{copiedQuote === item.title ? 'Copied quote to clipboard!' : 'Copy quote'}</span>
+              <span>{copiedQuote === item.title ? 'Copied quote to clipboard!' : 'Copy axiom quote'}</span>
             </button>
           </div>
         ))}
@@ -150,18 +212,20 @@ export const ManifestoView: React.FC<ManifestoViewProps> = ({
               "The future of engineering will not be determined by AI alone. It will be determined by the people who decide how AI should be used."
             </blockquote>
             <div className="text-xs uppercase tracking-widest text-[#475467] dark:text-slate-400 font-mono mt-4">
-              — Harsh Verma, Beyond AI Engineering
+              — {SITE_CONFIG.author.name}, {SITE_CONFIG.book.title}
             </div>
           </div>
 
           <div className="pt-6 no-print flex flex-wrap justify-center gap-4">
             <button
+              type="button"
               onClick={onOpenBuyModal}
               className="px-6 py-3 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors cursor-pointer shadow-sm"
             >
-              Order the Hardcover Edition
+              Get the Book
             </button>
             <button
+              type="button"
               onClick={() => onNavigate('frameworks')}
               className="px-6 py-3 text-xs font-semibold bg-white dark:bg-[#0D1527] border border-[#101828]/20 dark:border-white/20 rounded-md text-[#101828] dark:text-slate-200 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
             >

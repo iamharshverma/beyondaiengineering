@@ -1,25 +1,25 @@
 import React, { useEffect } from 'react';
 import { PageId } from '../types';
-import { updatePageSeo, CANONICAL_ORIGIN } from '../utils/seo';
+import { SITE_CONFIG } from '../config/siteConfig';
+import { updatePageSeo } from '../utils/seo';
 import { trackEvent } from '../utils/analytics';
-import { ChevronRight, BookOpen, ArrowRight, Download, CheckCircle2, Layers } from 'lucide-react';
+import { ChevronRight, BookOpen, ArrowRight, Download, Layers } from 'lucide-react';
 
 interface SampleViewProps {
   onNavigate: (page: PageId) => void;
   onOpenBuyModal: () => void;
-  onOpenInfographicModal?: (infographicId?: string) => void;
 }
 
 export const SampleView: React.FC<SampleViewProps> = ({
   onNavigate,
   onOpenBuyModal,
-  onOpenInfographicModal,
 }) => {
   useEffect(() => {
+    trackEvent('sample_read', { source: 'sample_view_mount' });
     updatePageSeo({
-      title: 'Read a Sample Chapter | Beyond AI Engineering by Harsh Verma',
+      title: `Read a Sample Chapter | ${SITE_CONFIG.book.title} by ${SITE_CONFIG.author.name}`,
       description:
-        'Read an exclusive excerpt from Beyond AI Engineering by Harsh Verma, including the Preface, Introduction (The Engineer After Code), and Chapter 1.',
+        'Read an exclusive excerpt from Beyond AI Engineering by Harsh Verma, including the Preface, Introduction (The Engineer After Code), and Chapter 1 highlights.',
       canonicalPath: '/book/sample',
       ogType: 'book',
       breadcrumbs: [
@@ -29,10 +29,10 @@ export const SampleView: React.FC<SampleViewProps> = ({
     });
   }, []);
 
-  const handleDownloadPdf = () => {
-    trackEvent('resource_download', { resource: 'sample_chapter_text' });
-    const sampleText = `BEYOND AI ENGINEERING: FROM CREATOR TO CURATOR
-By Harsh Verma
+  const handleDownloadSample = () => {
+    trackEvent('sample_download', { resource: 'sample_chapter_text' });
+    const sampleText = `${SITE_CONFIG.book.fullTitle.toUpperCase()}
+By ${SITE_CONFIG.author.name}
 
 === PREFACE: ESCAPING THE TYRANNY OF SYNTAX ===
 For over half a century, the software engineer's primary economic leverage was syntactic translation. Knowing how to translate human requirements into code gave engineers high compensation and respect.
@@ -47,15 +47,17 @@ The engineer of the next decade is not a displaced typist. They are a systems ar
 === CHAPTER 1: WELCOME TO THE NEW AGE OF ENGINEERING ===
 The old paradigm was about "How do we write this?" The new paradigm is "What deserves to be built, and what verifiable evidence justifies it?"
 
-To read the complete book across 11 chapters, companion lab canvases, and full architectural teardowns, visit https://www.beyondaiengineering.com/book`;
+To read the complete book across 11 chapters, companion lab canvases, and full architectural teardowns, visit ${SITE_CONFIG.canonicalOrigin}/book`;
 
     const blob = new Blob([sampleText], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
     link.download = 'Beyond-AI-Engineering-Sample-Harsh-Verma.txt';
+    document.body.appendChild(link);
     link.click();
-    URL.revokeObjectURL(url);
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   return (
@@ -64,6 +66,7 @@ To read the complete book across 11 chapters, companion lab canvases, and full a
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-mono text-[#475467] dark:text-slate-400">
           <button
+            type="button"
             onClick={() => onNavigate('home')}
             className="hover:text-[#101828] dark:hover:text-white transition-colors cursor-pointer"
           >
@@ -71,6 +74,7 @@ To read the complete book across 11 chapters, companion lab canvases, and full a
           </button>
           <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
           <button
+            type="button"
             onClick={() => onNavigate('book')}
             className="hover:text-[#101828] dark:hover:text-white transition-colors cursor-pointer"
           >
@@ -84,7 +88,7 @@ To read the complete book across 11 chapters, companion lab canvases, and full a
       {/* 2. HERO */}
       <section className="pt-8 sm:pt-14 pb-14 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
         <div className="max-w-4xl mx-auto text-center space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/40 text-blue-900 dark:text-blue-300 text-xs font-mono font-semibold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 text-blue-900 dark:text-blue-400 text-xs font-mono font-semibold uppercase tracking-widest">
             <BookOpen className="w-3.5 h-3.5" />
             <span>Official Book Excerpt</span>
           </div>
@@ -98,13 +102,14 @@ To read the complete book across 11 chapters, companion lab canvases, and full a
           </p>
 
           <div className="pt-2 text-xs text-[#475467] dark:text-slate-400">
-            By <strong className="text-[#101828] dark:text-white">Harsh Verma</strong> · Principal AI Engineer at Palo Alto Networks & Stanford Scholar
+            By <strong className="text-[#101828] dark:text-white">{SITE_CONFIG.author.name}</strong> · {SITE_CONFIG.author.headline}
           </div>
 
           <div className="pt-4 flex flex-wrap justify-center items-center gap-3">
             <button
+              type="button"
               onClick={() => {
-                trackEvent('get_book_click', { source: 'sample_hero' });
+                trackEvent('book_purchase_click', { source: 'sample_hero' });
                 onOpenBuyModal();
               }}
               className="px-5 py-2.5 bg-[#101828] dark:bg-white text-white dark:text-[#070B14] text-xs font-semibold rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors shadow-sm inline-flex items-center gap-1.5 cursor-pointer"
@@ -113,7 +118,8 @@ To read the complete book across 11 chapters, companion lab canvases, and full a
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
             <button
-              onClick={handleDownloadPdf}
+              type="button"
+              onClick={handleDownloadSample}
               className="px-4 py-2.5 bg-white dark:bg-[#0D1527] border border-[#101828]/20 dark:border-white/15 text-[#101828] dark:text-slate-200 text-xs font-semibold rounded-md hover:bg-black/5 dark:hover:bg-white/5 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
             >
               <Download className="w-3.5 h-3.5 text-blue-900 dark:text-blue-400" />
@@ -124,8 +130,7 @@ To read the complete book across 11 chapters, companion lab canvases, and full a
       </section>
 
       {/* 3. READING ROOM CONTENT */}
-      <article className="py-16 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        {/* PREFACE */}
+      <article className="py-16 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <section className="space-y-4">
           <span className="text-xs font-mono uppercase tracking-widest text-blue-900 dark:text-blue-400 font-bold block">
             Author’s Preface
@@ -146,7 +151,6 @@ To read the complete book across 11 chapters, companion lab canvases, and full a
           </div>
         </section>
 
-        {/* INTRODUCTION */}
         <section className="space-y-4 pt-8 border-t border-[#101828]/[0.08] dark:border-white/10">
           <span className="text-xs font-mono uppercase tracking-widest text-blue-900 dark:text-blue-400 font-bold block">
             Introduction
@@ -158,7 +162,7 @@ To read the complete book across 11 chapters, companion lab canvases, and full a
             <p>
               Welcome to the Trust Economy. In this new world, software output is abundant, but verified human accountability is scarce. Clients and employers do not pay for code volume; they pay for systems that work without catastrophic surprises at 3:00 AM.
             </p>
-            <div className="p-6 bg-[#FAF9F5] dark:bg-[#11192E] border-l-4 border-blue-900 dark:border-blue-400 my-6 rounded-r-xl italic font-serif text-base sm:text-lg text-[#101828] dark:text-slate-100">
+            <div className="p-6 bg-[#FAF9F5] dark:bg-[#11192E] border border-[#101828]/15 dark:border-white/15 my-6 rounded-xl italic font-serif text-base sm:text-lg text-[#101828] dark:text-slate-100">
               "AI can increasingly write the code. Your advantage moves to deciding what deserves to be built."
             </div>
             <p>
@@ -167,7 +171,6 @@ To read the complete book across 11 chapters, companion lab canvases, and full a
           </div>
         </section>
 
-        {/* C.A.O. DIAGRAM CALLOUT */}
         <div className="bg-[#FAF9F5] dark:bg-[#0D1527] p-8 rounded-2xl border border-[#101828]/10 dark:border-white/10 space-y-4">
           <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-blue-900 dark:text-blue-400 font-bold">
             <Layers className="w-4 h-4" />
@@ -177,7 +180,7 @@ To read the complete book across 11 chapters, companion lab canvases, and full a
             The Creator → Architect → Orchestrator Triad
           </h3>
           <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed">
-            The central backbone of the book maps how your cognitive focus shifts across the three stages:
+            The central backbone of the book maps how your cognitive focus shifts across three stages:
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-2">
             <div className="p-3 bg-white dark:bg-[#11192E] rounded-lg border border-[#101828]/[0.08] dark:border-white/10">
@@ -195,26 +198,27 @@ To read the complete book across 11 chapters, companion lab canvases, and full a
           </div>
         </div>
 
-        {/* CLOSING CONVERSION BOX */}
         <div className="pt-8 border-t border-[#101828]/[0.08] dark:border-white/10 text-center space-y-4">
           <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#101828] dark:text-white">
             Ready to Read the Complete Book?
           </h3>
           <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 max-w-lg mx-auto leading-relaxed">
-            Get instant access to all 11 chapters, 15 high-resolution architectural infographics, companion lab canvases, and the full 30/60/90-day transition roadmap.
+            Explore all 11 chapters, 15 architectural infographics, companion lab canvases, and the 30/60/90-day transition roadmap.
           </p>
           <div className="pt-2 flex flex-wrap justify-center gap-3">
             <button
+              type="button"
               onClick={() => {
-                trackEvent('get_book_click', { source: 'sample_footer' });
+                trackEvent('book_purchase_click', { source: 'sample_footer' });
                 onOpenBuyModal();
               }}
               className="px-6 py-3 bg-[#101828] dark:bg-white text-white dark:text-[#070B14] text-xs font-semibold rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors shadow-sm inline-flex items-center gap-2 cursor-pointer"
             >
-              <span>Continue Reading — Get Beyond AI Engineering</span>
+              <span>Continue Reading — Get {SITE_CONFIG.book.title}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             <button
+              type="button"
               onClick={() => onNavigate('cao-framework')}
               className="px-4 py-3 bg-white dark:bg-[#0D1527] border border-[#101828]/20 dark:border-white/15 text-[#101828] dark:text-slate-200 text-xs font-semibold rounded-md hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
             >

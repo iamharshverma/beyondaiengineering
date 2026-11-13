@@ -58,9 +58,9 @@ export const InfographicModal: React.FC<InfographicModalProps> = ({
         
         {/* Top Control Bar */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-white/10 bg-[#0A0F1D]/80 shrink-0">
-          <div className="flex items-center gap-3">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-blue-400 bg-blue-950/60 border border-blue-800/40 px-2 py-0.5 rounded">
-              {activeItem.category} · {currentIndex + 1} of {ALL_INFOGRAPHICS.length}
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="text-xs font-mono text-blue-400 tabular-nums whitespace-nowrap">
+              {activeItem.category} · {currentIndex + 1} / {ALL_INFOGRAPHICS.length}
             </span>
             <h3 className="font-serif text-sm sm:text-base font-semibold text-white truncate max-w-md sm:max-w-xl">
               {activeItem.title}
@@ -77,7 +77,7 @@ export const InfographicModal: React.FC<InfographicModalProps> = ({
               >
                 <ZoomOut className="w-4 h-4" />
               </button>
-              <span className="text-xs font-mono px-2 text-slate-300 min-w-12 text-center">
+              <span className="text-xs font-mono px-2 text-slate-300 min-w-12 text-center tabular-nums">
                 {Math.round(zoomLevel * 100)}%
               </span>
               <button

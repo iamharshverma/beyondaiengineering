@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PageId } from '../types';
-import { READER_STORIES } from '../data/storiesData';
-import { ArrowRight, Send, CheckCircle2, Sparkles, Quote, Loader2, Mail } from 'lucide-react';
+import { READER_STORIES, STORY_ARCHETYPE_DISCLAIMER } from '../data/storiesData';
+import { updatePageSeo, PAGE_OG_IMAGES } from '../utils/seo';
+import { Send, CheckCircle2, Quote, Loader2, Mail, AlertCircle, Info } from 'lucide-react';
 import { sendBookInquiryToAuthor, AUTHOR_EMAIL } from '../utils/emailService';
 
 interface StoriesViewProps {
@@ -20,8 +21,21 @@ export const StoriesView: React.FC<StoriesViewProps> = ({
   const [userEmail, setUserEmail] = useState('');
   const [userStory, setUserStory] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'sent' | 'fallback'>('idle');
+  const [statusMessage, setStatusMessage] = useState('');
   const [mailtoUrl, setMailtoUrl] = useState('');
+
+  useEffect(() => {
+    updatePageSeo({
+      title: 'Transformation Archetypes & Reader Stories | Beyond AI Engineering',
+      description:
+        'Illustrative C.A.O. transition profiles showing how software engineers, graduates, and leaders apply systems judgment, plus a reader story submission channel.',
+      canonicalPath: '/stories',
+      ogType: 'website',
+      ogImage: PAGE_OG_IMAGES.stories,
+      breadcrumbs: [{ name: 'Stories', path: '/stories' }],
+    });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,12 +44,13 @@ export const StoriesView: React.FC<StoriesViewProps> = ({
       const res = await sendBookInquiryToAuthor({
         formType: 'Reader Transformation Story',
         name: userName,
-        email: userEmail || 'reader@beyondaiengineering.com',
+        email: userEmail,
         notesOrMessage: userStory,
         sourcePage: '/stories',
       });
       setMailtoUrl(res.mailtoUrl);
-      setSubmitted(true);
+      setStatusMessage(res.message);
+      setSubmitStatus(res.success ? 'sent' : 'fallback');
     } finally {
       setSubmitting(false);
     }
@@ -47,41 +62,43 @@ export const StoriesView: React.FC<StoriesViewProps> = ({
       <section className="pt-16 sm:pt-24 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
         <div className="max-w-4xl mx-auto text-center space-y-4">
           <span className="text-xs uppercase tracking-widest font-mono text-blue-900 dark:text-blue-400 font-semibold block">
-            Impact in the Field
+            Field Archetypes & Community Reports
           </span>
-          <h1 className="font-serif text-4xl sm:text-6xl font-bold tracking-tight text-[#101828] dark:text-white">
+          <h1 className="font-serif text-4xl sm:text-6xl font-bold tracking-tight text-[#101828] dark:text-white text-balance">
             Beyond AI Engineering in Practice
           </h1>
           <p className="font-serif text-xl sm:text-2xl text-[#475467] dark:text-slate-300 italic leading-relaxed">
-            Real transformations from working engineers, students, and technical leaders applying the C.A.O. operating system.
+            How engineers, students, and technical leaders transition across the Creator–Architect–Orchestrator operating system.
           </p>
 
-          <div className="pt-4 flex justify-center gap-3">
+          <div className="pt-4 flex flex-wrap justify-center gap-3">
             <button
+              type="button"
               onClick={() => setSubmissionOpen(!submissionOpen)}
               className="px-4 py-2 text-xs font-semibold bg-white dark:bg-[#0D1527] border border-[#101828]/20 dark:border-white/15 rounded-md text-[#101828] dark:text-slate-200 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer shadow-xs"
             >
               {submissionOpen ? 'Close Form' : 'Submit Your Transformation Story'}
             </button>
             <button
+              type="button"
               onClick={onOpenAssessment}
               className="px-4 py-2 text-xs font-semibold bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors cursor-pointer shadow-xs"
             >
-              Take Assessment
+              Take C.A.O. Assessment
             </button>
           </div>
         </div>
 
         {/* Story Submission Drawer */}
         {submissionOpen && (
-          <div className="mt-8 max-w-2xl mx-auto bg-white dark:bg-[#0D1527] p-6 sm:p-8 rounded-2xl border border-[#101828]/10 dark:border-white/10 shadow-sm animate-in fade-in duration-200">
-            {!submitted ? (
+          <div className="mt-8 max-w-2xl mx-auto bg-white dark:bg-[#0D1527] p-6 sm:p-8 rounded-2xl border border-[#101828]/10 dark:border-white/10 shadow-sm">
+            {submitStatus === 'idle' ? (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <h3 className="font-serif text-xl font-bold text-[#101828] dark:text-white">
                   Share Your Engineering Story
                 </h3>
                 <p className="text-xs text-[#475467] dark:text-slate-300">
-                  Tell us how the book or C.A.O. framework changed your projects, career altitude, or team outcomes.
+                  Tell Harsh Verma how the book or C.A.O. framework changed your projects, career altitude, or team outcomes.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
@@ -93,7 +110,7 @@ export const StoriesView: React.FC<StoriesViewProps> = ({
                       type="text"
                       value={userName}
                       onChange={(e) => setUserName(e.target.value)}
-                      placeholder="e.g. Maya Lin, Senior Architect"
+                      placeholder="Your name and title"
                       className="w-full text-xs sm:text-sm p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
                     />
                   </div>
@@ -106,7 +123,7 @@ export const StoriesView: React.FC<StoriesViewProps> = ({
                       type="email"
                       value={userEmail}
                       onChange={(e) => setUserEmail(e.target.value)}
-                      placeholder="e.g. maya@company.com"
+                      placeholder="you@domain.com"
                       className="w-full text-xs sm:text-sm p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
                     />
                   </div>
@@ -144,30 +161,62 @@ export const StoriesView: React.FC<StoriesViewProps> = ({
               </form>
             ) : (
               <div className="text-center py-6 space-y-3">
-                <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400 mx-auto" />
-                <h4 className="font-serif text-xl font-bold text-[#101828] dark:text-white">Thank You, {userName}</h4>
+                {submitStatus === 'sent' ? (
+                  <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400 mx-auto" />
+                ) : (
+                  <AlertCircle className="w-10 h-10 text-amber-600 dark:text-amber-400 mx-auto" />
+                )}
+                <h4 className="font-serif text-xl font-bold text-[#101828] dark:text-white">
+                  {submitStatus === 'sent'
+                    ? `Story Received, ${userName}`
+                    : 'Complete Story Delivery via Email App'}
+                </h4>
                 <p className="text-xs text-[#475467] dark:text-slate-300 max-w-md mx-auto">
-                  Your story has been dispatched directly to Harsh Verma (<strong>{AUTHOR_EMAIL}</strong>) for editorial review and reader showcase curation.
+                  {statusMessage}
                 </p>
                 {mailtoUrl && (
                   <div className="pt-1">
                     <a
                       href={mailtoUrl}
-                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-900 dark:text-blue-400 underline"
+                      className={`inline-flex items-center gap-1.5 text-xs font-semibold ${
+                        submitStatus === 'fallback'
+                          ? 'px-4 py-2 bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md'
+                          : 'text-blue-900 dark:text-blue-400 underline'
+                      }`}
                     >
-                      <Mail className="w-3 h-3" />
-                      <span>Send backup copy via mail client</span>
+                      <Mail className="w-3.5 h-3.5" />
+                      <span>
+                        {submitStatus === 'fallback'
+                          ? `Open Pre-Filled Email to ${AUTHOR_EMAIL}`
+                          : 'Send backup copy via mail client'}
+                      </span>
                     </a>
                   </div>
                 )}
+                <div className="pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setSubmitStatus('idle')}
+                    className="text-xs text-[#475467] dark:text-slate-400 underline cursor-pointer"
+                  >
+                    Submit another story
+                  </button>
+                </div>
               </div>
             )}
           </div>
         )}
       </section>
 
-      {/* 2. CASE STUDY CARDS */}
-      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* 2. ARCHETYPE DISCLAIMER + CASE STUDY CARDS */}
+      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div className="p-5 bg-[#FAF9F5] dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-xl flex items-start gap-3">
+          <Info className="w-4 h-4 text-blue-900 dark:text-blue-400 shrink-0 mt-0.5" />
+          <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed">
+            {STORY_ARCHETYPE_DISCLAIMER}
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {READER_STORIES.map((story) => (
             <div
@@ -175,15 +224,15 @@ export const StoriesView: React.FC<StoriesViewProps> = ({
               className="bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-2xl p-8 hover:border-blue-900 dark:hover:border-blue-400/60 transition-all duration-300 shadow-xs hover:shadow-lg hover:-translate-y-1 flex flex-col justify-between"
             >
               <div>
-                {/* Transformation Label Header */}
+                {/* Transformation Label Header (unboxed typographic label) */}
                 <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#101828]/[0.08] dark:border-white/10">
-                  <span className="font-mono text-xs font-bold text-blue-900 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 border border-blue-100 dark:border-blue-800/40 px-2.5 py-1 rounded">
+                  <span className="font-mono text-xs font-bold uppercase tracking-wider text-blue-900 dark:text-blue-400">
                     {story.transformationLabel}
                   </span>
                   <Quote className="w-4 h-4 text-[#98A2B3] dark:text-slate-500" />
                 </div>
 
-                {/* Author Info */}
+                {/* Archetype Info */}
                 <div className="mb-6">
                   <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white">
                     {story.authorName}
@@ -223,8 +272,8 @@ export const StoriesView: React.FC<StoriesViewProps> = ({
                   </div>
 
                   <div className="p-3 bg-emerald-50/50 dark:bg-emerald-950/40 rounded-lg border border-emerald-100/50 dark:border-emerald-800/40">
-                    <strong className="block text-[10px] font-mono uppercase tracking-wider text-emerald-900 dark:text-emerald-300 mb-1">
-                      What Happened (Career Outcome)
+                    <strong className="block text-[10px] font-mono uppercase tracking-wider text-emerald-800 dark:text-emerald-300 mb-1">
+                      What Happened (Outcome Pattern)
                     </strong>
                     <p className="text-[#101828] dark:text-slate-200 font-medium leading-relaxed">
                       {story.whatHappened}
@@ -233,12 +282,20 @@ export const StoriesView: React.FC<StoriesViewProps> = ({
                 </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-[#101828]/[0.06] dark:border-white/10 text-right">
+              <div className="mt-6 pt-4 border-t border-[#101828]/[0.06] dark:border-white/10 flex items-center justify-between">
                 <button
+                  type="button"
+                  onClick={() => onNavigate('book')}
+                  className="text-xs font-medium text-[#475467] dark:text-slate-400 hover:text-[#101828] dark:hover:text-white cursor-pointer"
+                >
+                  Explore the 11 Chapters
+                </button>
+                <button
+                  type="button"
                   onClick={onOpenBuyModal}
                   className="text-xs font-semibold text-blue-900 dark:text-blue-400 hover:underline cursor-pointer"
                 >
-                  Start Your Journey with the Book →
+                  Get the Book →
                 </button>
               </div>
             </div>

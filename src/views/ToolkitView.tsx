@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { PageId, ToolkitItem } from '../types';
+import { PageId } from '../types';
 import { TOOLKIT_ITEMS, TOOLKIT_CATEGORIES } from '../data/toolkitData';
-import { Search, ExternalLink, ArrowLeft, Wrench, Shield, CheckCircle } from 'lucide-react';
+import { Search, ExternalLink, ArrowLeft } from 'lucide-react';
 
 interface ToolkitViewProps {
   onNavigate: (page: PageId) => void;
@@ -27,6 +27,7 @@ export const ToolkitView: React.FC<ToolkitViewProps> = ({ onNavigate }) => {
       <section className="pt-16 sm:pt-24 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
         <div className="max-w-4xl mx-auto text-center space-y-4">
           <button
+            type="button"
             onClick={() => onNavigate('resources')}
             className="text-xs font-mono text-[#475467] dark:text-slate-400 hover:text-[#101828] dark:hover:text-white inline-flex items-center gap-1.5 mb-2 cursor-pointer transition-colors"
           >
@@ -38,7 +39,7 @@ export const ToolkitView: React.FC<ToolkitViewProps> = ({ onNavigate }) => {
             Evolving Ecosystem Directory
           </span>
 
-          <h1 className="font-serif text-4xl sm:text-6xl font-bold tracking-tight text-[#101828] dark:text-white">
+          <h1 className="font-serif text-4xl sm:text-6xl font-bold tracking-tight text-[#101828] dark:text-white text-balance">
             The Living AI Engineering Toolkit
           </h1>
 
@@ -47,7 +48,7 @@ export const ToolkitView: React.FC<ToolkitViewProps> = ({ onNavigate }) => {
           </p>
 
           <p className="text-sm text-[#475467] dark:text-slate-400 max-w-xl mx-auto leading-relaxed">
-            Curated, battle-tested tools across 11 key engineering categories—tested for reliability, telemetry observability, and agent governance.
+            Curated tools across 11 key engineering categories—evaluated for reliability, telemetry observability, and agent governance.
           </p>
 
           {/* Search bar */}
@@ -59,18 +60,20 @@ export const ToolkitView: React.FC<ToolkitViewProps> = ({ onNavigate }) => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search tools (e.g. LangGraph, DSPy, Phoenix, Guardrails)..."
+                aria-label="Search AI engineering toolkit"
                 className="w-full pl-9 pr-4 py-2 text-xs sm:text-sm bg-white dark:bg-[#0D1527] text-[#101828] dark:text-white border border-[#101828]/20 dark:border-white/15 rounded-md focus:outline-2 focus:outline-blue-900 dark:focus:outline-blue-400 placeholder:text-slate-400 shadow-xs"
               />
             </div>
           </div>
 
-          {/* Categories Pill/Tab Bar */}
+          {/* Interactive Category Filter Buttons */}
           <div className="pt-6 flex flex-wrap justify-center gap-1.5">
             {TOOLKIT_CATEGORIES.map((cat) => (
               <button
                 key={cat}
+                type="button"
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors cursor-pointer ${
+                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-colors cursor-pointer whitespace-nowrap ${
                   selectedCategory === cat
                     ? 'bg-[#101828] dark:bg-white text-white dark:text-[#070B14] shadow-xs'
                     : 'bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 text-[#475467] dark:text-slate-300 hover:text-[#101828] dark:hover:text-white'
@@ -84,7 +87,25 @@ export const ToolkitView: React.FC<ToolkitViewProps> = ({ onNavigate }) => {
       </section>
 
       {/* 2. TOOLKIT GRID */}
-      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between text-xs font-mono text-[#475467] dark:text-slate-400 mb-6 pb-3 border-b border-[#101828]/[0.08] dark:border-white/10">
+          <span>
+            Showing <strong className="text-[#101828] dark:text-white tabular-nums">{filteredItems.length}</strong> curated entries
+          </span>
+          {(selectedCategory !== 'All' || searchQuery) && (
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedCategory('All');
+                setSearchQuery('');
+              }}
+              className="text-blue-900 dark:text-blue-400 hover:underline cursor-pointer"
+            >
+              Reset filter
+            </button>
+          )}
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredItems.map((tool) => (
             <div
@@ -93,7 +114,7 @@ export const ToolkitView: React.FC<ToolkitViewProps> = ({ onNavigate }) => {
             >
               <div>
                 <div className="flex items-center justify-between text-xs font-mono mb-3">
-                  <span className="font-semibold text-blue-900 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded border border-blue-100 dark:border-blue-800/40">
+                  <span className="font-semibold text-blue-900 dark:text-blue-400 uppercase tracking-wider">
                     {tool.category}
                   </span>
                   <span className="text-[#475467] dark:text-slate-400 text-[11px] font-sans">
@@ -127,7 +148,7 @@ export const ToolkitView: React.FC<ToolkitViewProps> = ({ onNavigate }) => {
               </div>
 
               <div className="pt-3 border-t border-[#101828]/[0.08] dark:border-white/10 flex items-center justify-between text-xs">
-                <span className="text-[11px] font-mono text-[#98A2B3] dark:text-slate-400">
+                <span className="text-[11px] font-mono text-[#475467] dark:text-slate-400 tabular-nums">
                   Reviewed: {tool.lastReviewed}
                 </span>
                 <a

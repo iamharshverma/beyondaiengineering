@@ -6,11 +6,15 @@ export type PageId =
   | 'framework-detail'
   | 'resources'
   | 'toolkit'
+  | 'engineers'
   | 'students'
+  | 'organizations'
   | 'manifesto'
   | 'author'
   | 'speaking'
   | 'press'
+  | 'insights'
+  | 'insight-detail'
   | 'ideas'
   | 'article-detail'
   | 'stories'
@@ -19,7 +23,8 @@ export type PageId =
   | 'teams'
   | 'assessment'
   | 'blog'
-  | 'blog-detail';
+  | 'blog-detail'
+  | 'contact';
 
 export interface CaseStudyItem {
   name: string;
@@ -100,6 +105,9 @@ export interface LabResource {
   id: string;
   title: string;
   category: 'ASSESS' | 'BUILD' | 'LEAD' | 'GROW' | 'EXECUTE';
+  pillar?: 'Career Resources' | 'AI Engineering Resources' | 'Student Resources';
+  relatedChapter?: string;
+  targetAudience?: string;
   description: string;
   artifactProduced: string;
   estimatedTime: string;

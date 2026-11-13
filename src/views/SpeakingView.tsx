@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { PageId } from '../types';
-import { Mic, Users, Calendar, ArrowRight, ShieldCheck, Video, Building } from 'lucide-react';
+import { SITE_CONFIG } from '../config/siteConfig';
+import { updatePageSeo, PAGE_OG_IMAGES } from '../utils/seo';
+import { Mic } from 'lucide-react';
 
 interface SpeakingViewProps {
   onNavigate: (page: PageId) => void;
@@ -11,44 +13,61 @@ export const SpeakingView: React.FC<SpeakingViewProps> = ({
   onNavigate,
   onOpenSpeakingModal,
 }) => {
+  useEffect(() => {
+    updatePageSeo({
+      title: `Keynotes & Speaking | ${SITE_CONFIG.author.name} — ${SITE_CONFIG.book.title}`,
+      description:
+        'Invite Harsh Verma for keynotes, executive offsites, university talks, and engineering department masterclasses on the agentic AI era.',
+      canonicalPath: '/speaking',
+      ogType: 'website',
+      ogImage: PAGE_OG_IMAGES.speaking,
+      breadcrumbs: [{ name: 'Speaking', path: '/speaking' }],
+    });
+  }, []);
+
   const keynotes = [
     {
-      title: 'THE ENGINEER AFTER CODE',
+      title: 'The Engineer After Code',
       subtitle: 'What becomes valuable when AI can increasingly produce the implementation?',
       audience: 'General Engineering All-Hands, Global Developer Conferences',
-      keyTakeaway: 'Why syntax synthesis is no longer a career moat, and how engineers build irreplaceable leverage around systems thinking and problem curation.',
+      keyTakeaway:
+        'Why syntax synthesis is no longer a career moat, and how engineers build irreplaceable leverage around systems thinking and problem curation.',
     },
     {
-      title: 'FROM CREATOR TO ORCHESTRATOR',
+      title: 'From Creator to Orchestrator',
       subtitle: 'A career operating system for technical professionals in the agentic AI era.',
       audience: 'Staff Engineers, Team Leads, Technical Managers',
-      keyTakeaway: 'The three-stage evolution: shifting from building components to designing architectures to orchestrating autonomous intelligence with verified authority boundaries.',
+      keyTakeaway:
+        'The three-stage evolution: shifting from building components to designing architectures to orchestrating autonomous intelligence with verified authority boundaries.',
     },
     {
-      title: 'THE TRUST ECONOMY',
+      title: 'The Trust Economy',
       subtitle: 'Why human judgment becomes more valuable as AI makes information abundant.',
       audience: 'Executive Offsites, Enterprise Leaders, Founders',
-      keyTakeaway: 'The economic mechanics of generative technology: as technical output drops to zero marginal cost, verified human accountability becomes the scarcest commodity.',
+      keyTakeaway:
+        'The economic mechanics of generative technology: as technical output drops to zero marginal cost, verified human accountability becomes the scarcest commodity.',
     },
     {
-      title: 'WHEN AI AGENTS BECOME DIGITAL ACTORS',
+      title: 'When AI Agents Become Digital Actors',
       subtitle: 'Security, authority, identity, and accountability for autonomous systems.',
       audience: 'Cybersecurity Summits, AI Architects, Infrastructure Teams',
-      keyTakeaway: 'Designing zero-trust semantic boundaries for autonomous multi-agent systems, mitigating indirect prompt injection, and preventing catastrophic delegation failures.',
+      keyTakeaway:
+        'Designing zero-trust semantic boundaries for autonomous multi-agent systems, mitigating indirect prompt injection, and preventing catastrophic delegation failures.',
     },
     {
-      title: 'BUILDING THE AI-NATIVE ENGINEERING ORGANIZATION',
+      title: 'Building the AI-Native Engineering Organization',
       subtitle: 'How engineering teams evolve beyond AI-assisted coding.',
       audience: 'VPs of Engineering, CTOs, R&D Leadership',
-      keyTakeaway: 'A tactical blueprint for engineering leaders: restructuring sprint rituals, replacing shallow metrics with evaluation telemetry, and nurturing an elite curator culture.',
+      keyTakeaway:
+        'A tactical blueprint for engineering leaders: restructuring sprint rituals, replacing shallow metrics with evaluation telemetry, and nurturing an elite curator culture.',
     },
   ];
 
   const audienceTypes = [
-    { title: 'Global Tech Summits', desc: 'High-impact keynotes delivered to audiences of 500–5,000+ engineers and leaders.' },
-    { title: 'Enterprise All-Hands', desc: 'Bespoke internal sessions aligning engineering departments with agentic workflows.' },
-    { title: 'Executive Offsites', desc: 'High-level strategic advisory briefings on autonomous agent risk and opportunity.' },
-    { title: 'University Keynotes', desc: 'Inspiring future engineering talent to build verified evidence of capability.' },
+    { title: 'Global Tech Summits', desc: 'Keynotes delivered for software architecture, cybersecurity, and AI practitioner conferences.' },
+    { title: 'Enterprise All-Hands', desc: 'Bespoke internal sessions aligning engineering departments with agentic workflows and review standards.' },
+    { title: 'Executive Offsites', desc: 'Strategic briefings on autonomous agent risk, observability, and capability evolution.' },
+    { title: 'University Keynotes', desc: 'Inspiring future engineering talent to build verifiable proof of work and core CS depth.' },
   ];
 
   return (
@@ -59,20 +78,28 @@ export const SpeakingView: React.FC<SpeakingViewProps> = ({
           <span className="text-xs uppercase tracking-widest font-mono text-blue-900 dark:text-blue-400 font-semibold block">
             Keynotes & Executive Briefings
           </span>
-          <h1 className="font-serif text-4xl sm:text-6xl font-bold tracking-tight text-[#101828] dark:text-white">
-            Bring Beyond AI Engineering to Your Organization
+          <h1 className="font-serif text-4xl sm:text-6xl font-bold tracking-tight text-[#101828] dark:text-white text-balance">
+            Bring {SITE_CONFIG.book.title} to Your Organization
           </h1>
           <p className="font-serif text-xl sm:text-2xl text-[#475467] dark:text-slate-300 italic max-w-2xl mx-auto leading-relaxed">
-            Keynotes, executive offsites, and technical masterclasses by Harsh Verma on navigating the agentic AI revolution.
+            Keynotes, executive offsites, and technical masterclasses by {SITE_CONFIG.author.name} on navigating the agentic AI revolution.
           </p>
 
-          <div className="pt-4 flex justify-center">
+          <div className="pt-4 flex flex-wrap justify-center gap-3">
             <button
+              type="button"
               onClick={() => onOpenSpeakingModal()}
               className="px-6 py-3.5 text-sm font-semibold tracking-wide text-white bg-[#101828] dark:bg-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-all shadow-sm flex items-center gap-2 cursor-pointer"
             >
               <Mic className="w-4 h-4 text-blue-400 dark:text-blue-600" />
               <span>Invite Harsh to Speak</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('organizations')}
+              className="px-5 py-3.5 text-sm font-semibold bg-white dark:bg-[#0D1527] border border-[#101828]/20 dark:border-white/20 text-[#101828] dark:text-slate-200 rounded-md hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
+            >
+              View Organization Programs
             </button>
           </div>
         </div>
@@ -96,10 +123,11 @@ export const SpeakingView: React.FC<SpeakingViewProps> = ({
               className="bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-2xl p-6 sm:p-8 hover:border-blue-900/60 dark:hover:border-blue-400/50 hover:-translate-y-1 transition-all duration-300 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6"
             >
               <div className="space-y-2 max-w-2xl">
-                <div className="flex items-center gap-2 text-xs font-mono">
-                  <span className="font-bold text-blue-900 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/80 px-2 py-0.5 rounded border border-blue-100 dark:border-blue-900/60">
+                <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+                  <span className="font-bold text-blue-900 dark:text-blue-400 tabular-nums">
                     TOPIC 0{idx + 1}
                   </span>
+                  <span aria-hidden="true" className="text-slate-400">·</span>
                   <span className="text-[#475467] dark:text-slate-400">Ideal for: {keynote.audience}</span>
                 </div>
                 <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white">
@@ -115,6 +143,7 @@ export const SpeakingView: React.FC<SpeakingViewProps> = ({
 
               <div className="shrink-0">
                 <button
+                  type="button"
                   onClick={() => onOpenSpeakingModal(keynote.title)}
                   className="px-4 py-2 text-xs font-semibold border border-[#101828]/20 dark:border-white/20 rounded-md text-[#101828] dark:text-slate-200 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer whitespace-nowrap"
                 >

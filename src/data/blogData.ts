@@ -625,8 +625,8 @@ export const BLOG_POSTS: BlogPost[] = [
     "relatedFrameworkId": "cao-framework"
   },
   {
-    "id": "the-clean-attack-problem-when-nothing-looks-wrong-but-everything-is-compromised",
-    "slug": "the-clean-attack-problem-when-nothing-looks-wrong-but-everything-is-compromised",
+    "id": "the-clean-attack-problem-rsac",
+    "slug": "the-clean-attack-problem-rsac",
     "title": "The Clean Attack Problem: When Nothing Looks Wrong but Everything is Compromised",
     "subtitle": "Published on RSA Conference official library: How AI agents mimic legitimate human interactions, adapt to organizational context, and operate within approved API policies to evade legacy SOC detection.",
     "category": "Cybersecurity",

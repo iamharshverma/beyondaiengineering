@@ -1,5 +1,8 @@
 import { ReaderStory } from '../types';
 
+export const STORY_ARCHETYPE_DISCLAIMER =
+  'Illustrative C.A.O. Transition Archetypes — These four composite field profiles demonstrate how software engineers, graduates, and engineering leaders apply the C.A.O. Framework in practice. Verified reader submissions sent via the form below are added after editorial review.';
+
 export const READER_STORIES: ReaderStory[] = [
   {
     id: 'story-1',

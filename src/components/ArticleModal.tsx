@@ -1,5 +1,5 @@
-import React from 'react';
-import { X, BookOpen, Clock, Calendar, Share2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, BookOpen, Clock, Calendar, Share2, Check } from 'lucide-react';
 import { Article } from '../types';
 
 interface ArticleModalProps {
@@ -13,12 +13,15 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
   onClose,
   onOpenBuyModal,
 }) => {
+  const [copied, setCopied] = useState(false);
+
   if (!article) return null;
 
   const handleShare = () => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(`Read "${article.title}" by Harsh Verma from Beyond AI Engineering.`);
-      alert('Article link copied to clipboard!');
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
     }
   };
 
@@ -29,13 +32,13 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
         {/* Top Bar */}
         <div className="flex items-center justify-between pb-4 border-b border-[#101828]/10 dark:border-white/10 mb-6 shrink-0">
           <div className="flex items-center gap-2 text-xs font-mono text-[#475467] dark:text-slate-400">
-            <span>IDEAS BEYOND THE BOOK</span>
-            <span>·</span>
+            <span>Ideas Beyond the Book</span>
+            <span aria-hidden="true">·</span>
             <span className="text-blue-900 dark:text-blue-400 font-semibold">{article.topic}</span>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-[#475467] dark:text-slate-400 hover:text-[#101828] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors cursor-pointer"
+            className="p-1.5 text-[#475467] dark:text-slate-400 hover:text-[#101828] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded-md transition-colors cursor-pointer"
             aria-label="Close article"
           >
             <X className="w-5 h-5" />
@@ -51,7 +54,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
                 <Calendar className="w-3.5 h-3.5" />
                 {article.publishDate}
               </span>
-              <span>·</span>
+              <span aria-hidden="true">·</span>
               <span className="flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5" />
                 {article.readTime}
@@ -87,8 +90,8 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
 
           {/* Key Quote Callout */}
           <div className="p-5 bg-white dark:bg-[#11192E] border border-[#101828]/10 dark:border-white/10 rounded-xl shadow-2xs">
-            <span className="text-[10px] font-mono uppercase tracking-widest text-blue-900 dark:text-blue-400 block mb-1">
-              Core Axiom
+            <span className="text-[11px] font-mono uppercase tracking-wider text-blue-900 dark:text-blue-400 block mb-1">
+              Core Principle
             </span>
             <p className="font-serif text-lg sm:text-xl font-medium text-[#101828] dark:text-slate-100 italic">
               "{article.keyQuote}"
@@ -96,7 +99,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
           </div>
 
           {/* Article Paragraphs */}
-          <div className="space-y-4 text-sm sm:text-base text-[#101828] dark:text-slate-200 leading-relaxed font-sans">
+          <div className="space-y-4 text-sm sm:text-base text-[#101828] dark:text-slate-200 leading-relaxed font-sans max-w-2xl">
             <p className="font-medium text-base sm:text-lg text-[#101828] dark:text-white leading-relaxed">
               {article.leadParagraph}
             </p>
@@ -114,8 +117,8 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
             onClick={handleShare}
             className="text-[#475467] dark:text-slate-400 hover:text-[#101828] dark:hover:text-white flex items-center gap-1.5 cursor-pointer"
           >
-            <Share2 className="w-3.5 h-3.5" />
-            <span>Share Essay</span>
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Share2 className="w-3.5 h-3.5" />}
+            <span>{copied ? 'Copied to clipboard!' : 'Share Essay'}</span>
           </button>
 
           {onOpenBuyModal && (

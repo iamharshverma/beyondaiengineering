@@ -49,7 +49,7 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
     options: [
       {
         stage: 'creator',
-        text: 'Quickly wire up a LangChain or LangGraph prototype over the weekend to show a working proof-of-concept on Monday.',
+        text: 'Quickly wire up an agent prototype over the weekend to show a working proof-of-concept on Monday.',
         explanation: 'Relies on prototyping speed to demonstrate technical feasibility (Creator).',
       },
       {
@@ -66,7 +66,7 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
   },
   {
     id: 4,
-    scenario: 'How do you structure your daily workflow with modern AI coding assistants (Cursor, Claude Code, Copilot)?',
+    scenario: 'How do you structure your daily workflow with modern AI coding assistants?',
     options: [
       {
         stage: 'creator',
@@ -81,7 +81,7 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
       {
         stage: 'orchestrator',
         text: 'I orchestrate headless coding agents across repositories with automated security checks, spending my time curating system boundaries.',
-        explanation: 'Conducts autonomous agent swarms while maintaining authoritative oversight (Orchestrator).',
+        explanation: 'Conducts autonomous agent workflows while maintaining authoritative oversight (Orchestrator).',
       },
     ],
   },
@@ -150,7 +150,7 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
   },
   {
     id: 8,
-    scenario: 'An engineering squad wants to give an autonomous LLM agent execution permissions to run SQL queries and bash scripts in pre-production. What is your reaction?',
+    scenario: 'An engineering squad wants to give an autonomous LLM agent execution permissions to run SQL queries and shell scripts in pre-production. What is your reaction?',
     options: [
       {
         stage: 'creator',
@@ -171,7 +171,7 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
   },
   {
     id: 9,
-    scenario: 'A product manager proposes replacing the standard faceted search in your enterprise SaaS application with an open-ended conversational AI agent. How do you evaluate it?',
+    scenario: 'A product manager proposes replacing standard faceted search in your enterprise SaaS application with a conversational AI agent. How do you evaluate it?',
     options: [
       {
         stage: 'creator',
@@ -185,29 +185,71 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
       },
       {
         stage: 'orchestrator',
-        text: 'Audit whether conversational search creates data liability, defensible customer retention moats, and business alignment.',
+        text: 'Audit whether conversational search creates data liability, defensible customer retention moats, and strategic business alignment.',
         explanation: 'Protects enterprise data rights, strategic defensibility, and long-term customer trust (Orchestrator).',
       },
     ],
   },
   {
     id: 10,
-    scenario: 'An early-career software engineer confides that they feel anxious and demoralized because AI tools can synthesize their code in seconds. How do you mentor them?',
+    scenario: 'An early-career software engineer confides that they feel overwhelmed because AI tools can synthesize their code in seconds. How do you mentor them?',
     options: [
       {
         stage: 'creator',
-        text: 'Teach them advanced prompt engineering techniques and keyboard shortcuts so they become the fastest code generators on the team.',
-        explanation: 'Focuses on increasing implementation velocity within existing paradigms (Creator).',
+        text: 'Teach them prompt workflows and editor shortcuts so they can generate and test features faster with AI assistance.',
+        explanation: 'Focuses on improving implementation velocity within existing workflows (Creator).',
       },
       {
         stage: 'architect',
-        text: 'Guide them to build systems intuition: understanding boundary failures, reading complex telemetry, and writing Architecture Decision Records.',
-        explanation: 'Expands their skills into systems design, trade-offs, and critical technical discernment (Architect).',
+        text: 'Guide them to build systems intuition: understanding boundary failures, reading telemetry, and writing Architecture Decision Records.',
+        explanation: 'Expands their skills into systems design, trade-offs, and technical discernment (Architect).',
       },
       {
         stage: 'orchestrator',
-        text: 'Help them curate an irreplaceable Proof of Work portfolio, cultivate peer trust in specialized micro-communities, and master the curator mindset.',
-        explanation: 'Develops long-term career resilience, personal authority, and strategic trust in the age of code abundance (Orchestrator).',
+        text: 'Help them curate an inspectable Proof of Work portfolio, cultivate peer trust in micro-communities, and practice the curator mindset.',
+        explanation: 'Develops long-term career resilience, authority, and strategic trust (Orchestrator).',
+      },
+    ],
+  },
+  {
+    id: 11,
+    scenario: 'A production AI feature begins producing subtle accuracy drift two weeks after an upstream foundation model update. How do you handle evaluation and observability?',
+    options: [
+      {
+        stage: 'creator',
+        text: 'Tweak a few system instructions manually and re-check a handful of sample inputs locally until responses look right again.',
+        explanation: 'Addresses symptoms locally through manual prompt adjustments (Creator).',
+      },
+      {
+        stage: 'architect',
+        text: 'Build a versioned golden evaluation dataset, automated regression thresholds, and trace telemetry comparing baseline vs. model drift.',
+        explanation: 'Installs deterministic evaluation harnesses and observability invariants (Architect).',
+      },
+      {
+        stage: 'orchestrator',
+        text: 'Institute release-gating Service Level Objectives (SLOs), automated fallback routing across model providers, and transparent incident reporting.',
+        explanation: 'Governs production reliability, vendor resilience, and organizational trust (Orchestrator).',
+      },
+    ],
+  },
+  {
+    id: 12,
+    scenario: 'Security and legal teams raise compliance concerns before approving an external AI agent integration that touches customer PII. How do you lead the resolution?',
+    options: [
+      {
+        stage: 'creator',
+        text: 'Add regex redaction helper functions around user messages before forwarding payloads to the external API.',
+        explanation: 'Applies localized code filtering to patch the immediate requirement (Creator).',
+      },
+      {
+        stage: 'architect',
+        text: 'Design zero-trust data tokenization, scoped least-privilege tool tokens, and strict network egress isolation.',
+        explanation: 'Architects structural security isolation so sensitive state never leaks by design (Architect).',
+      },
+      {
+        stage: 'orchestrator',
+        text: 'Establish a repeatable cross-functional Human API review board, signed risk-acceptance criteria, and auditable provenance ledgers.',
+        explanation: 'Aligns legal, security, and engineering around accountable governance standards (Orchestrator).',
       },
     ],
   },
@@ -222,9 +264,13 @@ export interface AssessmentResult {
   keyStrengths: string[];
   blindSpots: string[];
   recommended30DayActions: string[];
+  recommendedChapters: { chapter: number; title: string; reason: string }[];
+  recommendedExercises: string[];
 }
 
-export function calculateAssessmentResult(answers: Record<number, 'creator' | 'architect' | 'orchestrator'>): AssessmentResult {
+export function calculateAssessmentResult(
+  answers: Record<number, 'creator' | 'architect' | 'orchestrator'>
+): AssessmentResult {
   let creatorCount = 0;
   let architectCount = 0;
   let orchestratorCount = 0;
@@ -239,50 +285,70 @@ export function calculateAssessmentResult(answers: Record<number, 'creator' | 'a
 
   const creatorPct = Math.round((creatorCount / total) * 100);
   const architectPct = Math.round((architectCount / total) * 100);
-  const orchestratorPct = 100 - (creatorPct + architectPct);
+  const orchestratorPct = Math.max(0, 100 - (creatorPct + architectPct));
 
-  if (orchestratorPct >= 50) {
+  if (orchestratorPct >= 45) {
     return {
       creatorPct,
       architectPct,
       orchestratorPct,
       archetypeTitle: 'Strategic Systems Orchestrator',
-      summary: 'You operate at the frontier of the AI agent revolution. You view software not as static syntax, but as an ecosystem of autonomous agents, human stakeholders, and verifiable authority boundaries. Your primary value lies in governance, risk mitigation, and strategic outcomes.',
+      summary:
+        'You operate at the orchestration frontier of the AI era. You view software as an ecosystem of autonomous agents, human stakeholders, and verifiable authority boundaries. Your signature strength is organizational trust, governance, and outcome accountability.',
       keyStrengths: [
-        'Exceptional grasp of agent authority boundaries and governance',
-        'Focus on enterprise trust and long-term organizational viability',
-        'Ability to coordinate humans and autonomous intelligence seamlessly',
+        'Strong grasp of agent authority boundaries and governance',
+        'Orientation toward enterprise trust, compliance, and organizational viability',
+        'Ability to coordinate human teams and autonomous tooling toward clear outcomes',
       ],
       blindSpots: [
-        'Risk of detaching too far from emerging low-level model mechanics',
-        'May overlook simple deterministic scripts in pursuit of multi-agent elegance',
+        'Stay grounded in evolving model failure modes so abstractions match reality',
+        'Avoid over-engineering multi-agent governance where a simple script suffices',
       ],
       recommended30DayActions: [
-        'Publish an authoritative public whitepaper on Agentic Diplomacy in your domain',
-        'Implement an automated AI Authority Matrix for your engineering organization',
-        'Host a private Micro-Community salon on multi-agent security invariants',
+        'Publish an internal or public architecture brief on Agentic Diplomacy in your domain',
+        'Codify a 1-page Human API authorization policy for automated pull requests and agents',
+        'Host a peer paper-reading or post-mortem circle on AI drift observability',
+      ],
+      recommendedChapters: [
+        { chapter: 5, title: 'Mastering AI Workflows', reason: 'Deepen multi-agent permission design and Human API governance.' },
+        { chapter: 9, title: 'The Do’s and Don’ts', reason: 'Audit production risk, ethical curation, and compliance boundaries.' },
+        { chapter: 10, title: 'Sustaining Your Edge', reason: 'Build long-term leadership resilience and micro-community leverage.' },
+      ],
+      recommendedExercises: [
+        'Ethical AI Audit Checklist (Lab Canvas #14)',
+        'Human API Contract Template (Lab Canvas #8)',
       ],
     };
-  } else if (architectPct >= 45 || architectPct > creatorPct) {
+  } else if (architectPct >= 40 || architectPct > creatorPct) {
     return {
       creatorPct,
       architectPct,
       orchestratorPct,
       archetypeTitle: 'Systems Architect with Emerging Orchestration',
-      summary: 'You have successfully transitioned beyond pure code production into systems thinking. You naturally evaluate trade-offs, boundary invariants, and cognitive overhead. Your next quantum leap is expanding from single-system design into multi-agent orchestration and institutional authority.',
+      summary:
+        'You have transitioned naturally from pure implementation into systems judgment. You weigh trade-offs, invariants, unit economics, and cognitive overhead. Your next high-leverage growth step is formalizing multi-agent governance and making your engineering decisions visible.',
       keyStrengths: [
-        'Strong AI Product Sense and problem selection discipline',
-        'Anticipation of failure modes and distributed concurrency risks',
-        'Focus on maintainability and structural elegance over quick hacks',
+        'Strong AI Product Sense and rigorous problem selection discipline',
+        'Proactive anticipation of failure modes, latency limits, and blast radius',
+        'Emphasis on maintainability, observability, and deterministic verification',
       ],
       blindSpots: [
-        'May spend too much time perfecting single-system specs before deploying',
-        'Opportunity to leave a more visible public Digital Paper Trail of your decisions',
+        'Watch for over-specifying architecture before empirical eval feedback arrives',
+        'Make implicit design judgment visible through written Architecture Decision Records',
       ],
       recommended30DayActions: [
-        'Build and deploy a multi-agent system with explicit human approval checkpoints',
-        'Document your next three technical decisions as public Architecture Decision Records (ADRs)',
-        'Take the "Human API" concept from Chapter 5 and draft a team AI contract',
+        'Build or harden an evaluation harness for one production AI workflow',
+        'Publish two Architecture Decision Records (ADRs) explaining concrete system trade-offs',
+        'Draft a team-wide Human API validation checklist for AI-assisted diffs',
+      ],
+      recommendedChapters: [
+        { chapter: 2, title: 'From HOW to WHAT', reason: 'Sharpen problem framing and system direction over raw output.' },
+        { chapter: 5, title: 'Mastering AI Workflows', reason: 'Combine deterministic constraints with agentic execution.' },
+        { chapter: 6, title: 'The Art of Personal Branding for Engineers', reason: 'Convert architectural depth into a verifiable Digital Paper Trail.' },
+      ],
+      recommendedExercises: [
+        'AI Evaluation & Drift Rubric (Lab Canvas #12)',
+        'Digital Paper Trail Architecture Log (Lab Canvas #7)',
       ],
     };
   } else {
@@ -290,21 +356,31 @@ export function calculateAssessmentResult(answers: Record<number, 'creator' | 'a
       creatorPct,
       architectPct,
       orchestratorPct,
-      archetypeTitle: 'High-Velocity Master Creator',
-      summary: 'You have extraordinary execution horsepower and prototyping depth. You love building, shipping, and turning ideas into working software. However, as AI models rapidly commoditize syntax generation, your highest-leverage growth area is ascending into system trade-offs (Architect) and governance (Orchestrator).',
+      archetypeTitle: 'High-Velocity Builder & Creator',
+      summary:
+        'You bring strong execution horsepower, technical fluency, and hands-on prototyping energy. You turn ideas into running software quickly. Your biggest career multiplier now is pairing that builder speed with architectural framing (what should exist) and verification discipline (why it can be trusted).',
       keyStrengths: [
-        'Rapid prototyping velocity and implementation depth',
-        'Hands-on mastery of modern developer tooling and AI coding assistants',
-        'Relentless bias for action and tangible working software',
+        'Rapid prototyping velocity and hands-on coding fluency',
+        'Direct familiarity with modern developer tooling and AI assistants',
+        'Strong bias for shipping tangible, working artifacts',
       ],
       blindSpots: [
-        'Vulnerability to syntax commoditization as models continue improving',
-        'Risk of answering "How do I build this?" before asking "Should this exist?"',
+        'Opportunity to pause on "What problem deserves solving?" before generating code',
+        'Developing written decision trails so your system judgment is as visible as your code',
       ],
       recommended30DayActions: [
-        'Shift 30% of your weekly coding hours toward system boundary analysis and failure modeling',
-        'Complete the "How → What" exercise in Chapter 7 for your current sprint tickets',
-        'Start your Digital Paper Trail by authoring a post-mortem of an AI agent failure',
+        'Dedicate 30% of weekly engineering time to writing edge-case evals and invariant notes',
+        'Complete a How → What problem-framing teardown before starting your next feature',
+        'Publish one detailed post-mortem or Digital Paper Trail benchmark study',
+      ],
+      recommendedChapters: [
+        { chapter: 1, title: 'Welcome to the New Age of Engineering', reason: 'Understand why verification and judgment command growing leverage.' },
+        { chapter: 3, title: 'Reimagining the Engineer', reason: 'Map the step-by-step transition from Creator to Architect.' },
+        { chapter: 11, title: 'Starting Out', reason: 'Build concrete Proof of Work artifacts without falling into tutorial loops.' },
+      ],
+      recommendedExercises: [
+        'C.A.O. Weekly Time Audit (Lab Canvas #1)',
+        '30/60/90-Day Transition Plan (Lab Canvas #9)',
       ],
     };
   }

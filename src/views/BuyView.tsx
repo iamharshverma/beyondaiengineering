@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
 import { PageId } from '../types';
-import { BOOK_DETAILS } from '../data/bookData';
-import { ArrowUpRight, CheckCircle2, Users, ShieldCheck, Sparkles, BookOpen, Mail, Loader2, Send } from 'lucide-react';
+import { SITE_CONFIG } from '../config/siteConfig';
+import { trackEvent, buildUtmUrl } from '../utils/analytics';
+import {
+  ArrowUpRight,
+  CheckCircle2,
+  ShieldCheck,
+  BookOpen,
+  Mail,
+  Loader2,
+  Send,
+  AlertCircle,
+} from 'lucide-react';
 import { sendBookInquiryToAuthor, AUTHOR_EMAIL } from '../utils/emailService';
 
 interface BuyViewProps {
@@ -11,7 +21,7 @@ interface BuyViewProps {
 
 export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) => {
   const [selectedFormat, setSelectedFormat] = useState<'hardcover' | 'paperback' | 'ebook' | 'audiobook'>('hardcover');
-  
+
   // Bulk order state
   const [teamSize, setTeamSize] = useState('25-50 copies');
   const [teamEmail, setTeamEmail] = useState('');
@@ -19,58 +29,28 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
   const [teamOrg, setTeamOrg] = useState('');
   const [teamNotes, setTeamNotes] = useState('');
   const [teamSubmitting, setTeamSubmitting] = useState(false);
-  const [teamSubmitted, setTeamSubmitted] = useState(false);
+  const [teamStatus, setTeamStatus] = useState<'idle' | 'sent' | 'fallback'>('idle');
+  const [teamMessage, setTeamMessage] = useState('');
   const [teamMailtoUrl, setTeamMailtoUrl] = useState('');
 
   // Direct author copy form state
-  const [showDirectForm, setShowDirectForm] = useState(false);
+  const [showDirectForm, setShowDirectForm] = useState(true);
   const [directName, setDirectName] = useState('');
   const [directEmail, setDirectEmail] = useState('');
   const [directNotes, setDirectNotes] = useState('');
   const [directSubmitting, setDirectSubmitting] = useState(false);
-  const [directSubmitted, setDirectSubmitted] = useState(false);
+  const [directStatus, setDirectStatus] = useState<'idle' | 'sent' | 'fallback'>('idle');
+  const [directMessage, setDirectMessage] = useState('');
   const [directMailtoUrl, setDirectMailtoUrl] = useState('');
 
-  const formats = [
-    {
-      id: 'hardcover' as const,
-      name: 'Hardcover Collector’s Edition',
-      subtitle: 'Navy Embossed Cloth with Gold Foil & Archival Acid-Free Paper',
-      price: '$34.00',
-      description: 'The permanent physical volume for your engineering library. Includes full architectural diagrams, durable binding, and complimentary companion digital Lab worksheets.',
-      badge: 'Bestseller Choice',
-    },
-    {
-      id: 'paperback' as const,
-      name: 'Paperback Field Manual',
-      subtitle: 'Lightweight Trade Edition for Daily Reference',
-      price: '$24.00',
-      description: 'The everyday companion for your desk or commute. Perfect for university coursework, book clubs, and engineering team reading circles.',
-      badge: 'Everyday Practical',
-    },
-    {
-      id: 'ebook' as const,
-      name: 'Digital eBook & PDF Bundle',
-      subtitle: 'Kindle, ePub & High-Resolution DRM-Free PDF',
-      price: '$16.99',
-      description: 'Instant delivery to your e-reader or workstation. Features interactive hyperlinked footnotes, vector schematics, and direct links to Lab worksheets.',
-      badge: 'Instant Delivery',
-    },
-    {
-      id: 'audiobook' as const,
-      name: 'Unabridged Audiobook',
-      subtitle: '10 Hours Narrated by Author Harsh Verma',
-      price: '$26.00',
-      description: 'Listen on Audible, Apple Books, or Spotify. Features author commentary on enterprise agent governance and real-world cybersecurity war stories.',
-      badge: 'Author Narrated',
-    },
-  ];
-
-  const currentFmt = formats.find((f) => f.id === selectedFormat) || formats[0];
+  const editions = SITE_CONFIG.book.editions;
+  const currentFmt = editions.find((e) => e.id === selectedFormat) || editions[0];
+  const configuredRetailers = SITE_CONFIG.book.retailers.filter((r) => r.isConfigured && r.url);
 
   const handleBulkSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTeamSubmitting(true);
+    trackEvent('organization_inquiry', { copies: teamSize, source: 'buy_page' });
     try {
       const res = await sendBookInquiryToAuthor({
         formType: 'Team & Bulk Book Order',
@@ -78,11 +58,12 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
         email: teamEmail,
         organization: teamOrg || 'Engineering Organization',
         formatOrCopies: teamSize,
-        notesOrMessage: teamNotes || 'Requested bulk quote and information pack.',
+        notesOrMessage: teamNotes || 'Requested bulk quote and team licensing details.',
         sourcePage: '/book/buy',
       });
       setTeamMailtoUrl(res.mailtoUrl);
-      setTeamSubmitted(true);
+      setTeamMessage(res.message);
+      setTeamStatus(res.success ? 'sent' : 'fallback');
     } finally {
       setTeamSubmitting(false);
     }
@@ -91,17 +72,19 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
   const handleDirectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setDirectSubmitting(true);
+    trackEvent('book_purchase_click', { format: currentFmt.format, source: 'buy_page_direct' });
     try {
       const res = await sendBookInquiryToAuthor({
         formType: 'Book Order (Direct Author Copy)',
         name: directName,
         email: directEmail,
-        formatOrCopies: `${currentFmt.name} (${currentFmt.price})`,
-        notesOrMessage: directNotes || `Inquiry to get a copy of ${currentFmt.name}.`,
-        sourcePage: `/book/buy (${currentFmt.name})`,
+        formatOrCopies: currentFmt.format,
+        notesOrMessage: directNotes || `Inquiry to request a copy of ${currentFmt.format}.`,
+        sourcePage: `/book/buy (${currentFmt.format})`,
       });
       setDirectMailtoUrl(res.mailtoUrl);
-      setDirectSubmitted(true);
+      setDirectMessage(res.message);
+      setDirectStatus(res.success ? 'sent' : 'fallback');
     } finally {
       setDirectSubmitting(false);
     }
@@ -112,26 +95,26 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
       {/* 1. HERO */}
       <section className="pt-16 sm:pt-24 pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
           {/* Left Column: Cover Showcase */}
           <div className="lg:col-span-5 flex justify-center">
-            <div className="relative group max-w-[320px] sm:max-w-[360px] animate-float">
+            <div className="relative group max-w-[320px] sm:max-w-[360px]">
               <div className="rounded-xl overflow-hidden book-shadow border border-[#101828]/10 dark:border-white/20 bg-[#0E1B38]">
                 <img
-                  src="/assets/images/book_hardcover_mockup_1793842329740.jpg"
-                  alt="Beyond AI Engineering hardcover book by Harsh Verma"
+                  src={SITE_CONFIG.book.coverImage}
+                  alt={`${SITE_CONFIG.book.title} hardcover book by ${SITE_CONFIG.author.name}`}
                   className="w-full h-auto object-cover"
                   referrerPolicy="no-referrer"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     if (!target.src.includes('public/assets')) {
-                      target.src = '/public/assets/images/book_hardcover_mockup_1793842329740.jpg';
+                      target.src = `/public${SITE_CONFIG.book.coverImage}`;
                     }
                   }}
                 />
               </div>
               <div className="mt-4 text-center">
                 <button
+                  type="button"
                   onClick={onOpenSample}
                   className="text-xs font-semibold text-blue-900 dark:text-blue-400 hover:underline inline-flex items-center gap-1 cursor-pointer"
                 >
@@ -145,33 +128,35 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
           {/* Right Column: Buying Options */}
           <div className="lg:col-span-7 space-y-6 text-left">
             <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs uppercase tracking-widest font-mono text-blue-900 dark:text-blue-400 font-semibold block">
-                  Official Book Distribution
+              <div className="flex flex-wrap items-center gap-2 mb-1 text-xs font-mono">
+                <span className="uppercase tracking-widest text-blue-900 dark:text-blue-400 font-semibold">
+                  Book Editions & Requests
                 </span>
-                <span className="inline-flex items-center gap-1 text-[11px] font-mono bg-blue-100 dark:bg-blue-950/80 text-blue-900 dark:text-blue-300 px-2 py-0.5 rounded-full">
+                <span className="text-slate-300 dark:text-slate-600">·</span>
+                <span className="text-[#475467] dark:text-slate-400 inline-flex items-center gap-1">
                   <Mail className="w-3 h-3" />
-                  <span>Direct Author: {AUTHOR_EMAIL}</span>
+                  <span>Author Desk: {AUTHOR_EMAIL}</span>
                 </span>
               </div>
               <h1 className="font-serif text-fluid-hero font-bold tracking-tight text-[#101828] dark:text-white mb-2 text-balance">
-                Ready to Go Beyond AI Engineering?
+                Get {SITE_CONFIG.book.title}
               </h1>
               <p className="font-serif text-lg text-[#475467] dark:text-slate-300 italic">
-                From Creator to Curator: Build Your Authority and Lead the AI Agent Revolution
+                {SITE_CONFIG.book.subtitle}: {SITE_CONFIG.book.tagline}
               </p>
             </div>
 
             {/* Format Selection Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-              {formats.map((fmt) => (
-                <div
+              {editions.map((fmt) => (
+                <button
+                  type="button"
                   key={fmt.id}
                   onClick={() => {
                     setSelectedFormat(fmt.id);
-                    setDirectSubmitted(false);
+                    setDirectStatus('idle');
                   }}
-                  className={`p-4 rounded-xl border text-left transition-all cursor-pointer hover:-translate-y-0.5 duration-200 ${
+                  className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
                     selectedFormat === fmt.id
                       ? 'border-blue-900 dark:border-blue-400 bg-white dark:bg-[#111C35] ring-2 ring-blue-900/10 dark:ring-blue-400/20 shadow-sm'
                       : 'border-[#101828]/10 dark:border-white/10 bg-[#FAFAF7] dark:bg-[#0D1527] hover:border-[#101828]/30 dark:hover:border-white/20'
@@ -179,27 +164,25 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                 >
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-[10px] font-mono uppercase tracking-wider text-blue-900 dark:text-blue-300 font-semibold">
-                      {fmt.badge}
+                      {fmt.specLabel}
                     </span>
-                    <span className="font-serif text-lg font-bold text-[#101828] dark:text-white">{fmt.price}</span>
                   </div>
-                  <div className="font-serif font-bold text-base text-[#101828] dark:text-white mb-1">{fmt.name}</div>
-                  <p className="text-[11px] text-[#475467] dark:text-slate-400 leading-relaxed line-clamp-2">{fmt.description}</p>
-                </div>
+                  <div className="font-serif font-bold text-base text-[#101828] dark:text-white mb-1">{fmt.format}</div>
+                  <p className="text-[11px] text-[#475467] dark:text-slate-400 leading-relaxed">{fmt.subtitle}</p>
+                </button>
               ))}
             </div>
 
             {/* Selected Format Retailers & Direct Author Option */}
             <div className="bg-white dark:bg-[#0D1527] p-6 rounded-xl border border-[#101828]/10 dark:border-white/10 shadow-xs space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <h3 className="font-serif text-xl font-bold text-[#101828] dark:text-white">
-                    {currentFmt.name}
-                  </h3>
-                  <span className="text-xs text-[#475467] dark:text-slate-400">Available from authorized booksellers or direct author order:</span>
-                </div>
-                <div className="font-serif text-2xl font-bold text-[#101828] dark:text-white">
-                  {currentFmt.price}
+                  <h2 className="font-serif text-xl font-bold text-[#101828] dark:text-white">
+                    {currentFmt.format}
+                  </h2>
+                  <span className="text-xs text-[#475467] dark:text-slate-400">
+                    {currentFmt.priceLabel} · Direct author fulfillment & edition updates
+                  </span>
                 </div>
               </div>
 
@@ -209,7 +192,7 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                   <div className="flex items-center gap-2">
                     <Mail className="w-4 h-4 text-blue-900 dark:text-blue-400" />
                     <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-950 dark:text-blue-300">
-                      Request Direct Copy from Harsh Verma
+                      {currentFmt.directRequestLabel}
                     </span>
                   </div>
                   <button
@@ -217,24 +200,25 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                     onClick={() => setShowDirectForm(!showDirectForm)}
                     className="text-xs font-semibold text-blue-900 dark:text-blue-300 underline hover:text-blue-700 cursor-pointer"
                   >
-                    {showDirectForm ? 'Close Form' : 'Order Direct Copy →'}
+                    {showDirectForm ? 'Hide Form' : 'Open Form →'}
                   </button>
                 </div>
 
                 <p className="text-xs text-[#475467] dark:text-slate-300">
-                  Submissions are emailed directly to <strong>{AUTHOR_EMAIL}</strong> for direct author distribution or invoice requests.
+                  Submissions are emailed directly to <strong>{AUTHOR_EMAIL}</strong> for direct author copies, advance notifications, or team invoices.
                 </p>
 
                 {showDirectForm && (
                   <div className="pt-2">
-                    {!directSubmitted ? (
+                    {directStatus === 'idle' && (
                       <form onSubmit={handleDirectSubmit} className="space-y-3">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           <div>
-                            <label className="block text-[11px] font-mono uppercase text-[#101828] dark:text-slate-300 font-semibold mb-1">
+                            <label htmlFor="buy-direct-name" className="block text-[11px] font-mono uppercase text-[#101828] dark:text-slate-300 font-semibold mb-1">
                               Your Name
                             </label>
                             <input
+                              id="buy-direct-name"
                               required
                               type="text"
                               value={directName}
@@ -244,10 +228,11 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                             />
                           </div>
                           <div>
-                            <label className="block text-[11px] font-mono uppercase text-[#101828] dark:text-slate-300 font-semibold mb-1">
+                            <label htmlFor="buy-direct-email" className="block text-[11px] font-mono uppercase text-[#101828] dark:text-slate-300 font-semibold mb-1">
                               Your Email
                             </label>
                             <input
+                              id="buy-direct-email"
                               required
                               type="email"
                               value={directEmail}
@@ -259,14 +244,15 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                         </div>
 
                         <div>
-                          <label className="block text-[11px] font-mono uppercase text-[#101828] dark:text-slate-300 font-semibold mb-1">
-                            Delivery Address / Custom Request
+                          <label htmlFor="buy-direct-notes" className="block text-[11px] font-mono uppercase text-[#101828] dark:text-slate-300 font-semibold mb-1">
+                            Shipping Location / Custom Request
                           </label>
                           <textarea
+                            id="buy-direct-notes"
                             rows={2}
                             value={directNotes}
                             onChange={(e) => setDirectNotes(e.target.value)}
-                            placeholder="Mailing address for physical books, or special notes for Harsh Verma"
+                            placeholder="Optional city/country or specific edition questions for Harsh Verma"
                             className="w-full text-xs p-2 rounded-md border border-[#101828]/20 dark:border-white/20 bg-white dark:bg-[#0A101F] text-[#101828] dark:text-white"
                           />
                         </div>
@@ -284,30 +270,44 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                           ) : (
                             <>
                               <Send className="w-3.5 h-3.5" />
-                              <span>Send Book Order to {AUTHOR_EMAIL}</span>
+                              <span>Send Edition Request to Harsh Verma</span>
                             </>
                           )}
                         </button>
                       </form>
-                    ) : (
+                    )}
+
+                    {directStatus === 'sent' && (
                       <div className="bg-emerald-50 dark:bg-emerald-950/60 p-4 rounded-lg border border-emerald-200 dark:border-emerald-800 text-center space-y-2">
                         <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto" />
                         <div className="font-serif font-bold text-base text-emerald-950 dark:text-emerald-200">
-                          Book Request Dispatched to Harsh Verma!
+                          Request Dispatched to Harsh Verma
                         </div>
-                        <p className="text-xs text-emerald-800 dark:text-emerald-300">
-                          Your request for <strong>{currentFmt.name}</strong> was sent directly to <strong>{AUTHOR_EMAIL}</strong>. Harsh will follow up at <strong>{directEmail}</strong>.
-                        </p>
+                        <p className="text-xs text-emerald-800 dark:text-emerald-300">{directMessage}</p>
+                        <button
+                          type="button"
+                          onClick={() => setDirectStatus('idle')}
+                          className="text-xs underline text-emerald-900 dark:text-emerald-200 cursor-pointer"
+                        >
+                          Submit another request
+                        </button>
+                      </div>
+                    )}
+
+                    {directStatus === 'fallback' && (
+                      <div className="bg-amber-50 dark:bg-amber-950/50 p-4 rounded-lg border border-amber-200 dark:border-amber-800 space-y-2">
+                        <div className="flex items-start gap-2 text-xs text-amber-900 dark:text-amber-200">
+                          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                          <span>{directMessage}</span>
+                        </div>
                         {directMailtoUrl && (
-                          <div className="pt-1">
-                            <a
-                              href={directMailtoUrl}
-                              className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-900 dark:text-blue-300 underline"
-                            >
-                              <span>Send backup copy via mail client</span>
-                              <ArrowUpRight className="w-3 h-3" />
-                            </a>
-                          </div>
+                          <a
+                            href={directMailtoUrl}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded text-xs font-semibold"
+                          >
+                            <Mail className="w-3.5 h-3.5" />
+                            <span>Send via Your Email Client</span>
+                          </a>
                         )}
                       </div>
                     )}
@@ -315,54 +315,35 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                 )}
               </div>
 
-              {/* Retailer Links */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <a
-                  href="https://amazon.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 bg-[#FAFAF7] dark:bg-[#11192E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors"
-                >
-                  <span>Amazon Worldwide</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
-                </a>
-                <a
-                  href="https://barnesandnoble.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 bg-[#FAFAF7] dark:bg-[#11192E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors"
-                >
-                  <span>Barnes & Noble</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
-                </a>
-                <a
-                  href="https://bookshop.org"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 bg-[#FAFAF7] dark:bg-[#11192E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors"
-                >
-                  <span>Bookshop.org (Independent Bookstores)</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
-                </a>
-                <a
-                  href="https://audible.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 bg-[#FAFAF7] dark:bg-[#11192E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors"
-                >
-                  <span>Audible & Apple Books</span>
-                  <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
-                </a>
-              </div>
+              {/* Retailer Links (Only shown when configured; otherwise transparent availability notice) */}
+              {configuredRetailers.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  {configuredRetailers.map((retailer) => (
+                    <a
+                      key={retailer.id}
+                      href={buildUtmUrl(retailer.url!, 'book_launch', 'website', retailer.id)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => trackEvent('retailer_click', { retailer: retailer.id, format: currentFmt.id })}
+                      className="p-3 bg-[#FAFAF7] dark:bg-[#11192E] border border-[#101828]/15 dark:border-white/10 rounded-lg hover:border-blue-900 dark:hover:border-blue-400 font-medium flex items-center justify-between text-[#101828] dark:text-slate-200 transition-colors"
+                    >
+                      <span>{retailer.name}</span>
+                      <ArrowUpRight className="w-3.5 h-3.5 text-slate-400" />
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-3.5 rounded-lg bg-[#FAFAF7] dark:bg-[#11192E] border border-[#101828]/10 dark:border-white/10 text-xs text-[#475467] dark:text-slate-300">
+                  Direct bookstore and marketplace product links will appear here once public edition ISBNs and storefront URLs are finalized. Use the direct author request form above to reserve copies or review editions now.
+                </div>
+              )}
 
               <div className="text-[11px] text-[#475467] dark:text-slate-400 pt-2 border-t border-[#101828]/[0.08] dark:border-white/10 flex items-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 dark:text-emerald-400" />
-                <span>All editions include complimentary access to the Beyond AI Engineering Lab canvases.</span>
+                <span>All readers receive complimentary web access to the 15 companion resources & lab canvases.</span>
               </div>
             </div>
-
           </div>
-
         </div>
       </section>
 
@@ -378,81 +359,86 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                 Buying for an Engineering Team?
               </h2>
               <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed">
-                Bring the Creator–Architect–Orchestrator framework into your engineering organization. Bulk requests are dispatched directly to Harsh Verma (<strong>{AUTHOR_EMAIL}</strong>) with custom tiered discounts and a private virtual Q&A session.
+                Bring the Creator–Architect–Orchestrator framework into your organization. Requests go directly to Harsh Verma (<strong>{AUTHOR_EMAIL}</strong>) with reading guides and workshop options.
               </p>
             </div>
 
-            {!teamSubmitted ? (
+            {teamStatus === 'idle' && (
               <form onSubmit={handleBulkSubmit} className="space-y-4 max-w-lg mx-auto">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-mono uppercase text-[#101828] dark:text-slate-200 font-semibold mb-1">
+                    <label htmlFor="buy-team-name" className="block text-xs font-mono uppercase text-[#101828] dark:text-slate-200 font-semibold mb-1">
                       Your Name
                     </label>
                     <input
+                      id="buy-team-name"
                       required
                       type="text"
                       value={teamName}
                       onChange={(e) => setTeamName(e.target.value)}
-                      placeholder="e.g. Marcus Vance"
-                      className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/20 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
+                      placeholder="Full name"
+                      className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/20 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-mono uppercase text-[#101828] dark:text-slate-200 font-semibold mb-1">
+                    <label htmlFor="buy-team-email" className="block text-xs font-mono uppercase text-[#101828] dark:text-slate-200 font-semibold mb-1">
                       Work Email
                     </label>
                     <input
+                      id="buy-team-email"
                       required
                       type="email"
                       value={teamEmail}
                       onChange={(e) => setTeamEmail(e.target.value)}
                       placeholder="lead@company.com"
-                      className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/20 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
+                      className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/20 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-mono uppercase text-[#101828] dark:text-slate-200 font-semibold mb-1">
-                      Number of Copies Needed
+                    <label htmlFor="buy-team-size" className="block text-xs font-mono uppercase text-[#101828] dark:text-slate-200 font-semibold mb-1">
+                      Estimated Copies
                     </label>
                     <select
+                      id="buy-team-size"
                       value={teamSize}
                       onChange={(e) => setTeamSize(e.target.value)}
-                      className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/20 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
+                      className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/20 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white"
                     >
-                      <option value="10-24 copies">10–24 copies (15% discount + Lab Bundle)</option>
-                      <option value="25-50 copies">25–50 copies (25% discount + Virtual Q&A)</option>
-                      <option value="51-100 copies">51–100 copies (35% discount + Custom Workshop)</option>
-                      <option value="100+ copies">100+ copies (Enterprise Campus Licensing)</option>
+                      <option value="10-24 copies">10–24 copies (Team Circle)</option>
+                      <option value="25-50 copies">25–50 copies (Department + Q&A)</option>
+                      <option value="51-100 copies">51–100 copies (Org-Wide + Workshop)</option>
+                      <option value="100+ copies">100+ copies (Enterprise / Campus Licensing)</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-mono uppercase text-[#101828] dark:text-slate-200 font-semibold mb-1">
-                      Company / Organization
+                    <label htmlFor="buy-team-org" className="block text-xs font-mono uppercase text-[#101828] dark:text-slate-200 font-semibold mb-1">
+                      Company / University
                     </label>
                     <input
+                      id="buy-team-org"
                       type="text"
                       value={teamOrg}
                       onChange={(e) => setTeamOrg(e.target.value)}
-                      placeholder="e.g. OpenAI, Palantir, Stanford"
-                      className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/20 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
+                      placeholder="Organization name"
+                      className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/20 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-mono uppercase text-[#101828] dark:text-slate-200 font-semibold mb-1">
+                  <label htmlFor="buy-team-notes" className="block text-xs font-mono uppercase text-[#101828] dark:text-slate-200 font-semibold mb-1">
                     Timeline / Delivery Notes
                   </label>
                   <textarea
+                    id="buy-team-notes"
                     rows={2}
                     value={teamNotes}
                     onChange={(e) => setTeamNotes(e.target.value)}
-                    placeholder="Specify target delivery timeline, physical vs digital distribution, or briefing requests."
-                    className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/20 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white focus:outline-blue-900 dark:focus:outline-blue-400"
+                    placeholder="Target dates, physical vs digital preference, or workshop interest."
+                    className="w-full text-xs p-2.5 rounded-lg border border-[#101828]/20 dark:border-white/20 bg-[#FAFAF7] dark:bg-[#11192E] text-[#101828] dark:text-white"
                   />
                 </div>
 
@@ -469,36 +455,26 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                   ) : (
                     <>
                       <Send className="w-4 h-4" />
-                      <span>Send Team Bulk Inquiry to {AUTHOR_EMAIL}</span>
+                      <span>Send Team Inquiry to Harsh Verma</span>
                     </>
                   )}
                 </button>
               </form>
-            ) : (
+            )}
+
+            {teamStatus === 'sent' && (
               <div className="text-center py-6 space-y-3">
                 <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400 mx-auto" />
                 <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white">
-                  Bulk Request Dispatched to Harsh Verma!
+                  Bulk Request Dispatched to Harsh Verma
                 </h3>
                 <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 max-w-sm mx-auto leading-relaxed">
-                  Thank you, {teamName}. Your inquiry for <strong>{teamSize}</strong> has been transmitted directly to <strong>{AUTHOR_EMAIL}</strong>. We will send volume invoice details to <strong>{teamEmail}</strong> within 24 hours.
+                  {teamMessage}
                 </p>
-                {teamMailtoUrl && (
-                  <div className="pt-2">
-                    <a
-                      href={teamMailtoUrl}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-900 dark:text-blue-400 underline hover:opacity-80"
-                    >
-                      <Mail className="w-3.5 h-3.5" />
-                      <span>Send a copy via your personal mail app</span>
-                    </a>
-                  </div>
-                )}
                 <button
                   type="button"
                   onClick={() => {
-                    setTeamSubmitted(false);
-                    setTeamEmail('');
+                    setTeamStatus('idle');
                     setTeamNotes('');
                   }}
                   className="mt-2 text-xs text-[#475467] dark:text-slate-400 underline hover:text-[#101828] dark:hover:text-white cursor-pointer block mx-auto"
@@ -507,6 +483,34 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
                 </button>
               </div>
             )}
+
+            {teamStatus === 'fallback' && (
+              <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 max-w-lg mx-auto space-y-3">
+                <div className="flex items-start gap-2 text-xs text-amber-900 dark:text-amber-200">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <span>{teamMessage}</span>
+                </div>
+                {teamMailtoUrl && (
+                  <a
+                    href={teamMailtoUrl}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#101828] dark:bg-white text-white dark:text-[#070B14] rounded-md text-xs font-semibold"
+                  >
+                    <Mail className="w-3.5 h-3.5" />
+                    <span>Open Email App to Send Request</span>
+                  </a>
+                )}
+              </div>
+            )}
+
+            <div className="mt-8 pt-6 border-t border-[#101828]/10 dark:border-white/10 text-center">
+              <button
+                type="button"
+                onClick={() => onNavigate('organizations')}
+                className="text-xs font-semibold text-blue-900 dark:text-blue-400 hover:underline cursor-pointer"
+              >
+                Explore Organization Programs & Keynotes →
+              </button>
+            </div>
           </div>
         </div>
       </section>

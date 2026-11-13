@@ -1,22 +1,25 @@
 import { Chapter, SpecialInfographicSection } from '../types';
+import { SITE_CONFIG } from '../config/siteConfig';
 
 export const BOOK_DETAILS = {
-  title: 'BEYOND AI ENGINEERING',
-  subtitle: 'From Creator to Curator: Build Your Authority and Lead the AI Agent Revolution',
-  author: 'Harsh Verma',
-  authorTitle: 'Principal AI Engineer at Palo Alto Networks · Keynote Speaker · Stanford Distinguished Scholar · Forbes Tech Council · Fellow of RSA & BCS · IEEE Senior Member',
+  title: SITE_CONFIG.book.title.toUpperCase(),
+  subtitle: SITE_CONFIG.book.fullTitle.replace('Beyond AI Engineering: ', '') + ': ' + SITE_CONFIG.book.tagline.replace(/\.$/, ''),
+  author: SITE_CONFIG.author.name,
+  authorTitle:
+    'Principal AI Engineer at Palo Alto Networks · Stanford Distinguished Scholar · Fellow of RSA, BCS & IFGICT · IEEE Senior Member · Forbes Technology Council',
   coreTagline: 'AI can increasingly write the code. Your advantage is deciding what deserves to be built.',
-  positioning: 'Beyond AI Engineering is a practical career operating system for engineers navigating the age of AI agents. It helps engineers move from producing code to exercising judgment, designing systems, orchestrating AI and humans, and operating as a high-leverage Super Engineer.',
-  coverImage: '/assets/images/book_hardcover_mockup_1793842329740.jpg',
-  authorImage: '/assets/aistudio/harsh_verma_87a0217e.jpg',
-  authorImageFallback: '/public/assets/aistudio/harsh_verma_87a0217e.jpg',
-  publisher: 'Beyond AI Publishing',
-  publicationYear: '2026',
-  isbn: '978-1-965432-01-9',
-  pageCount: '344 pages',
-  contactEmail: 'connect@beyondaiengineering.com',
-  canonicalUrl: 'https://www.beyondaiengineering.com',
-  authorWebsite: 'https://www.harshverma.me',
+  positioning:
+    'Beyond AI Engineering is a practical career operating system for engineers navigating the age of AI agents. It helps engineers move from producing code to exercising judgment, designing systems, orchestrating AI and humans, and operating as a high-leverage engineer.',
+  coverImage: SITE_CONFIG.book.coverImage,
+  authorImage: SITE_CONFIG.author.portraitPrimary,
+  authorImageFallback: SITE_CONFIG.author.portraitSecondary,
+  publisher: SITE_CONFIG.book.publisher,
+  publicationYear: SITE_CONFIG.book.releaseDate,
+  isbn: SITE_CONFIG.book.isbn,
+  pageCount: SITE_CONFIG.book.structureSummary,
+  contactEmail: SITE_CONFIG.author.publicContactEmail,
+  canonicalUrl: SITE_CONFIG.canonicalOrigin,
+  authorWebsite: SITE_CONFIG.author.personalSiteUrl,
   authorAboutUrl: 'https://www.harshverma.me/page-about',
   authorBooksUrl: 'https://www.harshverma.me/page-books#book1',
 };
@@ -815,29 +818,9 @@ export const ALL_INFOGRAPHICS = [
   }
 ];
 
-export const ENDORSEMENTS = [
-  {
-    quote: 'Harsh Verma has written the definitive guide for software engineers grappling with the generative AI wave. Beyond AI Engineering is not another rehash of prompt templates; it is a profound rethinking of what it means to be an engineer.',
-    name: 'Dr. Elena Rostova',
-    role: 'VP of AI Engineering',
-    organization: 'Global Distributed Cloud Institute',
-  },
-  {
-    quote: 'The Creator-Architect-Orchestrator framework is the exact mental model our team needed. If you want to remain indispensable in the next ten years, read this book immediately.',
-    name: 'Marcus Vance',
-    role: 'Chief Technology Officer',
-    organization: 'Aether Systems & IEEE Fellow',
-  },
-  {
-    quote: 'Finally, an author who speaks directly to the reality of enterprise cybersecurity, autonomous agent boundaries, and distributed systems. Harsh brings battle-tested credibility to every page.',
-    name: 'Priya Sundaram',
-    role: 'Head of Autonomous Systems Research',
-    organization: 'Apex Frontier Labs',
-  },
-  {
-    quote: 'For students and early-career developers wondering if software engineering is dead: this book will give you your purpose and your competitive advantage.',
-    name: 'Prof. David K. Chen',
-    role: 'Dean of Computer Science',
-    organization: 'Polytechnic AI Initiative',
-  },
-];
+export const ENDORSEMENTS: Array<{
+  quote: string;
+  name: string;
+  role: string;
+  organization: string;
+}> = [];

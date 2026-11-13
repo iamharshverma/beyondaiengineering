@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PageId } from '../types';
-import { Download, Copy, Check, Mail, FileText, Image as ImageIcon, HelpCircle } from 'lucide-react';
-import { BOOK_DETAILS } from '../data/bookData';
+import { SITE_CONFIG } from '../config/siteConfig';
+import { trackEvent } from '../utils/analytics';
+import { updatePageSeo, PAGE_OG_IMAGES } from '../utils/seo';
+import { Download, Copy, Check, FileText, Image as ImageIcon, HelpCircle, ChevronRight } from 'lucide-react';
 
 interface PressViewProps {
   onNavigate: (page: PageId) => void;
@@ -10,10 +12,22 @@ interface PressViewProps {
 export const PressView: React.FC<PressViewProps> = ({ onNavigate }) => {
   const [copiedBio, setCopiedBio] = useState<string | null>(null);
 
+  useEffect(() => {
+    updatePageSeo({
+      title: `Media & Press Kit | ${SITE_CONFIG.book.title} — ${SITE_CONFIG.author.name}`,
+      description:
+        'Approved author biographies, interview angles, high-resolution covers and portraits, and direct media inquiry contacts.',
+      canonicalPath: '/press',
+      ogType: 'website',
+      ogImage: PAGE_OG_IMAGES.press,
+      breadcrumbs: [{ name: 'Media & Press Kit', path: '/press' }],
+    });
+  }, []);
+
   const bios = {
-    short: 'Harsh Verma is a Principal AI Engineer, Author, and Fellow of BCS whose work focuses on artificial intelligence, cybersecurity, autonomous agents, and enterprise systems. He is the author of Beyond AI Engineering: From Creator to Curator.',
-    medium: 'Harsh Verma is a Principal AI Engineer and technology leader with over a decade of experience across artificial intelligence, cybersecurity, and distributed architectures. A Fellow of BCS and Senior Member of IEEE, Harsh advises enterprise organizations on autonomous agent governance and engineering leadership. He is the author of Beyond AI Engineering: From Creator to Curator.',
-    long: 'Harsh Verma is a Principal AI Engineer, Author, and Cybersecurity Leader whose work sits at the intersection of artificial intelligence, autonomous systems, and enterprise resilience. With over twelve years of engineering leadership, Harsh works on mission-critical technologies designed for complex environments where security, scalability, and trust are paramount. He is a Fellow of BCS (The Chartered Institute for IT), a Senior Member of IEEE, a member of the Forbes Technology Council, a Google Developer Expert in Cloud AI, and an advisor to Berkeley SkyDeck startups. His book Beyond AI Engineering establishes the Creator-Architect-Orchestrator operating system for technical talent in the agentic era.',
+    short: `${SITE_CONFIG.author.name} is the author of ${SITE_CONFIG.book.fullTitle} and a Principal AI Engineer at Palo Alto Networks. His work focuses on autonomous AI systems, enterprise security boundaries, and systems engineering leadership.`,
+    medium: `${SITE_CONFIG.author.name} is the author of ${SITE_CONFIG.book.fullTitle}. He serves as a Principal AI Engineer at Palo Alto Networks, is a Stanford Distinguished Scholar, Fellow of the Royal Society of Arts (FRSA), Fellow of the British Computer Society (FBCS), IEEE Senior Member, and Forbes Technology Council Member.`,
+    long: SITE_CONFIG.author.verifiedBio,
   };
 
   const interviewQuestions = [
@@ -36,19 +50,59 @@ export const PressView: React.FC<PressViewProps> = ({ onNavigate }) => {
   };
 
   const handleDownloadAsset = (filename: string, content: string) => {
+    trackEvent('press_asset_download', { filename });
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
     link.download = filename;
+    document.body.appendChild(link);
     link.click();
-    URL.revokeObjectURL(url);
+    document.body.removeChild(link);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
+
+  const pressReleaseContent = `PRESS RELEASE & MEDIA FACT SHEET
+${SITE_CONFIG.book.fullTitle.toUpperCase()}
+Subtitle Tagline: ${SITE_CONFIG.book.tagline}
+Author: ${SITE_CONFIG.author.name} (${SITE_CONFIG.author.headline})
+
+OVERVIEW
+${SITE_CONFIG.book.shortDescription}
+
+Structure: ${SITE_CONFIG.book.structureSummary}
+
+ABOUT THE AUTHOR
+${SITE_CONFIG.author.verifiedBio}
+
+SUGGESTED INTERVIEW ANGLES
+${interviewQuestions.map((q, idx) => `${idx + 1}. ${q}`).join('\n')}
+
+MEDIA CONTACT
+Email: ${SITE_CONFIG.author.publicContactEmail}
+Website: ${SITE_CONFIG.canonicalOrigin}
+Press Kit: ${SITE_CONFIG.canonicalOrigin}/press
+Contact Form: ${SITE_CONFIG.canonicalOrigin}/contact`;
 
   return (
     <div className="space-y-0">
+      {/* Breadcrumb */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-mono text-[#475467] dark:text-slate-400">
+          <button
+            type="button"
+            onClick={() => onNavigate('home')}
+            className="hover:text-[#101828] dark:hover:text-white transition-colors cursor-pointer"
+          >
+            Home
+          </button>
+          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+          <span className="text-blue-900 dark:text-blue-400 font-semibold">Media & Press Kit</span>
+        </nav>
+      </div>
+
       {/* 1. HERO */}
-      <section className="pt-16 sm:pt-24 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
+      <section className="pt-8 sm:pt-14 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10">
         <div className="max-w-4xl mx-auto text-center space-y-4">
           <span className="text-xs uppercase tracking-widest font-mono text-blue-900 dark:text-blue-400 font-semibold block">
             Media, Press & Reviewers
@@ -57,11 +111,27 @@ export const PressView: React.FC<PressViewProps> = ({ onNavigate }) => {
             Press & Media Kit
           </h1>
           <p className="font-serif text-xl sm:text-2xl text-[#475467] dark:text-slate-300 italic leading-relaxed">
-            Resources for journalists, podcast hosts, conference organizers, and reviewers.
+            Verified bios, high-resolution imagery, and interview angles for journalists, podcast hosts, and reviewers.
           </p>
-          <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-400">
-            Media Inquiries: <a href="mailto:connect@beyondaiengineering.com" className="font-semibold text-blue-900 dark:text-blue-400 underline">connect@beyondaiengineering.com</a>
-          </p>
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-4 text-xs sm:text-sm text-[#475467] dark:text-slate-400">
+            <span>
+              Media Inquiries:{' '}
+              <a
+                href={`mailto:${SITE_CONFIG.author.publicContactEmail}`}
+                className="font-semibold text-blue-900 dark:text-blue-400 underline"
+              >
+                {SITE_CONFIG.author.publicContactEmail}
+              </a>
+            </span>
+            <span aria-hidden="true">·</span>
+            <button
+              type="button"
+              onClick={() => onNavigate('contact')}
+              className="font-semibold text-blue-900 dark:text-blue-400 underline cursor-pointer"
+            >
+              Submit Media Request Online →
+            </button>
+          </div>
         </div>
       </section>
 
@@ -74,7 +144,6 @@ export const PressView: React.FC<PressViewProps> = ({ onNavigate }) => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          
           {/* Asset 1: High-Res Book Cover */}
           <div className="bg-white dark:bg-[#0D1527] p-6 rounded-xl border border-[#101828]/10 dark:border-white/10 shadow-2xs hover:border-blue-900/40 dark:hover:border-blue-400/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
             <div>
@@ -85,12 +154,13 @@ export const PressView: React.FC<PressViewProps> = ({ onNavigate }) => {
                 Book Cover Artwork
               </h3>
               <p className="text-xs text-[#475467] dark:text-slate-400 mb-4">
-                300 DPI high-resolution hardcover 3D mockup & front cover graphic.
+                High-resolution hardcover 3D mockup & front cover artwork for {SITE_CONFIG.book.title}.
               </p>
             </div>
             <a
-              href="/assets/images/book_hardcover_mockup_1793842329740.jpg"
+              href={SITE_CONFIG.book.coverImage}
               download="Beyond-AI-Engineering-Cover.jpg"
+              onClick={() => trackEvent('press_asset_download', { filename: 'Beyond-AI-Engineering-Cover.jpg' })}
               className="text-xs font-semibold text-blue-900 dark:text-blue-400 hover:underline flex items-center gap-1.5"
             >
               <Download className="w-3.5 h-3.5" />
@@ -108,12 +178,13 @@ export const PressView: React.FC<PressViewProps> = ({ onNavigate }) => {
                 Author Headshots
               </h3>
               <p className="text-xs text-[#475467] dark:text-slate-400 mb-4">
-                Official high-resolution photography of Harsh Verma (Principal AI Engineer at Palo Alto Networks, Fellow of BCS/RSA).
+                Official portrait photography of {SITE_CONFIG.author.name} (Principal AI Engineer, Palo Alto Networks).
               </p>
             </div>
             <a
-              href="/assets/aistudio/harsh_verma_87a0217e.jpg"
+              href={SITE_CONFIG.author.portraitPrimary}
               download="Harsh-Verma-Author-Portrait.jpg"
+              onClick={() => trackEvent('press_asset_download', { filename: 'Harsh-Verma-Author-Portrait.jpg' })}
               className="text-xs font-semibold text-blue-900 dark:text-blue-400 hover:underline flex items-center gap-1.5"
             >
               <Download className="w-3.5 h-3.5" />
@@ -121,49 +192,50 @@ export const PressView: React.FC<PressViewProps> = ({ onNavigate }) => {
             </a>
           </div>
 
-          {/* Asset 3: Press Release */}
+          {/* Asset 3: Media Fact Sheet */}
           <div className="bg-white dark:bg-[#0D1527] p-6 rounded-xl border border-[#101828]/10 dark:border-white/10 shadow-2xs hover:border-emerald-900/40 dark:hover:border-emerald-400/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
             <div>
               <div className="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-950/80 text-emerald-900 dark:text-emerald-300 flex items-center justify-center mb-3 border border-emerald-100 dark:border-emerald-900/50">
                 <FileText className="w-5 h-5" />
               </div>
               <h3 className="font-serif text-lg font-bold text-[#101828] dark:text-white mb-1">
-                Official Press Release
+                Media Fact Sheet & Release
               </h3>
               <p className="text-xs text-[#475467] dark:text-slate-400 mb-4">
-                Standard publication announcement, key themes, publisher notes, and author statement.
+                Book overview, verified author biography, interview questions, and press contact details.
               </p>
             </div>
             <button
-              onClick={() => handleDownloadAsset('Beyond-AI-Engineering-Press-Release.txt', `PRESS RELEASE: BEYOND AI ENGINEERING\nAuthor: Harsh Verma\n\nBeyond AI Engineering establishes a groundbreaking operating system for technical talent navigating the generative AI age...`)}
+              type="button"
+              onClick={() => handleDownloadAsset('Beyond-AI-Engineering-Media-Fact-Sheet.txt', pressReleaseContent)}
               className="text-xs font-semibold text-blue-900 dark:text-blue-400 hover:underline flex items-center gap-1.5 cursor-pointer text-left"
             >
               <Download className="w-3.5 h-3.5" />
-              <span>Download Press Release (TXT)</span>
+              <span>Download Media Fact Sheet (TXT)</span>
             </button>
           </div>
-
         </div>
 
         {/* 3. AUTHOR BIOS */}
         <div className="bg-[#FAF9F5] dark:bg-[#0A101F] p-8 sm:p-10 rounded-2xl border border-[#101828]/10 dark:border-white/10 mb-16 space-y-6 transition-colors">
           <div className="flex items-center justify-between">
             <h3 className="font-serif text-2xl font-bold text-[#101828] dark:text-white">
-              Standard Author Bios
+              Approved Author Biographies
             </h3>
-            <span className="text-xs font-mono text-[#475467] dark:text-slate-400">Choose Length</span>
+            <span className="text-xs font-mono text-[#475467] dark:text-slate-400">Aligned to Verified Bio</span>
           </div>
 
-          {/* 50-word Bio */}
+          {/* Short Bio */}
           <div className="bg-white dark:bg-[#0D1527] p-5 rounded-xl border border-[#101828]/10 dark:border-white/10 space-y-2">
             <div className="flex items-center justify-between text-xs font-mono text-[#475467] dark:text-slate-400">
-              <span className="font-bold text-[#101828] dark:text-white">50-Word Bio (Brief)</span>
+              <span className="font-bold text-[#101828] dark:text-white">Short Bio (Podcast & Article Footers)</span>
               <button
-                onClick={() => handleCopyText(bios.short, '50-word')}
+                type="button"
+                onClick={() => handleCopyText(bios.short, 'short')}
                 className="text-blue-900 dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
               >
-                {copiedBio === '50-word' ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedBio === '50-word' ? 'Copied' : 'Copy'}</span>
+                {copiedBio === 'short' ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedBio === 'short' ? 'Copied' : 'Copy'}</span>
               </button>
             </div>
             <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed">
@@ -171,16 +243,17 @@ export const PressView: React.FC<PressViewProps> = ({ onNavigate }) => {
             </p>
           </div>
 
-          {/* 100-word Bio */}
+          {/* Medium Bio */}
           <div className="bg-white dark:bg-[#0D1527] p-5 rounded-xl border border-[#101828]/10 dark:border-white/10 space-y-2">
             <div className="flex items-center justify-between text-xs font-mono text-[#475467] dark:text-slate-400">
-              <span className="font-bold text-[#101828] dark:text-white">100-Word Bio (Conference Programs)</span>
+              <span className="font-bold text-[#101828] dark:text-white">Standard Bio (Conference Programs)</span>
               <button
-                onClick={() => handleCopyText(bios.medium, '100-word')}
+                type="button"
+                onClick={() => handleCopyText(bios.medium, 'medium')}
                 className="text-blue-900 dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
               >
-                {copiedBio === '100-word' ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedBio === '100-word' ? 'Copied' : 'Copy'}</span>
+                {copiedBio === 'medium' ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedBio === 'medium' ? 'Copied' : 'Copy'}</span>
               </button>
             </div>
             <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed">
@@ -188,11 +261,12 @@ export const PressView: React.FC<PressViewProps> = ({ onNavigate }) => {
             </p>
           </div>
 
-          {/* Long Bio */}
+          {/* Comprehensive Bio */}
           <div className="bg-white dark:bg-[#0D1527] p-5 rounded-xl border border-[#101828]/10 dark:border-white/10 space-y-2">
             <div className="flex items-center justify-between text-xs font-mono text-[#475467] dark:text-slate-400">
               <span className="font-bold text-[#101828] dark:text-white">Comprehensive Bio (Full Media Profile)</span>
               <button
+                type="button"
                 onClick={() => handleCopyText(bios.long, 'long')}
                 className="text-blue-900 dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
               >
@@ -224,13 +298,14 @@ export const PressView: React.FC<PressViewProps> = ({ onNavigate }) => {
                 key={idx}
                 className="p-4 bg-[#FAFAF7] dark:bg-[#11192E] rounded-lg border border-[#101828]/[0.06] dark:border-white/10 text-xs sm:text-sm text-[#101828] dark:text-slate-200 font-medium flex items-start gap-3"
               >
-                <span className="font-mono text-blue-900 dark:text-blue-400 font-bold shrink-0">0{idx + 1}.</span>
+                <span className="font-mono text-blue-900 dark:text-blue-400 font-bold shrink-0 tabular-nums">
+                  0{idx + 1}.
+                </span>
                 <span>{q}</span>
               </div>
             ))}
           </div>
         </div>
-
       </section>
     </div>
   );

@@ -1,10 +1,15 @@
 /**
  * Email Dispatch Service for Beyond AI Engineering
- * Sends book orders, direct author requests, bulk licensing inquiries,
- * and keynote requests directly to harshverma59@gmail.com.
+ * Routes book inquiries, bulk orders, speaking requests, stories, newsletter signups,
+ * C.A.O. diagnostic plans, and general contact inquiries directly to harshverma59@gmail.com.
+ *
+ * Returns honest `success: false` if the HTTP dispatch fails so callers can render
+ * an explicit fallback action (mailto:) rather than misleading confirmation text.
  */
 
-export const AUTHOR_EMAIL = 'harshverma59@gmail.com';
+import { SITE_CONFIG } from '../config/siteConfig';
+
+export const AUTHOR_EMAIL = SITE_CONFIG.author.directRecipientEmail;
 
 export interface BookInquiryPayload {
   formType:
@@ -12,11 +17,14 @@ export interface BookInquiryPayload {
     | 'Team & Bulk Book Order'
     | 'Individual Book Inquiry'
     | 'Speaking & Keynote Inquiry'
-    | 'Reader Transformation Story';
+    | 'Reader Transformation Story'
+    | 'Newsletter Subscription'
+    | 'General Contact Inquiry'
+    | 'C.A.O. Assessment Report';
   name: string;
   email: string;
   organization?: string;
-  formatOrCopies?: string; // e.g. "Hardcover Edition ($34.00)", "25-50 copies"
+  formatOrCopies?: string;
   notesOrMessage?: string;
   sourcePage?: string;
 }
@@ -25,45 +33,47 @@ export interface EmailDispatchResult {
   success: boolean;
   message: string;
   mailtoUrl: string;
+  providerStatus?: 'sent' | 'fallback_required';
 }
 
-/**
- * Dispatches form data to harshverma59@gmail.com via FormSubmit AJAX endpoint,
- * and generates a companion mailto URL as an immediate fallback or verification.
- */
 export async function sendBookInquiryToAuthor(
   payload: BookInquiryPayload
 ): Promise<EmailDispatchResult> {
-  const subject = `[Beyond AI Engineering] ${payload.formType}: ${payload.name || payload.email}`;
+  const cleanEmail = (payload.email || '').trim();
+  const subject = `[Beyond AI Engineering] ${payload.formType}: ${payload.name || cleanEmail}`;
 
   const bodyLines = [
-    `NEW BOOK REQUEST — BEYOND AI ENGINEERING`,
+    `NEW REQUEST — BEYOND AI ENGINEERING`,
     `----------------------------------------`,
     `Recipient: ${AUTHOR_EMAIL}`,
     `Form Type: ${payload.formType}`,
     `Contact Name: ${payload.name || 'Not provided'}`,
-    `Contact Email: ${payload.email}`,
+    `Contact Email: ${cleanEmail}`,
     `Organization: ${payload.organization || 'Individual Reader'}`,
-    `Format / Copies Requested: ${payload.formatOrCopies || 'Not specified'}`,
+    `Format / Details: ${payload.formatOrCopies || 'Not specified'}`,
     `Source Page: ${payload.sourcePage || (typeof window !== 'undefined' ? window.location.pathname : 'beyondaiengineering.com')}`,
-    `Submitted At: ${new Date().toLocaleString()}`,
+    `Submitted At: ${new Date().toISOString()}`,
     ``,
-    `Message / Delivery Notes:`,
-    `${payload.notesOrMessage || 'Request to get a copy of Beyond AI Engineering.'}`,
+    `Message / Notes:`,
+    `${payload.notesOrMessage || 'Request submitted via beyondaiengineering.com.'}`,
     ``,
     `----------------------------------------`,
-    `Automated dispatch from Beyond AI Engineering (beyondaiengineering.com)`,
+    `Dispatched from Beyond AI Engineering (beyondaiengineering.com)`,
   ];
 
   const bodyText = bodyLines.join('\n');
+  const mailtoUrl = `mailto:${AUTHOR_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
 
-  // Pre-formatted mailto URL
-  const mailtoUrl = `mailto:${AUTHOR_EMAIL}?subject=${encodeURIComponent(
-    subject
-  )}&body=${encodeURIComponent(bodyText)}`;
+  if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+    return {
+      success: false,
+      message: 'Please provide a valid email address before submitting.',
+      mailtoUrl,
+      providerStatus: 'fallback_required',
+    };
+  }
 
   try {
-    // Send via FormSubmit AJAX to harshverma59@gmail.com
     const response = await fetch(`https://formsubmit.co/ajax/${AUTHOR_EMAIL}`, {
       method: 'POST',
       headers: {
@@ -72,16 +82,16 @@ export async function sendBookInquiryToAuthor(
       },
       body: JSON.stringify({
         _subject: subject,
-        _replyto: payload.email,
+        _replyto: cleanEmail,
         _template: 'table',
         _captcha: 'false',
         formType: payload.formType,
-        name: payload.name || 'Anonymous Reader',
-        email: payload.email,
+        name: payload.name || 'Reader',
+        email: cleanEmail,
         organization: payload.organization || 'Individual',
-        formatOrCopies: payload.formatOrCopies || 'Standard Copy',
-        message: payload.notesOrMessage || 'Request to get Beyond AI Engineering',
-        sourceUrl: typeof window !== 'undefined' ? window.location.href : 'beyondaiengineering.com',
+        formatOrCopies: payload.formatOrCopies || 'Standard Inquiry',
+        message: payload.notesOrMessage || 'Request via Beyond AI Engineering',
+        sourceUrl: typeof window !== 'undefined' ? window.location.href : SITE_CONFIG.canonicalOrigin,
         timestamp: new Date().toISOString(),
       }),
     });
@@ -89,22 +99,25 @@ export async function sendBookInquiryToAuthor(
     if (response.ok) {
       return {
         success: true,
-        message: `Your book request has been emailed directly to Harsh Verma at ${AUTHOR_EMAIL}.`,
+        message: `Your submission has been sent to Harsh Verma (${AUTHOR_EMAIL}).`,
         mailtoUrl,
-      };
-    } else {
-      return {
-        success: true,
-        message: `Your request has been prepared for Harsh Verma at ${AUTHOR_EMAIL}.`,
-        mailtoUrl,
+        providerStatus: 'sent',
       };
     }
-  } catch (error) {
-    console.warn('Network error during background email dispatch, using mailto fallback:', error);
+
     return {
-      success: true,
-      message: `Your request has been prepared for ${AUTHOR_EMAIL}.`,
+      success: false,
+      message: `Background email dispatch could not be verified (HTTP ${response.status}). Use the button below to send directly via your email client to ${AUTHOR_EMAIL}.`,
       mailtoUrl,
+      providerStatus: 'fallback_required',
+    };
+  } catch (error) {
+    console.warn('Email dispatch error, returning explicit mailto fallback:', error);
+    return {
+      success: false,
+      message: `Unable to reach the background email relay right now. Use the button below to send directly to ${AUTHOR_EMAIL} via your email app.`,
+      mailtoUrl,
+      providerStatus: 'fallback_required',
     };
   }
 }

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import { PageId } from '../types';
+import { trackEvent } from '../utils/analytics';
 import {
   Menu,
   X,
@@ -15,13 +17,14 @@ import {
   GraduationCap,
   ScrollText,
   Mic,
-  Lightbulb,
   Sparkles,
   ChevronRight,
   ShieldCheck,
   Newspaper,
   Users,
   Search,
+  Briefcase,
+  Mail,
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -31,7 +34,6 @@ interface NavbarProps {
   onOpenAssessment: () => void;
 }
 
-// Brand Logo: Signature Architectural 'B' Monogram & Curator Nexus (Beyond AI Engineering)
 export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; className?: string }> = ({
   size = 'md',
   className = '',
@@ -41,25 +43,20 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; className?: string
       ? 'w-8 h-8'
       : size === 'lg'
       ? 'w-12 h-12'
-      : 'w-10 h-10 sm:w-11 sm:h-11';
+      : 'w-9 h-9 sm:w-10 sm:h-10';
   const iconSize =
     size === 'sm'
       ? 'w-5 h-5'
       : size === 'lg'
       ? 'w-8 h-8'
-      : 'w-6 h-6 sm:w-7 sm:h-7';
+      : 'w-6 h-6';
 
   return (
     <div
-      className={`${containerSize} rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#070B14] via-[#0F172A] to-[#1E293B] border border-blue-500/30 dark:border-blue-400/40 shadow-xs group-hover:shadow-md group-hover:shadow-blue-500/25 group-hover:border-blue-400/70 flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-105 ${className}`}
+      className={`${containerSize} rounded-xl bg-gradient-to-br from-[#070B14] via-[#0F172A] to-[#1E293B] border border-blue-500/30 dark:border-blue-400/40 shadow-xs flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${className}`}
       aria-hidden="true"
     >
-      <svg
-        viewBox="0 0 36 36"
-        className={`${iconSize} drop-shadow-sm`}
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg viewBox="0 0 36 36" className={iconSize} fill="none" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="baeBlueGrad" x1="6" y1="6" x2="30" y2="30" gradientUnits="userSpaceOnUse">
             <stop stopColor="#60A5FA" />
@@ -75,24 +72,15 @@ export const BrandLogo: React.FC<{ size?: 'sm' | 'md' | 'lg'; className?: string
             <stop offset="1" stopColor="#D97706" />
           </linearGradient>
         </defs>
-
-        {/* Dynamic Architectural 'B' Glyph */}
-        {/* Backbone Pillar (Solid Engineering Foundation) */}
         <rect x="7" y="6" width="4.5" height="24" rx="2.25" fill="url(#baeBlueGrad)" />
-
-        {/* Upper Loop: Curator Lens (Architect) */}
         <path
           d="M10 6.5H19.5C23.0899 6.5 26 9.41015 26 13C26 16.5899 23.0899 19.5 19.5 19.5H10V15H19.5C20.6046 15 21.5 14.1046 21.5 13C21.5 11.8954 20.6046 11 19.5 11H10V6.5Z"
           fill="url(#baeCyanGrad)"
         />
-
-        {/* Lower Loop: Orchestration Frontier (Beyond) */}
         <path
           d="M10 15H21.5C25.366 15 28.5 18.134 28.5 22C28.5 25.866 25.366 29 21.5 29H10V24.5H21.5C22.8807 24.5 24 23.3807 24 22C24 20.6193 22.8807 19.5 21.5 19.5H10V15Z"
           fill="url(#baeBlueGrad)"
         />
-
-        {/* Center Curator Diamond / Nexus (Judgment & Synthesis) */}
         <path
           d="M20.5 15L23 17.5L20.5 20L18 17.5L20.5 15Z"
           fill="url(#baeAmberGrad)"
@@ -114,14 +102,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [isDark, setIsDark] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const prefersReducedMotion = useReducedMotion();
 
-  // Initialize and sync dark mode state
   useEffect(() => {
-    const isCurrentlyDark = document.documentElement.classList.contains('dark');
-    setIsDark(isCurrentlyDark);
+    setIsDark(document.documentElement.classList.contains('dark'));
   }, []);
 
-  // Close drawer on ESC key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && drawerOpen) {
@@ -132,7 +118,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [drawerOpen]);
 
-  // Lock body scroll when drawer is open
   useEffect(() => {
     if (drawerOpen) {
       document.body.style.overflow = 'hidden';
@@ -164,57 +149,91 @@ export const Navbar: React.FC<NavbarProps> = ({
   const handleLinkClick = (page: PageId) => {
     onNavigate(page);
     setDrawerOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const reduced =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
   };
 
-  // Direct desktop navigation links: The Book, C.A.O. Framework, Blog, Manifesto, Author
-  const directDesktopLinks = [
-    { label: 'The Book', page: 'book' as PageId },
-    { label: 'C.A.O. Framework', page: 'cao-framework' as PageId },
-    { label: 'Blog', page: 'blog' as PageId },
-    { label: 'Manifesto', page: 'manifesto' as PageId },
-    { label: 'Author', page: 'author' as PageId },
+  const isActivePage = (page: PageId) => {
+    if (page === 'insights') {
+      return (
+        currentPage === 'insights' ||
+        currentPage === 'insight-detail' ||
+        currentPage === 'blog' ||
+        currentPage === 'blog-detail' ||
+        currentPage === 'ideas' ||
+        currentPage === 'article-detail'
+      );
+    }
+    if (page === 'organizations') {
+      return currentPage === 'organizations' || currentPage === 'teams';
+    }
+    if (page === 'cao-framework') {
+      return (
+        currentPage === 'cao-framework' ||
+        currentPage === 'frameworks' ||
+        currentPage === 'framework-detail'
+      );
+    }
+    if (page === 'book') {
+      return currentPage === 'book' || currentPage === 'sample' || currentPage === 'buy';
+    }
+    return currentPage === page;
+  };
+
+  const directDesktopLinks: Array<{ label: string; page: PageId }> = [
+    { label: 'Home', page: 'home' },
+    { label: 'The Book', page: 'book' },
+    { label: 'C.A.O. Framework', page: 'cao-framework' },
+    { label: 'Resources', page: 'resources' },
+    { label: 'Insights', page: 'insights' },
+    { label: 'About Author', page: 'author' },
+    { label: 'For Organizations', page: 'organizations' },
   ];
 
-  // Comprehensive categorized navigation links for the drawer
-  const navCategories = [
-    {
-      title: 'The Operating System',
-      badge: 'Core Principles',
-      items: [
-        { label: 'The Book', page: 'book' as PageId, icon: BookOpen, desc: 'Overview, chapter blueprints & table of contents' },
-        { label: 'C.A.O. Framework', page: 'cao-framework' as PageId, icon: Compass, desc: 'Creator → Architect → Orchestrator mental model' },
-        { label: 'The Manifesto', page: 'manifesto' as PageId, icon: ScrollText, desc: '10 founding theses for engineering in the agentic era' },
-        { label: 'Read Sample Chapter', page: 'sample' as PageId, icon: Sparkles, desc: 'Excerpt: The Engineer After Code' },
-        { label: 'Buy the Book', page: 'buy' as PageId, icon: ArrowUpRight, desc: 'Hardcover, paperback & digital retailer editions' },
-      ],
-    },
-    {
-      title: 'Frameworks & Interactive Lab',
-      badge: 'Applied Practice',
-      items: [
-        { label: '10 Proprietary Frameworks', page: 'frameworks' as PageId, icon: Layers, desc: 'Trust Economy, How to What, Agentic Diplomacy' },
-        { label: 'Lab & Canvases', page: 'resources' as PageId, icon: FlaskConical, desc: 'Worksheets, audit rubrics & transition planners' },
-        { label: 'Living AI Toolkit', page: 'toolkit' as PageId, icon: Wrench, desc: 'Curated agent tools, eval suites & memory fabrics' },
-        { label: 'Students & New Grads', page: 'students' as PageId, icon: GraduationCap, desc: 'Early career playbook for the agentic age' },
-      ],
-    },
-    {
-      title: 'Speaking, Authority & Community',
-      badge: 'Perspectives',
-      items: [
-        { label: 'Engineering Blog & Notes', page: 'blog' as PageId, icon: Newspaper, desc: 'Technical notes, Forbes columns & systems experiments by Harsh Verma' },
-        { label: 'Author Biography', page: 'author' as PageId, icon: User, desc: 'Harsh Verma, Principal AI Engineer & Fellow' },
-        { label: 'Keynotes & Speaking', page: 'speaking' as PageId, icon: Mic, desc: 'Executive briefings & conference keynotes by Harsh Verma' },
-        { label: 'Ideas & Research', page: 'ideas' as PageId, icon: Lightbulb, desc: 'Deep-dive technical essays and industry commentary' },
-        { label: 'Reader Stories', page: 'stories' as PageId, icon: ShieldCheck, desc: 'Field reports and production transformation case studies' },
-        { label: 'Press Kit & Media', page: 'press' as PageId, icon: Newspaper, desc: 'High-res photos, bios & media contacts' },
-        { label: 'Teams & Bulk Licensing', page: 'teams' as PageId, icon: Users, desc: 'Enterprise teams & university syllabi discounts' },
-      ],
-    },
-  ];
+  const navCategories = useMemo(
+    () => [
+      {
+        title: 'The Book & Core Operating System',
+        meta: 'Core Principles',
+        items: [
+          { label: 'Home', page: 'home' as PageId, icon: Sparkles, desc: 'Beyond AI Engineering: From Creator to Curator' },
+          { label: 'The Book', page: 'book' as PageId, icon: BookOpen, desc: '11 chapters, 4 parts & 15 visual blueprints' },
+          { label: 'Read a Sample Chapter', page: 'sample' as PageId, icon: BookOpen, desc: 'Excerpt: Escaping the Tyranny of Syntax' },
+          { label: 'C.A.O. Framework', page: 'cao-framework' as PageId, icon: Compass, desc: 'Creator → Architect → Orchestrator & 12-Scenario Assessment' },
+          { label: '12 Signature Frameworks', page: 'frameworks' as PageId, icon: Layers, desc: 'Trust Economy, How → What, Human API, Ethical Curation' },
+          { label: 'The Manifesto', page: 'manifesto' as PageId, icon: ScrollText, desc: '8 founding axioms for engineering in the AI era' },
+          { label: 'Get the Book', page: 'buy' as PageId, icon: ArrowUpRight, desc: 'Editions, direct author copies & inquiry options' },
+        ],
+      },
+      {
+        title: 'Audience Pathways & Implementation Lab',
+        meta: 'Applied Practice',
+        items: [
+          { label: 'For Engineers', page: 'engineers' as PageId, icon: Briefcase, desc: 'Build your next chapter beyond syntax generation' },
+          { label: 'For Students', page: 'students' as PageId, icon: GraduationCap, desc: 'Build 3 projects, fundamentals & early-career roadmap' },
+          { label: 'For Organizations', page: 'organizations' as PageId, icon: Users, desc: 'Bulk copies, reading groups, workshops & keynotes' },
+          { label: 'Implementation Lab (15 Tools)', page: 'resources' as PageId, icon: FlaskConical, desc: 'Interactive canvases, checklists & 30/60/90 plans' },
+          { label: 'Living AI Toolkit', page: 'toolkit' as PageId, icon: Wrench, desc: 'Curated agent, evaluation, observability & security tools' },
+        ],
+      },
+      {
+        title: 'Insights, Author & Media',
+        meta: 'Editorial & Contact',
+        items: [
+          { label: 'Insights (Articles & Notes)', page: 'insights' as PageId, icon: Newspaper, desc: 'Forbes columns, MCP benchmarks, essays & engineering notes' },
+          { label: 'About Harsh Verma', page: 'author' as PageId, icon: User, desc: 'Principal AI Engineer, Stanford Distinguished Scholar & Fellow' },
+          { label: 'Speaking & Keynotes', page: 'speaking' as PageId, icon: Mic, desc: 'Executive briefings, conferences & university keynotes' },
+          { label: 'Press & Media Kit', page: 'press' as PageId, icon: Newspaper, desc: 'Approved biographies, media angles & visual assets' },
+          { label: 'Reader Transformation Archetypes', page: 'stories' as PageId, icon: ShieldCheck, desc: 'Illustrative transition profiles & story submission' },
+          { label: 'Contact Harsh Verma', page: 'contact' as PageId, icon: Mail, desc: 'Direct inquiries routed to harshverma59@gmail.com' },
+        ],
+      },
+    ],
+    []
+  );
 
-  // Search filter for drawer items
   const filteredCategories = useMemo(() => {
     if (!searchQuery.trim()) return navCategories;
     const query = searchQuery.toLowerCase().trim();
@@ -233,135 +252,106 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       <header className="sticky top-0 z-40 w-full bg-[#FAFAF7]/95 dark:bg-[#070B14]/95 backdrop-blur-md border-b border-[#101828]/[0.08] dark:border-white/10 transition-colors duration-200">
-        <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-1.5 sm:gap-3 w-full">
-          
-          {/* ZONE 1: BRAND LOGO (Mobile: Logo only; Big screens sm+: Logo + Title) */}
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between gap-3 xl:gap-4">
+          {/* ZONE 1: BRAND WORDMARK */}
           <button
             onClick={() => handleLinkClick('home')}
-            className="text-left group focus-visible:outline-2 focus-visible:outline-blue-600 focus-visible:outline-offset-2 rounded-xl shrink-0 cursor-pointer flex items-center gap-2.5 sm:gap-3"
-            title="Beyond AI Engineering - Home"
+            className="text-left group rounded-lg shrink-0 cursor-pointer flex items-center gap-2 whitespace-nowrap"
             aria-label="Beyond AI Engineering Home"
           >
             <BrandLogo size="md" />
-
-            <div className="hidden sm:flex min-w-0 flex-col justify-center leading-tight">
-              <span className="font-serif text-sm sm:text-base lg:text-lg font-bold tracking-tight text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap block">
-                Beyond AI
-              </span>
-              <span className="font-sans text-[9px] sm:text-[10px] lg:text-[11px] font-bold tracking-[0.22em] uppercase text-blue-900 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors whitespace-nowrap block -mt-0.5 sm:-mt-1">
-                Engineering
-              </span>
-            </div>
+            <span className="hidden sm:inline-block font-serif text-base font-bold tracking-tight text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors whitespace-nowrap">
+              Beyond AI Engineering
+            </span>
           </button>
 
-          {/* ZONE 2: DIRECT DESKTOP NAVIGATION (Visible on Desktop lg+, Clean & Authoritative) */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2 shrink-0">
+          {/* ZONE 2: SINGLE-ROW DESKTOP LINKS */}
+          <nav
+            aria-label="Primary navigation"
+            className="hidden xl:flex items-center gap-3.5 shrink-0"
+          >
             {directDesktopLinks.map((item) => {
-              const isActive = currentPage === item.page;
+              const active = isActivePage(item.page);
               return (
                 <button
                   key={item.page}
                   onClick={() => handleLinkClick(item.page)}
-                  className={`px-2.5 xl:px-3 py-1.5 rounded-md text-xs xl:text-sm font-medium transition-all cursor-pointer whitespace-nowrap ${
-                    isActive
-                      ? 'text-blue-950 dark:text-blue-200 bg-blue-50 dark:bg-blue-950/70 font-semibold border border-blue-200 dark:border-blue-800/70 shadow-2xs'
-                      : 'text-[#344054] dark:text-slate-300 hover:text-[#101828] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 border border-transparent'
+                  className={`py-1 text-[13px] font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0 border-b-2 ${
+                    active
+                      ? 'text-blue-900 dark:text-blue-300 border-blue-900 dark:border-blue-400 font-semibold'
+                      : 'text-[#344054] dark:text-slate-300 border-transparent hover:text-[#101828] dark:hover:text-white hover:border-[#101828]/25 dark:hover:border-white/25'
                   }`}
                 >
                   {item.label}
                 </button>
               );
             })}
-
-            {/* Desktop "More" Trigger */}
-            <button
-              onClick={() => setDrawerOpen(true)}
-              className="px-2 xl:px-2.5 py-1.5 rounded-md text-xs xl:text-sm font-medium text-[#475467] dark:text-slate-300 hover:text-[#101828] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-all cursor-pointer flex items-center gap-1 border border-transparent"
-              title="Explore all frameworks, lab resources, and research"
-            >
-              <span>More</span>
-              <Menu className="w-3.5 h-3.5 text-blue-900 dark:text-blue-400" />
-            </button>
           </nav>
 
-          {/* ZONE 3: ACTIONS & MOBILE NAV (Always Visible, Zero-Overflow Guaranteed) */}
-          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-            {/* 1. Take Assessment Button (Always Visible) */}
-            <button
-              onClick={onOpenAssessment}
-              className="px-2 sm:px-3 py-1.5 text-[11px] sm:text-xs font-semibold text-[#101828] dark:text-slate-200 hover:text-blue-900 dark:hover:text-blue-400 bg-black/[0.03] dark:bg-white/[0.05] hover:bg-black/5 dark:hover:bg-white/10 border border-[#101828]/15 dark:border-white/15 rounded-md transition-all whitespace-nowrap cursor-pointer shrink-0 flex items-center gap-1 shadow-2xs"
-              title="Take C.A.O. Self-Assessment"
+          {/* ZONE 3: PRIMARY ACTION & CONTROLS */}
+          <div className="flex items-center gap-2 shrink-0">
+            <motion.button
+              type="button"
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+              onClick={() => {
+                trackEvent('cao_assessment_start', { source: 'navbar' });
+                onOpenAssessment();
+              }}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-blue-900 dark:text-blue-300 bg-blue-50/80 dark:bg-blue-950/40 border border-blue-900/25 dark:border-blue-400/30 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors whitespace-nowrap cursor-pointer shrink-0"
             >
-              <Sparkles className="w-3 h-3 text-blue-800 dark:text-blue-400 shrink-0" />
-              <span className="hidden sm:inline">Take Assessment</span>
-              <span className="sm:hidden">Assessment</span>
-            </button>
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
+              <span>Take Assessment</span>
+            </motion.button>
 
-            {/* 2. Get The Book Button (Always Visible) */}
             <button
               onClick={onOpenBuyModal}
-              className="px-2 xs:px-2.5 sm:px-3.5 py-1.5 text-[11px] sm:text-xs font-semibold tracking-wide text-white bg-[#101828] dark:bg-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-all shadow-xs hover:shadow flex items-center gap-1 whitespace-nowrap cursor-pointer shrink-0"
-              title="Get The Book"
+              className="px-3.5 py-2 text-xs font-semibold text-white bg-[#101828] dark:bg-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors flex items-center gap-1 whitespace-nowrap cursor-pointer shrink-0"
             >
-              <span>Get Book</span>
-              <ArrowUpRight className="w-3 h-3 shrink-0" />
+              <span>Get the Book</span>
+              <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
             </button>
 
-            {/* 3. Theme Toggle Button */}
             <button
               onClick={toggleTheme}
-              aria-label={isDark ? 'Switch to light edition' : 'Switch to luxury dark edition'}
-              title={isDark ? 'Switch to light edition' : 'Switch to luxury dark edition'}
-              className="p-1.5 sm:p-2 rounded-md text-[#475467] dark:text-amber-300 hover:text-[#101828] dark:hover:text-amber-200 hover:bg-black/5 dark:hover:bg-white/10 transition-colors border border-transparent dark:border-amber-400/20 cursor-pointer shrink-0"
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              className="p-2 rounded-md text-[#475467] dark:text-amber-300 hover:text-[#101828] dark:hover:text-amber-200 hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer shrink-0"
             >
-              {isDark ? (
-                <Sun className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-300" />
-              ) : (
-                <Moon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-700" />
-              )}
+              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
 
-            {/* 4. Collapsible Nav Toggle ("Menu" / Hamburger Icon - Highly Visible & Never Cut Off) */}
             <button
               onClick={() => setDrawerOpen(true)}
-              className="p-1.5 sm:px-2.5 sm:py-2 text-[#101828] dark:text-white bg-blue-50/90 dark:bg-blue-950/60 hover:bg-blue-100 dark:hover:bg-blue-900/60 rounded-md transition-all cursor-pointer flex items-center gap-1 border border-blue-200/90 dark:border-blue-800/80 shrink-0 shadow-2xs"
-              aria-label="Open complete navigation menu"
-              title="Explore all chapters, frameworks & resources"
+              className="px-2.5 py-2 text-xs font-semibold text-[#101828] dark:text-white border border-[#101828]/15 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/10 rounded-md transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap shrink-0"
+              aria-label="Open full site directory"
             >
-              <Menu className="w-4 h-4 text-blue-900 dark:text-blue-300 shrink-0" />
-              <span className="hidden sm:inline text-xs font-semibold text-blue-950 dark:text-blue-200">
-                Menu
-              </span>
+              <Menu className="w-4 h-4 text-blue-900 dark:text-blue-400 shrink-0" />
+              <span className="hidden sm:inline">Menu</span>
             </button>
           </div>
-
         </div>
       </header>
 
-      {/* CREATIVE COLLAPSIBLE SLIDE-OVER SIDEBAR */}
+      {/* SLIDE-OVER NAVIGATION DRAWER */}
       {drawerOpen && (
         <div className="fixed inset-0 z-50 flex justify-end">
-          {/* Backdrop with subtle blur */}
           <div
             onClick={() => setDrawerOpen(false)}
-            className="fixed inset-0 bg-black/50 dark:bg-black/75 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
+            className="fixed inset-0 bg-black/50 dark:bg-black/75 backdrop-blur-xs"
             aria-hidden="true"
           />
 
-          {/* Slide-Over Panel */}
-          <aside className="relative w-full max-w-md sm:max-w-lg bg-[#FAFAF7] dark:bg-[#070B14] border-l border-[#101828]/10 dark:border-white/10 shadow-2xl flex flex-col h-full z-10 animate-in slide-in-from-right duration-300 overflow-hidden">
-            
-            {/* Sidebar Header */}
-            <div className="p-4 sm:p-5 border-b border-[#101828]/10 dark:border-white/10 flex items-center justify-between shrink-0 bg-white/80 dark:bg-[#0D1527]/80 backdrop-blur-md">
+          <aside
+            aria-label="Site directory drawer"
+            className="relative w-full max-w-md sm:max-w-lg bg-[#FAFAF7] dark:bg-[#070B14] border-l border-[#101828]/10 dark:border-white/10 shadow-2xl flex flex-col h-full z-10 overflow-hidden"
+          >
+            <div className="p-4 sm:p-5 border-b border-[#101828]/10 dark:border-white/10 flex items-center justify-between shrink-0 bg-white/90 dark:bg-[#0D1527]/90">
               <div className="flex items-center gap-2.5 min-w-0">
                 <BrandLogo size="sm" />
-                <div className="min-w-0 flex flex-col justify-center leading-tight">
-                  <div className="font-serif text-sm sm:text-base font-bold text-[#101828] dark:text-white truncate">
-                    Beyond AI
-                  </div>
-                  <span className="text-[9px] font-sans font-bold tracking-[0.2em] uppercase text-blue-900 dark:text-blue-400 block truncate">
-                    Engineering
-                  </span>
+                <div className="font-serif text-base font-bold text-[#101828] dark:text-white truncate">
+                  Beyond AI Engineering
                 </div>
               </div>
 
@@ -369,13 +359,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   onClick={toggleTheme}
                   aria-label="Toggle theme"
-                  className="p-1.5 sm:p-2 rounded-lg text-[#475467] dark:text-amber-300 hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer"
+                  className="p-2 rounded-md text-[#475467] dark:text-amber-300 hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer"
                 >
-                  {isDark ? <Sun className="w-4 h-4 text-amber-300" /> : <Moon className="w-4 h-4 text-slate-700" />}
+                  {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                 </button>
                 <button
                   onClick={() => setDrawerOpen(false)}
-                  className="p-1.5 sm:p-2 rounded-lg text-[#475467] dark:text-slate-300 hover:text-[#101828] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer"
+                  className="p-2 rounded-md text-[#475467] dark:text-slate-300 hover:text-[#101828] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors cursor-pointer"
                   aria-label="Close navigation"
                 >
                   <X className="w-5 h-5" />
@@ -383,21 +373,21 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
             </div>
 
-            {/* Quick Filter Search Bar */}
-            <div className="px-4 sm:px-5 pt-3 pb-2 shrink-0 bg-white/40 dark:bg-[#070B14]/40 border-b border-[#101828]/5 dark:border-white/5">
+            <div className="px-4 sm:px-5 pt-3 pb-2.5 shrink-0 bg-white/50 dark:bg-[#070B14] border-b border-[#101828]/5 dark:border-white/5">
               <div className="relative">
                 <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Filter frameworks, chapters, tools..."
+                  placeholder="Search pages, frameworks, tools..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-8 pr-3 py-1.5 text-xs bg-black/[0.03] dark:bg-white/[0.05] border border-[#101828]/10 dark:border-white/10 rounded-lg text-[#101828] dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-blue-600 dark:focus:border-blue-400 transition-colors"
+                  className="w-full pl-8 pr-8 py-2 text-xs bg-black/[0.03] dark:bg-white/[0.05] border border-[#101828]/10 dark:border-white/10 rounded-md text-[#101828] dark:text-white placeholder:text-slate-400"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                    aria-label="Clear search"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -405,63 +395,53 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
             </div>
 
-            {/* Sidebar Content (Scrollable Categories) */}
             <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-5 space-y-6">
               {filteredCategories.length === 0 ? (
                 <div className="text-center py-12 text-[#475467] dark:text-slate-400 text-xs">
-                  No matching links found for "{searchQuery}".
+                  No matching pages found for "{searchQuery}".
                 </div>
               ) : (
                 filteredCategories.map((category) => (
                   <div key={category.title} className="space-y-2">
-                    <div className="flex items-center justify-between px-1">
-                      <h3 className="text-[10px] font-mono uppercase tracking-wider text-[#475467] dark:text-slate-400 font-bold">
-                        {category.title}
-                      </h3>
-                      <span className="text-[9px] font-mono text-slate-400 dark:text-slate-500">
-                        {category.badge}
-                      </span>
+                    <div className="flex items-center justify-between px-1 text-xs font-mono text-[#475467] dark:text-slate-400">
+                      <span className="font-semibold">{category.title}</span>
+                      <span>{category.meta}</span>
                     </div>
-                    
+
                     <div className="grid grid-cols-1 gap-1">
                       {category.items.map((item) => {
                         const Icon = item.icon;
-                        const isActive = currentPage === item.page;
+                        const active = isActivePage(item.page);
                         return (
                           <button
                             key={item.page}
                             onClick={() => handleLinkClick(item.page)}
-                            className={`w-full text-left p-2.5 rounded-xl transition-all cursor-pointer flex items-center justify-between group ${
-                              isActive
-                                ? 'bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/60 text-blue-950 dark:text-blue-200 shadow-2xs'
+                            className={`w-full text-left p-2.5 rounded-lg transition-colors cursor-pointer flex items-center justify-between group ${
+                              active
+                                ? 'bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/60 text-blue-950 dark:text-blue-200'
                                 : 'hover:bg-white dark:hover:bg-[#0D1527] border border-transparent hover:border-[#101828]/10 dark:hover:border-white/10 text-[#344054] dark:text-slate-300'
                             }`}
                           >
                             <div className="flex items-center gap-3 min-w-0">
-                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                                isActive
-                                  ? 'bg-blue-900 text-white dark:bg-blue-400 dark:text-[#070B14]'
-                                  : 'bg-[#FAFAF7] dark:bg-[#131D33] text-[#475467] dark:text-slate-300 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/40 group-hover:text-blue-900 dark:group-hover:text-blue-300'
-                              }`}>
+                              <div
+                                className={`w-8 h-8 rounded-md flex items-center justify-center shrink-0 ${
+                                  active
+                                    ? 'bg-blue-900 text-white dark:bg-blue-400 dark:text-[#070B14]'
+                                    : 'bg-[#FAFAF7] dark:bg-[#131D33] text-[#475467] dark:text-slate-300'
+                                }`}
+                              >
                                 <Icon className="w-4 h-4" />
                               </div>
                               <div className="min-w-0">
-                                <div className={`text-xs sm:text-sm font-semibold truncate transition-colors ${
-                                  isActive
-                                    ? 'text-blue-900 dark:text-blue-300'
-                                    : 'text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-400'
-                                }`}>
+                                <div className="text-xs sm:text-sm font-semibold truncate text-[#101828] dark:text-white">
                                   {item.label}
                                 </div>
-                                <div className="text-[10px] sm:text-[11px] text-[#475467] dark:text-slate-400 truncate font-sans">
+                                <div className="text-[11px] text-[#475467] dark:text-slate-400 truncate">
                                   {item.desc}
                                 </div>
                               </div>
                             </div>
-
-                            <ChevronRight className={`w-4 h-4 shrink-0 transition-transform ${
-                              isActive ? 'text-blue-900 dark:text-blue-400' : 'text-slate-300 dark:text-slate-600 group-hover:translate-x-0.5 group-hover:text-blue-700 dark:group-hover:text-blue-400'
-                            }`} />
+                            <ChevronRight className="w-4 h-4 shrink-0 text-slate-400 group-hover:text-blue-800 dark:group-hover:text-blue-300" />
                           </button>
                         );
                       })}
@@ -471,31 +451,33 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </div>
 
-            {/* Sidebar Sticky Footer Actions */}
-            <div className="p-4 sm:p-5 border-t border-[#101828]/10 dark:border-white/10 bg-white/90 dark:bg-[#0D1527]/90 backdrop-blur-md space-y-2 shrink-0">
-              <button
+            <div className="p-4 sm:p-5 border-t border-[#101828]/10 dark:border-white/10 bg-white/95 dark:bg-[#0D1527]/95 space-y-2 shrink-0">
+              <motion.button
+                type="button"
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
                 onClick={() => {
                   setDrawerOpen(false);
                   onOpenAssessment();
                 }}
-                className="w-full py-2.5 px-4 text-xs font-semibold rounded-lg border border-[#101828]/20 dark:border-white/20 text-[#101828] dark:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+                className="w-full py-2.5 px-4 text-xs font-semibold rounded-md border border-[#101828]/20 dark:border-white/20 text-[#101828] dark:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5 text-blue-900 dark:text-blue-400" />
-                <span>Take C.A.O. Self-Assessment (Free)</span>
-              </button>
+                <span>Take 12-Scenario C.A.O. Assessment</span>
+              </motion.button>
 
               <button
                 onClick={() => {
                   setDrawerOpen(false);
                   onOpenBuyModal();
                 }}
-                className="w-full py-2.5 px-4 text-xs font-semibold rounded-lg bg-[#101828] dark:bg-white text-white dark:text-[#070B14] hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                className="w-full py-2.5 px-4 text-xs font-semibold rounded-md bg-[#101828] dark:bg-white text-white dark:text-[#070B14] hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                <span>Get the Book (Hardcover & Digital)</span>
+                <span>Get the Book (Editions & Inquiries)</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
             </div>
-
           </aside>
         </div>
       )}

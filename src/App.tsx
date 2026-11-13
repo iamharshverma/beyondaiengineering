@@ -16,17 +16,17 @@ import { SampleView } from './views/SampleView';
 import { TeamsView } from './views/TeamsView';
 import { ResourcesView } from './views/ResourcesView';
 import { ToolkitView } from './views/ToolkitView';
+import { EngineersView } from './views/EngineersView';
 import { StudentsView } from './views/StudentsView';
 import { ManifestoView } from './views/ManifestoView';
 import { AuthorView } from './views/AuthorView';
 import { SpeakingView } from './views/SpeakingView';
 import { PressView } from './views/PressView';
-import { IdeasView } from './views/IdeasView';
-import { ArticleDetailView } from './views/ArticleDetailView';
+import { InsightsView } from './views/InsightsView';
+import { InsightDetailView } from './views/InsightDetailView';
 import { StoriesView } from './views/StoriesView';
 import { BuyView } from './views/BuyView';
-import { BlogView } from './views/BlogView';
-import { BlogDetailView } from './views/BlogDetailView';
+import { ContactView } from './views/ContactView';
 
 import { AssessmentModal } from './components/AssessmentModal';
 import { ChapterModal } from './components/ChapterModal';
@@ -38,13 +38,14 @@ import { InfographicModal } from './components/InfographicModal';
 
 import { parseCurrentRoute, navigateTo, RouteState } from './utils/router';
 import { updatePageSeo, PAGE_SEO_CONFIGS } from './utils/seo';
-import { ARTICLES } from './data/articlesData';
+import { INSIGHTS } from './data/insightsData';
 
 export default function App() {
   const [currentRoute, setCurrentRoute] = useState<RouteState>(() => parseCurrentRoute());
-  const [currentFrameworkId, setCurrentFrameworkId] = useState<string>('cao-framework');
-  const [currentArticleId, setCurrentArticleId] = useState<string>(() => ARTICLES[0]?.id || 'from-builder-to-curator');
-  const [currentBlogSlug, setCurrentBlogSlug] = useState<string>('whole-articles-local-model-accurate-15x-slow');
+  const [currentFrameworkId, setCurrentFrameworkId] = useState<string>('trust-economy');
+  const [currentInsightSlug, setCurrentInsightSlug] = useState<string>(
+    () => INSIGHTS[0]?.slug || 'whole-articles-local-model-accurate-15x-slow'
+  );
 
   // Modals
   const [isAssessmentOpen, setIsAssessmentOpen] = useState(false);
@@ -64,6 +65,8 @@ export default function App() {
       if (scrollHeight > 0) {
         const progress = (window.scrollY / scrollHeight) * 100;
         setReadingProgress(Math.min(100, Math.max(0, progress)));
+      } else {
+        setReadingProgress(0);
       }
     };
 
@@ -73,15 +76,17 @@ export default function App() {
 
   // Sync with browser URL / history and saved theme on initial load & popstate
   useEffect(() => {
-    // Restore dark mode preference
     try {
       const savedTheme = localStorage.getItem('beyond-theme');
-      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      if (
+        savedTheme === 'dark' ||
+        (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+      ) {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
       }
-    } catch (e) {}
+    } catch {}
 
     const handleRouteChange = () => {
       const route = parseCurrentRoute();
@@ -89,11 +94,13 @@ export default function App() {
       if (route.page === 'framework-detail' && route.param) {
         setCurrentFrameworkId(route.param);
       }
-      if (route.page === 'article-detail' && route.param) {
-        setCurrentArticleId(route.param);
-      }
-      if (route.page === 'blog-detail' && route.param) {
-        setCurrentBlogSlug(route.param);
+      if (
+        (route.page === 'insight-detail' ||
+          route.page === 'blog-detail' ||
+          route.page === 'article-detail') &&
+        route.param
+      ) {
+        setCurrentInsightSlug(route.param);
       }
     };
 
@@ -114,23 +121,54 @@ export default function App() {
     }
   }, [currentRoute.page]);
 
-  const handleNavigate = (pageOrPath: PageId | string) => {
+  const handleNavigate = (pageOrPath: PageId | string, param?: string) => {
     if (pageOrPath.startsWith('/')) {
       navigateTo(pageOrPath);
       return;
     }
+
+    if (param) {
+      if (pageOrPath === 'frameworks' || pageOrPath === 'framework-detail') {
+        if (param === 'cao-framework') {
+          navigateTo('/cao-framework');
+        } else {
+          setCurrentFrameworkId(param);
+          navigateTo(`/frameworks/${param}`);
+        }
+        return;
+      }
+      if (
+        pageOrPath === 'insights' ||
+        pageOrPath === 'insight-detail' ||
+        pageOrPath === 'blog' ||
+        pageOrPath === 'blog-detail' ||
+        pageOrPath === 'ideas' ||
+        pageOrPath === 'article-detail'
+      ) {
+        setCurrentInsightSlug(param);
+        navigateTo(`/insights/${param}`);
+        return;
+      }
+      navigateTo(`/${pageOrPath}/${param}`);
+      return;
+    }
+
     if (pageOrPath === 'home') {
       navigateTo('/');
     } else if (pageOrPath === 'sample') {
       navigateTo('/book/sample');
     } else if (pageOrPath === 'buy') {
       navigateTo('/book/buy');
-    } else if (pageOrPath === 'teams') {
-      navigateTo('/teams');
+    } else if (pageOrPath === 'teams' || pageOrPath === 'organizations') {
+      navigateTo('/organizations');
     } else if (pageOrPath === 'cao-framework') {
       navigateTo('/cao-framework');
-    } else if (pageOrPath === 'blog') {
-      navigateTo('/blog');
+    } else if (
+      pageOrPath === 'blog' ||
+      pageOrPath === 'ideas' ||
+      pageOrPath === 'insights'
+    ) {
+      navigateTo('/insights');
     } else {
       navigateTo('/' + pageOrPath);
     }
@@ -212,8 +250,12 @@ export default function App() {
             frameworkId={currentFrameworkId}
             onNavigate={handleNavigate}
             onSelectFramework={(id) => {
-              setCurrentFrameworkId(id);
-              handleNavigate('/frameworks/' + id);
+              if (id === 'cao-framework') {
+                handleNavigate('/cao-framework');
+              } else {
+                setCurrentFrameworkId(id);
+                handleNavigate('/frameworks/' + id);
+              }
             }}
             onOpenBuyModal={() => setIsBuyModalOpen(true)}
           />
@@ -223,11 +265,10 @@ export default function App() {
           <SampleView
             onNavigate={handleNavigate}
             onOpenBuyModal={() => setIsBuyModalOpen(true)}
-            onOpenInfographicModal={handleOpenInfographic}
           />
         )}
 
-        {currentPage === 'teams' && (
+        {(currentPage === 'organizations' || currentPage === 'teams') && (
           <TeamsView
             onNavigate={handleNavigate}
             onOpenAssessment={() => setIsAssessmentOpen(true)}
@@ -245,6 +286,14 @@ export default function App() {
 
         {currentPage === 'toolkit' && (
           <ToolkitView onNavigate={handleNavigate} />
+        )}
+
+        {currentPage === 'engineers' && (
+          <EngineersView
+            onNavigate={handleNavigate}
+            onOpenAssessment={() => setIsAssessmentOpen(true)}
+            onOpenSample={() => handleOpenSample(1)}
+          />
         )}
 
         {currentPage === 'students' && (
@@ -281,25 +330,30 @@ export default function App() {
           <PressView onNavigate={handleNavigate} />
         )}
 
-        {currentPage === 'ideas' && (
-          <IdeasView
+        {(currentPage === 'insights' ||
+          currentPage === 'blog' ||
+          currentPage === 'ideas') && (
+          <InsightsView
             onNavigate={handleNavigate}
-            onOpenArticle={(art) => {
-              setCurrentArticleId(art.id);
-              handleNavigate('/ideas/' + art.id);
+            onSelectInsight={(slug) => {
+              setCurrentInsightSlug(slug);
+              handleNavigate('/insights/' + slug);
             }}
           />
         )}
 
-        {currentPage === 'article-detail' && (
-          <ArticleDetailView
-            articleId={currentArticleId}
+        {(currentPage === 'insight-detail' ||
+          currentPage === 'blog-detail' ||
+          currentPage === 'article-detail') && (
+          <InsightDetailView
+            slug={currentInsightSlug}
             onNavigate={handleNavigate}
-            onSelectArticle={(id) => {
-              setCurrentArticleId(id);
-              handleNavigate('/ideas/' + id);
+            onSelectInsight={(slug) => {
+              setCurrentInsightSlug(slug);
+              handleNavigate('/insights/' + slug);
             }}
             onOpenBuyModal={() => setIsBuyModalOpen(true)}
+            onOpenSample={() => handleOpenSample(1)}
           />
         )}
 
@@ -318,26 +372,8 @@ export default function App() {
           />
         )}
 
-        {currentPage === 'blog' && (
-          <BlogView
-            onNavigate={handleNavigate}
-            onOpenArticleDetail={(slug) => {
-              setCurrentBlogSlug(slug);
-              handleNavigate('/blog/' + slug);
-            }}
-          />
-        )}
-
-        {currentPage === 'blog-detail' && (
-          <BlogDetailView
-            slug={currentBlogSlug}
-            onNavigate={handleNavigate}
-            onSelectPost={(slug) => {
-              setCurrentBlogSlug(slug);
-              handleNavigate('/blog/' + slug);
-            }}
-            onOpenBuyModal={() => setIsBuyModalOpen(true)}
-          />
+        {currentPage === 'contact' && (
+          <ContactView onNavigate={handleNavigate} />
         )}
       </main>
 
@@ -349,15 +385,12 @@ export default function App() {
       />
 
       {/* 4. Global Interactive Modals */}
-      
-      {/* C.A.O. Assessment Modal */}
       <AssessmentModal
         isOpen={isAssessmentOpen}
         onClose={() => setIsAssessmentOpen(false)}
         onOpenBuyModal={() => setIsBuyModalOpen(true)}
       />
 
-      {/* Sample Chapter Reader Modal */}
       <ChapterModal
         isOpen={sampleChapterNumber !== null}
         initialChapterNumber={sampleChapterNumber || 1}
@@ -366,7 +399,6 @@ export default function App() {
         onOpenInfographicModal={handleOpenInfographic}
       />
 
-      {/* High-Resolution Infographic Zoom & Navigation Modal */}
       <InfographicModal
         isOpen={activeInfographicId !== null}
         initialInfographicId={activeInfographicId || 'infographic-intro'}
@@ -374,27 +406,23 @@ export default function App() {
         onOpenBuyModal={() => setIsBuyModalOpen(true)}
       />
 
-      {/* Lab Canvas / Worksheet Modal */}
       <LabCanvasModal
         resource={activeCanvasResource}
         onClose={() => setActiveCanvasResource(null)}
       />
 
-      {/* Speaking Inquiry Modal */}
       <SpeakingInquiryModal
         isOpen={isSpeakingModalOpen}
         defaultTopic={speakingTopic}
         onClose={() => setIsSpeakingModalOpen(false)}
       />
 
-      {/* Ideas / Article Reader Modal */}
       <ArticleModal
         article={activeArticle}
         onClose={() => setActiveArticle(null)}
         onOpenBuyModal={() => setIsBuyModalOpen(true)}
       />
 
-      {/* Buy / Retailer Hub Modal */}
       <BuyModal
         isOpen={isBuyModalOpen}
         onClose={() => setIsBuyModalOpen(false)}
