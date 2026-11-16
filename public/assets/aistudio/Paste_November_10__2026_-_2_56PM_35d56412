@@ -1,0 +1,1348 @@
+# MASTER IMPLEMENTATION PROMPT
+## Transform BeyondAIEngineering.com into a Premium Book, Framework & Author Authority Platform
+
+### 1. YOUR ROLE
+
+Act as a world-class multidisciplinary team consisting of:
+
+- Award-winning UX/UI and digital product designer.
+- Senior frontend and full-stack engineer.
+- Book publishing and direct-response conversion strategist.
+- Technical SEO and Google Search specialist.
+- Structured data and knowledge graph architect.
+- AI search and generative discovery strategist.
+- Content strategist and editorial copywriter.
+- Accessibility and performance engineer.
+
+Your task is to upgrade the existing website:
+
+**https://www.beyondaiengineering.com/**
+
+The website belongs to author Harsh Verma and promotes his book:
+
+**Beyond AI Engineering: From Creator to Curator**
+
+Tagline:
+
+**Build Your Authority and Lead the AI Agent Revolution.**
+
+The objective is to turn this website into a premium digital destination that helps the book achieve strong discoverability, credibility, reader engagement, sales conversion, and long-term authority.
+
+Do not simply create another generic author website.
+
+Build a recognizable intellectual property platform around the ideas and frameworks introduced in the book.
+
+---
+
+# 2. MOST IMPORTANT IMPLEMENTATION RULES
+
+Before writing or modifying code:
+
+1. Inspect the existing website and current project structure.
+2. Understand the current frontend framework, routing, styling system, dependencies, backend, hosting and deployment configuration.
+3. Review all existing pages, images, logos, book-cover assets, links, forms and content.
+4. Identify what is already implemented and what is missing.
+5. Preserve working functionality and existing useful content.
+6. Improve the existing implementation instead of unnecessarily rebuilding it.
+7. Maintain the existing domain, brand identity and working integrations.
+8. Do not remove useful features or pages without a clear reason.
+9. Do not introduce unnecessary dependencies or complicated infrastructure.
+10. Implement the changes directly in the existing project wherever possible.
+
+If you cannot inspect the live website or its source code, clearly identify that limitation. Do not pretend to have inspected components or functionality you cannot access.
+
+**Critical content integrity rules:**
+
+- Never invent ISBNs, book prices, release dates, retailer links, testimonials, reviews, endorsements, awards, author credentials or sales numbers.
+- Reuse existing verified assets and links.
+- Where important information is missing, create a clearly documented configuration field rather than inventing a value.
+- Do not publish placeholder testimonials or fake reviews.
+- Do not claim that the book is a bestseller unless that status has been independently verified.
+- Do not make unsupported promises about Google rankings, Knowledge Panels, indexing or AI citations.
+- Keep all important claims consistent with the author's verified profile and published book material.
+
+---
+
+# 3. BRAND POSITIONING AND DESIGN DIRECTION
+
+## Brand identity
+
+Brand: Beyond AI Engineering
+
+Book: Beyond AI Engineering: From Creator to Curator
+
+Author: Harsh Verma
+
+Core positioning:
+
+A practical career operating system for engineers navigating the agentic AI era.
+
+The central message:
+
+Engineering is evolving beyond writing code. Future engineers must know how to create with AI, architect intelligent systems, evaluate outputs, exercise judgment, govern risk and orchestrate people and autonomous agents.
+
+The website must communicate this transformation.
+
+## Visual design direction
+
+Create a premium, editorial, technology-focused design.
+
+The design should feel like a combination of:
+
+- A premium technology book publisher.
+- A sophisticated engineering knowledge platform.
+- A modern professional thought-leadership brand.
+- A high-quality digital product experience.
+
+### Visual characteristics
+
+- Premium light theme as the primary appearance.
+- Clean white, warm off-white and subtle neutral backgrounds.
+- Deep navy or charcoal typography.
+- Electric blue or restrained cobalt accents.
+- Sophisticated typography pairing: editorial display typography and highly readable sans-serif body text.
+- Strong visual hierarchy.
+- Generous whitespace.
+- Elegant framework diagrams.
+- High-quality book-cover presentation.
+- Subtle transitions and micro-interactions.
+- Refined cards, dividers and section treatments.
+- Consistent spacing and responsive layouts.
+
+Avoid:
+
+- Generic AI landing-page templates.
+- Excessive neon colors.
+- Overuse of gradients.
+- Generic stock photographs of robots.
+- Excessive animations.
+- Unnecessary floating elements.
+- Overcrowded layouts.
+- Large walls of text.
+- Too many competing calls to action.
+- A homepage that looks like a personal awards portfolio.
+
+Use the existing book cover and author photographs wherever available. Do not invent a replacement book cover.
+
+Create original diagrams using CSS, SVG or the existing design system when they add genuine explanatory value.
+
+Support reduced-motion preferences.
+
+---
+
+# 4. WEBSITE INFORMATION ARCHITECTURE
+
+Create a clear, simple navigation system.
+
+Recommended primary navigation:
+
+1. Home
+2. The Book
+3. C.A.O. Framework
+4. Resources
+5. Insights
+6. About the Author
+7. For Organizations
+
+Primary navigation CTA:
+
+**Get the Book**
+
+Suggested page structure:
+
+- `/`
+- `/book`
+- `/cao-framework`
+- `/frameworks/trust-economy`
+- `/frameworks/how-to-what`
+- `/frameworks/human-api`
+- `/frameworks/ethical-curation`
+- `/resources`
+- `/engineers`
+- `/students`
+- `/organizations`
+- `/author`
+- `/insights`
+- `/press`
+- `/contact`
+
+Do not create thin pages just to increase the page count.
+
+Build the core pages first. Additional pages should only be published when there is enough meaningful content to make them genuinely useful.
+
+Ensure every page has a clear purpose, unique content, a logical URL and a route back to the book.
+
+---
+
+# 5. HOMEPAGE — COMPLETE REDESIGN
+
+The homepage is the most important conversion page.
+
+Its purpose is to communicate the book's value within a few seconds and guide visitors toward reading, exploring or purchasing it.
+
+## Section 1: Premium hero
+
+Use a compelling editorial hero layout.
+
+Left side:
+
+Eyebrow:
+THE FUTURE OF ENGINEERING IS BEYOND CODE
+
+Main headline:
+
+**BEYOND AI ENGINEERING**
+
+Subtitle:
+
+**From Creator to Curator**
+
+Supporting statement:
+
+Build Your Authority and Lead the AI Agent Revolution.
+
+Description:
+
+AI is changing how software is built, how decisions are made and what organizations expect from engineers. The next generation of engineering leaders will do more than generate code. They will design intelligent systems, evaluate AI, exercise judgment and orchestrate human and machine collaboration.
+
+Primary CTA:
+**Get the Book**
+
+Secondary CTA:
+**Explore the C.A.O. Framework**
+
+Additional CTA:
+**Read a Free Sample**
+
+Right side:
+
+- Display the actual book cover in a premium 3D-style book mockup if the original asset supports it.
+- Use subtle architectural or AI-system-inspired visual elements.
+- Maintain a clean editorial aesthetic.
+- Do not obscure the title or book cover.
+
+The primary purchase CTA must link to a verified retailer or checkout destination. If no verified destination exists, use a configurable purchase link and do not simulate a working checkout.
+
+## Section 2: The engineering transformation
+
+Headline:
+
+**The Engineer After Code**
+
+Explain the changing nature of engineering.
+
+Create three visual columns:
+
+CREATOR
+Build with AI.
+
+ARCHITECT
+Design intelligent systems.
+
+ORCHESTRATOR
+Coordinate AI agents, people and outcomes.
+
+Supporting statement:
+
+The future does not belong only to engineers who write code faster. It belongs to engineers who understand what to build, how to design it, how to evaluate it and how to take responsibility for its outcomes.
+
+CTA:
+Discover the C.A.O. Framework.
+
+## Section 3: The central book philosophy
+
+Headline:
+
+**From Writing Code to Orchestrating Intelligence**
+
+Explain the major shifts:
+
+- From How to What.
+- From code production to problem selection.
+- From isolated implementation to systems thinking.
+- From AI-generated output to verified judgment.
+- From individual productivity to human-AI collaboration.
+- From technical activity to measurable impact.
+
+Present these ideas with concise explanations and original diagrams.
+
+## Section 4: What readers will gain
+
+Headline:
+
+**More Than a Book. A Practical Operating System for Your Engineering Career.**
+
+Display tangible reader outcomes:
+
+- Understand the Creator → Architect → Orchestrator transition.
+- Build effective AI workflows.
+- Develop Prompt Empathy.
+- Apply Agentic Diplomacy.
+- Practice Ethical Curation.
+- Develop AI Product Sense.
+- Strengthen probabilistic and systems thinking.
+- Build professional credibility through Proof of Work.
+- Develop a meaningful professional network.
+- Create a practical 30/60/90-day career plan.
+
+Use attractive cards or an editorial grid.
+
+## Section 5: Explore the book
+
+Display the actual eleven-chapter structure:
+
+1. Welcome to the New Age of Engineering.
+2. Beyond Code: The Engineer of the Future.
+3. Reimagining the Engineer: Who Will Lead the AI Revolution?
+4. Breaking Barriers: Case Studies of Engineers Who Thrived.
+5. Mastering AI Workflows: Managing More Than Just Code.
+6. The Art of Personal Branding for Engineers.
+7. From Stagnation to Innovation: Career Strategies in the Age of AI.
+8. Template for Success: How to Stand Out in a Crowded AI Landscape.
+9. The Do's and Don'ts: A Guide for Thriving as an Engineer in the AI World.
+10. Free Tools for Engineers: Accessing Harsh's Expertise.
+11. Starting Out: A Guide for Students and Early-Career Engineers.
+
+Include a short, accurate summary for each chapter based on the existing manuscript.
+
+Link to the detailed book page.
+
+## Section 6: Signature frameworks
+
+Headline:
+
+**Explore the Ideas Behind Beyond AI Engineering**
+
+Feature:
+
+- C.A.O. Framework.
+- Trust Economy.
+- How → What.
+- Human API.
+- Prompt Empathy.
+- Agentic Diplomacy.
+- Ethical Curation.
+- AI Product Sense.
+- Probabilistic Thinking.
+- Proof of Work.
+
+Each card should link to a substantive explanation.
+
+## Section 7: About the author
+
+Headline:
+
+**Meet the Author**
+
+Introduce Harsh Verma as an AI and cybersecurity engineering leader, author and technology speaker.
+
+Use a concise professional biography based on the verified content of:
+
+https://www.harshverma.me/page-about
+
+Relevant professional context includes:
+
+- Principal Software Engineer specializing in AI and cybersecurity at Palo Alto Networks.
+- 12+ years of experience in software engineering and intelligent systems.
+- Expertise in AI, agentic systems, cybersecurity and enterprise technology.
+- Forbes Technology Council membership.
+- IEEE Senior Member.
+- BCS Fellowship.
+- Google Developer Expert in Cloud AI.
+- UC Berkeley SkyDeck Advisor and Mentor.
+- Technology speaking, mentoring and judging experience.
+
+Verify the current wording and evidence for every credential against the existing author profile before publishing. Do not automatically publish the entire list.
+
+Use a professional author photograph.
+
+CTA:
+Read the Full Author Story.
+
+## Section 8: Social proof
+
+Create a polished section for:
+
+- Genuine reader testimonials.
+- Verified endorsements.
+- Media coverage.
+- Interviews.
+- Speaking appearances.
+- Institutional or organizational adoption.
+
+Do not fill the section with invented testimonials.
+
+If approved endorsements are not yet available, create an attractive section structure that can be populated later without displaying fake content.
+
+## Section 9: Free sample and resources
+
+Headline:
+
+**Start Your Journey Beyond Code**
+
+Offer:
+
+- Free book sample.
+- C.A.O. Framework guide.
+- AI Workflow Canvas.
+- Ethical Curation Checklist.
+- 30/60/90-Day Career Plan.
+
+CTA:
+Explore Free Resources.
+
+## Section 10: Final conversion section
+
+Headline:
+
+**The Future of Engineering Is Not Just About What You Build. It Is About What You Enable.**
+
+Supporting copy:
+
+Start building the skills, judgment and authority needed to lead in the age of AI.
+
+Primary CTA:
+Get Beyond AI Engineering.
+
+Secondary CTA:
+Explore the Framework.
+
+---
+
+# 6. THE BOOK PAGE — /book
+
+Create a dedicated premium sales page.
+
+This page should be optimized for readers who are evaluating whether to buy the book.
+
+Include:
+
+### A. Book presentation
+
+- Actual book cover.
+- Full title and subtitle.
+- Author name.
+- Verified publication status.
+- Verified formats and editions.
+- Verified ISBNs, if available.
+- Verified price, if available.
+- Purchase buttons linked to real destinations.
+
+### B. Book description
+
+Explain that the book explores how engineers can evolve from creators of software into architects and orchestrators of intelligent systems.
+
+Position it as a practical guide to:
+
+- AI-era engineering.
+- Career evolution.
+- AI workflows.
+- Agentic systems.
+- Technical judgment.
+- Ethical AI.
+- Professional authority.
+- Human-AI collaboration.
+
+### C. Who should read it?
+
+Create three reader groups:
+
+1. Software engineers and engineering leaders.
+2. Students and early-career professionals.
+3. AI practitioners and technology professionals.
+
+Explain the value for each group.
+
+### D. What is inside?
+
+Include all eleven chapters with concise descriptions.
+
+### E. Practical outcomes
+
+Show the frameworks, checklists, experiments and career exercises readers will encounter.
+
+### F. Sample chapter
+
+Allow visitors to preview a real sample chapter or extract.
+
+Use an actual approved file if available. Do not invent a sample PDF.
+
+### G. Author credibility
+
+Include a short author introduction with a link to the full biography.
+
+### H. FAQs
+
+Answer practical reader questions:
+
+- What is Beyond AI Engineering about?
+- Who should read it?
+- Is it suitable for students?
+- Does it require prior AI expertise?
+- What is the C.A.O. Framework?
+- What practical exercises does the book include?
+- Where can readers purchase the book?
+- Are companion resources available?
+
+Only publish accurate answers supported by the manuscript or verified book information.
+
+### I. Conversion
+
+Keep a clear purchase CTA visible throughout the page without making the design intrusive.
+
+---
+
+# 7. C.A.O. FRAMEWORK — /cao-framework
+
+This should become the signature experience of the entire website.
+
+Headline:
+
+**The C.A.O. Framework: Creator → Architect → Orchestrator**
+
+Introduction:
+
+The C.A.O. framework describes how an engineer's contribution can expand in the age of AI. It is not a rigid promotion ladder. These responsibilities can overlap, and engineers may operate across all three dimensions.
+
+Create a premium interactive visual experience.
+
+### Creator
+
+Focus:
+Building with AI.
+
+Capabilities:
+
+- AI-assisted development.
+- Prompt Empathy.
+- Code generation and verification.
+- Technical experimentation.
+- AI workflow implementation.
+
+### Architect
+
+Focus:
+Designing intelligent systems.
+
+Capabilities:
+
+- System design.
+- AI Product Sense.
+- Problem selection.
+- Probabilistic Thinking.
+- Workflow design.
+- Evaluation architecture.
+- Reliability and integration.
+
+### Orchestrator
+
+Focus:
+Coordinating agents, people and outcomes.
+
+Capabilities:
+
+- Agentic Diplomacy.
+- Agent permissions and boundaries.
+- Human oversight.
+- Risk management.
+- Escalation.
+- Accountability.
+- Business impact.
+
+Include:
+
+1. Interactive Creator / Architect / Orchestrator visual.
+2. Comparison of responsibilities.
+3. Practical examples.
+4. Career development implications.
+5. Common mistakes.
+6. Relevant book chapters.
+7. Downloadable framework guide.
+8. CTA to explore the book.
+
+Create a visually impressive diagram using SVG or CSS rather than relying on generic stock imagery.
+
+---
+
+# 8. INTERACTIVE C.A.O. CAREER ASSESSMENT
+
+Build a functional interactive self-assessment.
+
+Headline:
+
+**Where Do You Stand in the AI Engineering Evolution?**
+
+Description:
+
+Discover your current strengths across the Creator, Architect and Orchestrator dimensions.
+
+Create a questionnaire of approximately 12 questions.
+
+Assess three dimensions:
+
+- Building and implementing AI systems.
+- Designing intelligent systems and workflows.
+- Orchestrating agents, people, risk and outcomes.
+
+Requirements:
+
+- Clear progress indicator.
+- One question at a time or a clean multi-question layout.
+- Easy-to-use answer controls.
+- Responsive mobile experience.
+- Score calculation for all three dimensions.
+- Results page with a visual score breakdown.
+- Personalized strengths.
+- Areas to develop.
+- Suggested book chapters.
+- Recommended exercises.
+- Suggested next steps.
+
+Results should explain that the assessment is a self-reflection tool, not a scientifically validated psychometric or hiring assessment.
+
+Do not label one result as inherently superior to another.
+
+Allow users to share their results through a shareable summary.
+
+Provide optional email signup to receive the result and an extended career development plan.
+
+Do not require an email to see the basic result.
+
+If there is no functioning email backend, do not simulate a successful signup. Make the integration configurable and explain what is required to activate it.
+
+---
+
+# 9. FRAMEWORK KNOWLEDGE PAGES
+
+Build meaningful pages for the major ideas.
+
+## Trust Economy
+
+Headline:
+
+**The Trust Economy: When AI Output Becomes Abundant, Judgment Becomes Valuable.**
+
+Explain:
+
+- Why AI-generated information is becoming abundant.
+- Why verification and judgment matter.
+- Why responsibility cannot be delegated entirely to models.
+- How engineers can build credibility through verified work.
+- How this affects career development and leadership.
+
+## How → What
+
+Headline:
+
+**From How to What: The New Engineering Question.**
+
+Explain the transition from implementation-focused thinking to problem selection, business outcomes, system design and strategic decision-making.
+
+Include practical before-and-after examples.
+
+## Human API
+
+Headline:
+
+**The Human API: Making Human-AI Collaboration Work.**
+
+Explain the two foundational concepts:
+
+- Prompt Empathy.
+- Agentic Diplomacy.
+
+Show how understanding intent, context, permissions and boundaries creates better human-AI collaboration.
+
+## Ethical Curation
+
+Headline:
+
+**Ethical Curation: Engineering AI Systems That Deserve Trust.**
+
+Include a practical five-question audit:
+
+1. Who benefits?
+2. Who could be harmed?
+3. What evidence supports the system's decisions?
+4. What happens when the system is wrong?
+5. Who has the authority to stop or override it?
+
+Use examples from enterprise AI and cybersecurity.
+
+All framework pages should link to the book and relevant resources.
+
+---
+
+# 10. COMPANION RESOURCES LIBRARY — /resources
+
+Create a polished, searchable resource library.
+
+Include these resource categories:
+
+### Career resources
+
+- C.A.O. Career Self-Assessment.
+- 30/60/90-Day Career Plan.
+- Proof of Work Template.
+- Professional Positioning Worksheet.
+- Digital Paper Trail Checklist.
+
+### AI engineering resources
+
+- AI Workflow Canvas.
+- AI Project Evaluation Checklist.
+- Agentic Workflow Design Template.
+- Human-in-the-Loop Checklist.
+- Ethical Curation Audit.
+- Agentic Diplomacy Matrix.
+
+### Student resources
+
+- AI Engineering Portfolio Planner.
+- Three-Project Career Blueprint.
+- Student Project Evaluation Template.
+- Technical Interview Preparation Guide.
+
+For every resource:
+
+- Provide a clear title.
+- Explain its purpose.
+- Display the relevant category.
+- Provide a preview where possible.
+- Provide a working download or printable version.
+- Link to relevant book chapters.
+
+Use actual files when available.
+
+If a downloadable file cannot be created, provide a well-designed printable web version instead.
+
+Do not display broken or fictitious download links.
+
+Allow visitors to access selected introductory resources without registration.
+
+An optional email signup may be used for additional material.
+
+---
+
+# 11. AUDIENCE-SPECIFIC PAGES
+
+Create three dedicated pathways.
+
+## /engineers
+
+Headline:
+
+**Build Your Next Chapter as an AI-Era Engineer.**
+
+Cover:
+
+- Career evolution.
+- AI-assisted workflows.
+- System architecture.
+- Technical judgment.
+- Agentic systems.
+- Proof of Work.
+- Leadership development.
+
+## /students
+
+Headline:
+
+**Your Engineering Career Starts Beyond the Code.**
+
+Cover:
+
+- How to learn AI engineering.
+- Portfolio projects.
+- Practical technical skills.
+- Evaluation and judgment.
+- Communication and collaboration.
+- Professional networking.
+- First 90-day action plan.
+
+## /organizations
+
+Headline:
+
+**Prepare Your Engineering Teams for the Agentic AI Era.**
+
+Position the book for:
+
+- Corporate learning programs.
+- Engineering teams.
+- Technology leadership.
+- University courses.
+- Professional development.
+- AI workshops and speaking sessions.
+
+Include genuine enquiry pathways for:
+
+- Bulk book purchases.
+- University adoption.
+- Corporate workshops.
+- Author speaking engagements.
+- Partnerships.
+
+Use a functional contact form only when a real backend or email integration is configured.
+
+---
+
+# 12. AUTHOR PAGE — /author
+
+Build a premium author profile.
+
+Use verified content from:
+
+https://www.harshverma.me/page-about
+
+Also cross-reference:
+
+https://www.harshverma.me/page-speaker
+
+https://www.harshverma.me/page-books
+
+https://www.linkedin.com/in/harshverma59/
+
+Present:
+
+- Professional biography.
+- Current role.
+- AI and cybersecurity expertise.
+- Engineering leadership experience.
+- Book authorship.
+- Selected professional memberships.
+- Selected awards and recognitions.
+- Speaking and keynote experience.
+- Mentoring and advisory work.
+- Publications and thought leadership.
+
+Use a concise, editorial biography rather than an exhaustive CV.
+
+Include links to the author's official website, LinkedIn, speaker profile and relevant publications.
+
+Do not invent, exaggerate or automatically reconcile conflicting numbers or credentials. If the source pages disagree, use the most clearly verified current wording or flag the discrepancy for approval.
+
+The author page should establish credibility while keeping the book as the main focus.
+
+---
+
+# 13. INSIGHTS AND EDITORIAL CONTENT — /insights
+
+Create a high-quality editorial section called:
+
+**Ideas Beyond the Book**
+
+Organize content into these pillars:
+
+1. The Future of Engineering.
+2. Agentic AI.
+3. Trust and Responsible AI.
+4. AI Engineering Architecture.
+5. Career Development.
+6. Students and Early-Career Engineers.
+
+Suggested cornerstone articles:
+
+- The Engineer After Code.
+- Why AI Engineering Is Becoming an Orchestration Discipline.
+- The Trust Economy in the Age of AI.
+- From Prompt Engineering to Prompt Empathy.
+- Why Agentic Systems Need Agentic Diplomacy.
+- How Engineers Can Build Proof of Work.
+- Your First AI Agent Is an Experiment, Not a Product.
+- How to Evaluate AI-Generated Code.
+- The Future of Human-AI Collaboration.
+
+Each article should include:
+
+- Descriptive title.
+- Original, substantive content.
+- Clear author attribution.
+- Publication and modification dates where accurate.
+- Relevant framework links.
+- Links to related book chapters.
+- Social sharing metadata.
+- Appropriate structured data.
+
+Do not automatically generate dozens of generic SEO articles.
+
+Prioritize originality, usefulness and real engineering examples.
+
+---
+
+# 14. NEWSLETTER AND COMMUNITY
+
+Create a newsletter section called:
+
+**The Engineer After Code**
+
+Description:
+
+A practical newsletter about AI engineering, intelligent systems, career evolution and the future of human-AI collaboration.
+
+Suggested content:
+
+- One important AI engineering insight.
+- One practical framework.
+- One engineering example.
+- One exercise or career action.
+- One useful resource.
+
+Create a clean subscription experience.
+
+Use the existing email marketing provider if configured.
+
+If no provider exists, implement a secure integration-ready form and document the required configuration.
+
+Never expose API keys in frontend code.
+
+Do not claim a user has subscribed unless the backend confirms success.
+
+---
+
+# 15. PRESS, SPEAKING AND SOCIAL PROOF
+
+Create a `/press` page or equivalent section.
+
+Include:
+
+- Author headshot.
+- Short and long biography.
+- Book description.
+- Book cover.
+- Approved author introduction.
+- Speaking topics.
+- Public speaking videos.
+- Media coverage.
+- Verified interviews.
+- Press contact details, only if confirmed.
+
+Provide a downloadable press kit if the source assets are available.
+
+Create a dedicated speaking and organizational enquiry CTA.
+
+Do not use unverified press logos, publication endorsements or testimonials.
+
+---
+
+# 16. SEO AND GOOGLE SEARCH OPTIMIZATION
+
+Technical SEO is a critical part of this project.
+
+Implement and validate the following.
+
+## Page metadata
+
+Every indexable page must have:
+
+- Unique page title.
+- Unique meta description.
+- One descriptive H1.
+- Logical H2 and H3 structure.
+- Canonical URL.
+- Relevant image alt text.
+- Appropriate Open Graph metadata.
+- Twitter/X card metadata.
+
+Suggested homepage title:
+
+Beyond AI Engineering | From Creator to Curator — Harsh Verma
+
+Suggested homepage description:
+
+Discover Beyond AI Engineering by Harsh Verma. Learn how engineers can evolve from creators to architects and orchestrators in the age of AI.
+
+Create unique metadata for all major pages.
+
+## Crawlability and indexing
+
+Verify:
+
+- `robots.txt`.
+- XML sitemap.
+- Canonical URLs.
+- Correct HTTP status codes.
+- No accidental `noindex` directives.
+- No blocked critical resources.
+- No duplicate URLs.
+- Working internal links.
+- Correct redirect behavior.
+- Search engine accessibility.
+
+Submit or document the sitemap URL for Google Search Console.
+
+Do not claim indexing has occurred simply because a sitemap was generated.
+
+## JavaScript rendering
+
+Ensure that important page content is accessible to search engines.
+
+Prefer server-side rendering, static generation or prerendering where supported by the current architecture.
+
+Do not rely exclusively on client-side interactions to reveal essential text.
+
+Important content must remain accessible when JavaScript rendering is limited.
+
+## Structured data
+
+Implement valid Schema.org structured data where appropriate:
+
+- `Book`
+- `Person`
+- `ProfilePage`
+- `WebSite`
+- `Article`
+- `BreadcrumbList`
+- `Organization`, only where genuinely applicable.
+
+For the Book entity, include available verified properties:
+
+- Name.
+- Author.
+- Description.
+- Image.
+- ISBN-13, if verified.
+- Edition, if known.
+- Publication date, if confirmed.
+- Publisher, if confirmed.
+- Book format, if confirmed.
+
+Use JSON-LD.
+
+The structured data must match the visible page content.
+
+Use the same consistent author identity across the website.
+
+Include verified `sameAs` references to the author's official public profiles.
+
+Validate structured data and fix errors.
+
+Do not imply that Schema.org markup guarantees a Google rich result, Book Knowledge Panel or Google Book Actions placement.
+
+## Image SEO
+
+- Use descriptive filenames.
+- Compress images.
+- Use responsive image sizing.
+- Use WebP or AVIF where appropriate.
+- Provide descriptive alt text.
+- Include the actual book-cover image in relevant metadata.
+- Avoid loading unnecessary large images above the fold.
+
+## AI discovery and entity consistency
+
+Make the website an authoritative source about:
+
+- Beyond AI Engineering.
+- Harsh Verma.
+- The C.A.O. Framework.
+- The Trust Economy.
+- Human API.
+- Prompt Empathy.
+- Agentic Diplomacy.
+- Ethical Curation.
+
+Use clear definitions, consistent terminology, descriptive headings and internal links.
+
+Create a coherent relationship between the book, author and original frameworks.
+
+Where useful, provide a well-organized FAQ and glossary.
+
+Do not create misleading claims about how AI search engines select or cite content.
+
+---
+
+# 17. PERFORMANCE AND ACCESSIBILITY
+
+Target excellent real-world performance.
+
+Priorities:
+
+- Fast initial page load.
+- Optimized images.
+- Minimal unnecessary JavaScript.
+- Lazy loading below-the-fold images.
+- Proper font loading.
+- Efficient component rendering.
+- Responsive layout.
+- No layout shifts.
+- Fast mobile experience.
+
+Aim for strong Core Web Vitals, including:
+
+- LCP: 2.5 seconds or less.
+- INP: 200 milliseconds or less.
+- CLS: 0.1 or less.
+
+Use semantic HTML and aim for WCAG 2.2 AA accessibility.
+
+Verify:
+
+- Keyboard navigation.
+- Visible focus indicators.
+- Sufficient color contrast.
+- Descriptive labels.
+- Form error messages.
+- Image alt text.
+- Accessible interactive elements.
+- Screen-reader-friendly navigation.
+- Reduced-motion support.
+
+---
+
+# 18. ANALYTICS AND CONVERSION TRACKING
+
+Set up or preserve Google Analytics 4 if available.
+
+Support Google Search Console integration.
+
+Track the following meaningful events:
+
+- `book_purchase_click`
+- `sample_download`
+- `resource_download`
+- `cao_assessment_start`
+- `cao_assessment_complete`
+- `newsletter_signup`
+- `organization_inquiry`
+- `contact_form_submit`
+
+For retailer links, use appropriate outbound click tracking and UTM parameters where suitable.
+
+Build the website so that performance can be measured across:
+
+- Organic search traffic.
+- Book page visits.
+- Purchase CTA clicks.
+- Sample downloads.
+- Resource engagement.
+- Newsletter subscriptions.
+- Organizational enquiries.
+
+Do not collect unnecessary personal data.
+
+Respect applicable privacy requirements and consent settings.
+
+---
+
+# 19. CONTENT AND DATA MANAGEMENT
+
+Create a clean and maintainable way to manage the important book and author information.
+
+Where appropriate, centralize configuration for:
+
+- Book title.
+- Subtitle.
+- Author biography.
+- Book cover.
+- Publication status.
+- ISBN.
+- Publisher.
+- Formats.
+- Pricing.
+- Purchase links.
+- Sample chapter.
+- Social links.
+- Newsletter integration.
+- Contact destinations.
+
+This avoids inconsistent details appearing across multiple pages.
+
+Use a single source of truth for repeated content.
+
+If a field has not been verified, keep it unconfigured and identify it in the implementation report.
+
+Do not expose private configuration or API keys.
+
+---
+
+# 20. CONVERSION DESIGN PRINCIPLES
+
+The website must make the next action obvious.
+
+Primary conversion:
+Purchase the book.
+
+Secondary conversions:
+- Download a free sample.
+- Explore the C.A.O. Framework.
+- Complete the career assessment.
+- Download companion resources.
+- Subscribe to the newsletter.
+- Contact the author for speaking or organizational adoption.
+
+Use strategically placed CTAs without making every section feel like an advertisement.
+
+Use sticky navigation only if it improves usability.
+
+Make the purchase CTA accessible on mobile.
+
+If retailer destinations are configured, make sure the correct book edition and format are linked.
+
+If the website does not have a functioning payment backend, do not create a fake checkout experience.
+
+---
+
+# 21. IMPLEMENTATION PRIORITIES
+
+Do not attempt to create every advanced feature simultaneously.
+
+Implement in the following order.
+
+### PHASE 1 — Essential foundation
+
+1. Inspect the existing project.
+2. Improve the homepage.
+3. Build or improve `/book`.
+4. Establish accurate book positioning.
+5. Verify purchase links and book status.
+6. Fix navigation and mobile layout.
+7. Verify core SEO metadata.
+8. Verify sitemap, robots.txt and rendering.
+9. Improve loading speed and accessibility.
+
+### PHASE 2 — Intellectual property
+
+1. Build `/cao-framework`.
+2. Build the Trust Economy page.
+3. Build How → What.
+4. Build Human API.
+5. Build Ethical Curation.
+6. Add the interactive C.A.O. assessment.
+
+### PHASE 3 — Reader experience
+
+1. Build the resource library.
+2. Add free downloadable resources.
+3. Build engineer and student pathways.
+4. Add the newsletter.
+5. Add the author page.
+6. Add genuine social proof.
+
+### PHASE 4 — Growth
+
+1. Build organizational adoption and enquiry pages.
+2. Launch Ideas Beyond the Book.
+3. Build press and speaking materials.
+4. Improve analytics.
+5. Expand content based on reader and search behavior.
+
+Complete and validate each phase before moving to the next.
+
+---
+
+# 22. QUALITY ASSURANCE AND ACCEPTANCE CRITERIA
+
+Before declaring the project complete, run a full quality review.
+
+### Functionality
+
+- Every navigation item works.
+- Every CTA has a valid destination.
+- Purchase links are verified.
+- No broken image assets.
+- No broken internal links.
+- Assessment calculates correct results.
+- Forms have real submission behavior.
+- Download buttons point to actual files.
+- Mobile navigation works.
+- No console errors.
+- No fake success states.
+
+### Content
+
+- Book title and subtitle are consistent.
+- C.A.O. terminology is consistent.
+- Chapter descriptions reflect the actual manuscript.
+- Author information is accurate.
+- No placeholder endorsements are published.
+- No unsupported bestseller or ranking claims appear.
+- No unverified publication details are presented as fact.
+
+### SEO
+
+- Unique metadata for every major page.
+- Correct canonical URLs.
+- Valid sitemap.
+- Valid robots.txt.
+- Structured data validated.
+- Important content accessible to crawlers.
+- Correct social sharing previews.
+- No accidental noindex directives.
+
+### Design
+
+- Premium editorial appearance.
+- Consistent typography.
+- Consistent spacing.
+- High-quality book presentation.
+- Excellent desktop and mobile experience.
+- Accessible colors and controls.
+- No excessive visual clutter.
+
+### Performance
+
+- Optimized assets.
+- Minimal unnecessary scripts.
+- No major layout shifts.
+- Fast mobile experience.
+- Core Web Vitals reviewed.
+
+---
+
+# 23. FINAL DELIVERABLE
+
+Do not stop after producing a design proposal.
+
+Make the actual improvements in the existing project, subject to the available tools and permissions.
+
+After implementation, provide a concise but detailed report containing:
+
+1. Existing architecture and technology stack identified.
+2. Pages inspected.
+3. Pages created or upgraded.
+4. Features implemented.
+5. SEO improvements made.
+6. Structured data added.
+7. Performance and accessibility improvements.
+8. Working integrations.
+9. Features that require API keys or external configuration.
+10. Unverified information requiring author approval.
+11. Outstanding issues.
+12. Recommended next steps.
+
+For every feature, distinguish between:
+
+- Implemented and tested.
+- Implemented but awaiting configuration.
+- Planned but not implemented.
+- Blocked by missing information or external access.
+
+Do not claim that a feature is complete if it has only been visually mocked up.
+
+If a task cannot be completed because an external service or credential is unavailable, explain exactly what is needed.
+
+---
+
+# 24. THE FINAL CREATIVE DIRECTION
+
+The final website should communicate one powerful idea:
+
+**Beyond AI Engineering is not simply a book about learning AI tools. It is about becoming the kind of engineer who can create, design, evaluate, govern and orchestrate intelligent systems.**
+
+The website should become:
+
+- A premium destination for the book.
+- The definitive online home of the C.A.O. Framework.
+- A practical learning platform for engineers and students.
+- An authoritative resource on the future of AI engineering.
+- A platform that creates long-term readership and community.
+- A conversion channel for book purchases, institutional adoption and speaking opportunities.
+
+Every design decision, page, feature and piece of content should reinforce this positioning.
+
+**Think premium publishing house + world-class engineering knowledge platform + modern author brand.**
+
+Prioritize clarity, credibility, usability, originality and conversion.
+
+Build something that can grow with the book and its ideas for years—not just a promotional website for a single launch.

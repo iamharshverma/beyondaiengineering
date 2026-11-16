@@ -1,4 +1,4 @@
-import { PageId } from '../types';
+import { CAOStageId, PageId } from '../types';
 import { FRAMEWORKS } from '../data/frameworksData';
 
 export interface RouteState {
@@ -8,6 +8,45 @@ export interface RouteState {
 }
 
 const VALID_FRAMEWORK_IDS = new Set(FRAMEWORKS.map((f) => f.id));
+const VALID_CAO_STAGES = new Set<CAOStageId>(['creator', 'architect', 'orchestrator']);
+
+export const RESOURCE_WORKSPACE_ALIASES: Record<string, string> = {
+  'cao-career-map': 'cao-career-map',
+  'cao-self-assessment': 'cao-career-map',
+  'human-advantage-inventory': 'human-advantage-inventory',
+  'ai-workflow-experiment': 'ai-workflow-experiment',
+  'ai-workflow-canvas': 'ai-workflow-experiment',
+  'ethical-ai-audit': 'ethical-ai-audit',
+  'professional-positioning': 'professional-positioning',
+  'career-positioning-audit': 'professional-positioning',
+  'war-story-narrative': 'war-story-narrative',
+  'war-story-template': 'war-story-narrative',
+  'digital-paper-trail': 'digital-paper-trail',
+  'digital-paper-trail-planner': 'digital-paper-trail',
+  'micro-community-map': 'micro-community-map',
+  '30-60-90-plan': '30-60-90-plan',
+  '30-60-90-career-plan': '30-60-90-plan',
+};
+
+export const VALID_RESOURCE_WORKSPACE_SLUGS = new Set([
+  'cao-career-map',
+  'human-advantage-inventory',
+  'ai-workflow-experiment',
+  'ethical-ai-audit',
+  'professional-positioning',
+  'war-story-narrative',
+  'digital-paper-trail',
+  'micro-community-map',
+  '30-60-90-plan',
+]);
+
+function syncBrowserCanonicalUrl(canonicalPath: string) {
+  if (typeof window === 'undefined') return;
+  const current = window.location.pathname.replace(/\/+$/, '') || '/';
+  if (current !== canonicalPath) {
+    window.history.replaceState(null, '', canonicalPath);
+  }
+}
 
 export function parseCurrentRoute(): RouteState {
   if (typeof window === 'undefined') {
@@ -37,7 +76,7 @@ export function parseCurrentRoute(): RouteState {
   return { page: 'home', path: '/' };
 }
 
-function routeFromPath(rawPath: string): RouteState {
+export function routeFromPath(rawPath: string, syncHistory = true): RouteState {
   const clean = rawPath.replace(/\/+$/, '') || '/';
 
   // 1. Home
@@ -47,16 +86,75 @@ function routeFromPath(rawPath: string): RouteState {
 
   // 2. Book Core
   if (clean === '/book') return { page: 'book', path: '/book' };
-  if (clean === '/book/sample' || clean === '/sample') return { page: 'sample', path: '/book/sample' };
-  if (clean === '/book/buy' || clean === '/buy') return { page: 'buy', path: '/book/buy' };
+  if (clean === '/book/sample' || clean === '/sample') {
+    return { page: 'sample', path: '/book/sample' };
+  }
+  if (clean === '/book/buy' || clean === '/buy') {
+    return { page: 'buy', path: '/book/buy' };
+  }
 
-  // 3. Pathways: Engineers, Students, Organizations (and legacy /teams alias)
+  // 3. Dedicated Assessment Route
+  if (clean === '/assessment' || clean === '/cao-assessment') {
+    if (syncHistory && clean !== '/assessment') {
+      syncBrowserCanonicalUrl('/assessment');
+    }
+    return { page: 'assessment', path: '/assessment' };
+  }
+
+  // 4. Canonical Audience Journeys + Legacy Redirects
+  if (clean === '/journeys' || clean === '/journeys/working-engineers') {
+    if (syncHistory && clean === '/journeys') {
+      syncBrowserCanonicalUrl('/journeys/working-engineers');
+    }
+    return {
+      page: 'journey-working-engineers',
+      param: 'working-engineers',
+      path: '/journeys/working-engineers',
+    };
+  }
   if (clean === '/engineers' || clean === '/for-engineers') {
-    return { page: 'engineers', path: '/engineers' };
+    if (syncHistory) {
+      syncBrowserCanonicalUrl('/journeys/working-engineers');
+    }
+    return {
+      page: 'journey-working-engineers',
+      param: 'working-engineers',
+      path: '/journeys/working-engineers',
+    };
+  }
+  if (clean === '/journeys/ai-ml-professionals') {
+    return {
+      page: 'journey-ai-ml',
+      param: 'ai-ml-professionals',
+      path: '/journeys/ai-ml-professionals',
+    };
+  }
+  if (clean === '/journeys/technical-leaders') {
+    return {
+      page: 'journey-technical-leaders',
+      param: 'technical-leaders',
+      path: '/journeys/technical-leaders',
+    };
+  }
+  if (clean === '/journeys/students') {
+    return {
+      page: 'journey-students',
+      param: 'students',
+      path: '/journeys/students',
+    };
   }
   if (clean === '/students' || clean === '/for-students') {
-    return { page: 'students', path: '/students' };
+    if (syncHistory) {
+      syncBrowserCanonicalUrl('/journeys/students');
+    }
+    return {
+      page: 'journey-students',
+      param: 'students',
+      path: '/journeys/students',
+    };
   }
+
+  // Keep /organizations intact for institutional & bulk orders
   if (
     clean === '/organizations' ||
     clean === '/for-organizations' ||
@@ -66,13 +164,13 @@ function routeFromPath(rawPath: string): RouteState {
     return { page: 'organizations', path: clean === '/teams' ? '/organizations' : clean };
   }
 
-  // 4. Author, Speaking, Press, Contact
+  // 5. Author, Speaking, Press, Contact
   if (clean === '/author' || clean === '/about') return { page: 'author', path: '/author' };
   if (clean === '/speaking') return { page: 'speaking', path: '/speaking' };
   if (clean === '/press') return { page: 'press', path: '/press' };
   if (clean === '/contact') return { page: 'contact', path: '/contact' };
 
-  // 5. C.A.O. Framework & Signature Frameworks
+  // 6. C.A.O. Framework, 3 Standalone Stage Routes, & Signature Frameworks
   if (clean === '/cao-framework') return { page: 'cao-framework', path: '/cao-framework' };
   if (clean === '/frameworks') return { page: 'frameworks', path: '/frameworks' };
   if (clean.startsWith('/frameworks/')) {
@@ -80,29 +178,37 @@ function routeFromPath(rawPath: string): RouteState {
     if (slug === 'cao-framework') {
       return { page: 'cao-framework', path: '/cao-framework' };
     }
+    if (VALID_CAO_STAGES.has(slug as CAOStageId)) {
+      return { page: 'cao-stage', param: slug, path: `/frameworks/${slug}` };
+    }
     if (VALID_FRAMEWORK_IDS.has(slug)) {
       return { page: 'framework-detail', param: slug, path: clean };
     }
     return { page: 'frameworks', path: '/frameworks' };
   }
 
-  // 6. Manifesto
+  // 7. Manifesto
   if (clean === '/manifesto') return { page: 'manifesto', path: '/manifesto' };
 
-  // 7. Resources & Toolkit
+  // 8. Resources Workspaces & Toolkit
   if (clean === '/resources') return { page: 'resources', path: '/resources' };
-  if (clean.startsWith('/resources/ethical-ai-audit')) {
-    return { page: 'resources', param: 'ethical-ai-audit', path: clean };
+  if (clean === '/toolkit' || clean === '/resources/toolkit') {
+    return { page: 'toolkit', path: '/toolkit' };
   }
-  if (clean.startsWith('/resources/ai-workflow-canvas')) {
-    return { page: 'resources', param: 'ai-workflow-canvas', path: clean };
+  if (clean.startsWith('/resources/')) {
+    const rawSlug = clean.replace('/resources/', '').split('/')[0];
+    const normalizedSlug = RESOURCE_WORKSPACE_ALIASES[rawSlug];
+    if (normalizedSlug && VALID_RESOURCE_WORKSPACE_SLUGS.has(normalizedSlug)) {
+      const canonical = `/resources/${normalizedSlug}`;
+      if (syncHistory && rawSlug !== normalizedSlug) {
+        syncBrowserCanonicalUrl(canonical);
+      }
+      return { page: 'resource-detail', param: normalizedSlug, path: canonical };
+    }
+    return { page: 'resources', param: rawSlug, path: '/resources' };
   }
-  if (clean.startsWith('/resources/30-60-90-plan')) {
-    return { page: 'resources', param: '30-60-90-career-plan', path: clean };
-  }
-  if (clean === '/toolkit' || clean === '/resources/toolkit') return { page: 'toolkit', path: '/toolkit' };
 
-  // 8. Unified Insights (consolidating /insights, /blog, /ideas)
+  // 9. Unified Insights (consolidating /insights, /blog, /ideas)
   if (
     clean === '/insights' ||
     clean === '/blog' ||
@@ -125,7 +231,7 @@ function routeFromPath(rawPath: string): RouteState {
     return { page: 'insight-detail', param: slug, path: clean };
   }
 
-  // 9. Reader Stories
+  // 10. Reader Stories
   if (clean === '/stories') return { page: 'stories', path: '/stories' };
 
   return { page: 'home', path: '/' };
@@ -133,8 +239,15 @@ function routeFromPath(rawPath: string): RouteState {
 
 export function getPagePath(page: PageId, param?: string): string {
   if (param) {
+    if (page === 'cao-stage') {
+      return `/frameworks/${param}`;
+    }
     if (page === 'frameworks' || page === 'framework-detail') {
       return param === 'cao-framework' ? '/cao-framework' : `/frameworks/${param}`;
+    }
+    if (page === 'resource-detail') {
+      const normalized = RESOURCE_WORKSPACE_ALIASES[param] || param;
+      return `/resources/${normalized}`;
     }
     if (
       page === 'insights' ||
@@ -156,6 +269,18 @@ export function getPagePath(page: PageId, param?: string): string {
       return '/book/sample';
     case 'buy':
       return '/book/buy';
+    case 'assessment':
+      return '/assessment';
+    case 'journey-working-engineers':
+    case 'engineers':
+      return '/journeys/working-engineers';
+    case 'journey-ai-ml':
+      return '/journeys/ai-ml-professionals';
+    case 'journey-technical-leaders':
+      return '/journeys/technical-leaders';
+    case 'journey-students':
+    case 'students':
+      return '/journeys/students';
     case 'teams':
     case 'organizations':
       return '/organizations';
@@ -165,8 +290,6 @@ export function getPagePath(page: PageId, param?: string): string {
     case 'ideas':
     case 'insights':
       return '/insights';
-    case 'assessment':
-      return '/cao-framework';
     default:
       return `/${page}`;
   }

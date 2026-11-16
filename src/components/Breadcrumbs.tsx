@@ -16,9 +16,29 @@ interface BreadcrumbNode {
 interface BreadcrumbsProps {
   currentPage: PageId;
   frameworkId?: string;
+  stageId?: string;
+  resourceSlug?: string;
   insightSlug?: string;
   onNavigate: (pageOrPath: PageId | string, param?: string) => void;
 }
+
+const STAGE_LABELS: Record<string, string> = {
+  creator: '01. Creator (Build)',
+  architect: '02. Architect (Design)',
+  orchestrator: '03. Orchestrator (Coordinate & Govern)',
+};
+
+const RESOURCE_WORKSPACE_TITLES: Record<string, string> = {
+  'cao-career-map': 'C.A.O. Career Map',
+  'human-advantage-inventory': 'Human Advantage Inventory',
+  'ai-workflow-experiment': 'AI Workflow Experiment',
+  'ethical-ai-audit': 'Ethical AI Audit',
+  'professional-positioning': 'Professional Positioning',
+  'war-story-narrative': 'War Story Narrative',
+  'digital-paper-trail': 'Digital Paper Trail',
+  'micro-community-map': 'Micro-Community Map',
+  '30-60-90-plan': '30/60/90-Day Plan',
+};
 
 function buildCanonicalUrl(path: string): string {
   const normalized = path === '/' ? '/' : path.startsWith('/') ? path : `/${path}`;
@@ -28,6 +48,8 @@ function buildCanonicalUrl(path: string): string {
 export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
   currentPage,
   frameworkId,
+  stageId,
+  resourceSlug,
   insightSlug,
   onNavigate,
 }) => {
@@ -61,16 +83,25 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
         break;
       case 'cao-framework':
         nodes.push({
-          label: '12 Signature Frameworks',
-          page: 'frameworks',
-          path: '/frameworks',
-        });
-        nodes.push({
           label: 'C.A.O. Framework',
           page: 'cao-framework',
           path: '/cao-framework',
         });
         break;
+      case 'cao-stage': {
+        const cleanStage = stageId && STAGE_LABELS[stageId] ? stageId : 'creator';
+        nodes.push({
+          label: 'C.A.O. Framework',
+          page: 'cao-framework',
+          path: '/cao-framework',
+        });
+        nodes.push({
+          label: STAGE_LABELS[cleanStage],
+          page: 'cao-stage',
+          path: `/frameworks/${cleanStage}`,
+        });
+        break;
+      }
       case 'framework-detail': {
         const fw = FRAMEWORKS.find((f) => f.id === frameworkId) || FRAMEWORKS[0];
         nodes.push({
@@ -103,17 +134,51 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
         break;
       }
       case 'resources':
-        nodes.push({ label: 'Implementation Lab', page: 'resources', path: '/resources' });
+        nodes.push({ label: 'Companion Resources', page: 'resources', path: '/resources' });
         break;
+      case 'resource-detail': {
+        const cleanSlug = resourceSlug || 'cao-career-map';
+        nodes.push({ label: 'Companion Resources', page: 'resources', path: '/resources' });
+        nodes.push({
+          label: RESOURCE_WORKSPACE_TITLES[cleanSlug] || 'Interactive Resource',
+          page: 'resource-detail',
+          path: `/resources/${cleanSlug}`,
+        });
+        break;
+      }
       case 'toolkit':
-        nodes.push({ label: 'Implementation Lab', page: 'resources', path: '/resources' });
+        nodes.push({ label: 'Companion Resources', page: 'resources', path: '/resources' });
         nodes.push({ label: 'Living AI Toolkit', page: 'toolkit', path: '/toolkit' });
         break;
+      case 'journey-working-engineers':
       case 'engineers':
-        nodes.push({ label: 'For Engineers', page: 'engineers', path: '/engineers' });
+        nodes.push({
+          label: 'Journey: Working Engineers',
+          page: 'journey-working-engineers',
+          path: '/journeys/working-engineers',
+        });
         break;
+      case 'journey-ai-ml':
+        nodes.push({
+          label: 'Journey: AI / ML Professionals',
+          page: 'journey-ai-ml',
+          path: '/journeys/ai-ml-professionals',
+        });
+        break;
+      case 'journey-technical-leaders':
+        nodes.push({
+          label: 'Journey: Technical Leaders',
+          page: 'journey-technical-leaders',
+          path: '/journeys/technical-leaders',
+        });
+        break;
+      case 'journey-students':
       case 'students':
-        nodes.push({ label: 'For Students', page: 'students', path: '/students' });
+        nodes.push({
+          label: 'Journey: Students & New Grads',
+          page: 'journey-students',
+          path: '/journeys/students',
+        });
         break;
       case 'organizations':
       case 'teams':
@@ -145,14 +210,14 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
         break;
       case 'assessment':
         nodes.push({
-          label: '12 Signature Frameworks',
-          page: 'frameworks',
-          path: '/frameworks',
-        });
-        nodes.push({
-          label: 'C.A.O. Assessment',
+          label: 'C.A.O. Framework',
           page: 'cao-framework',
           path: '/cao-framework',
+        });
+        nodes.push({
+          label: 'C.A.O. Self-Assessment',
+          page: 'assessment',
+          path: '/assessment',
         });
         break;
       default:
@@ -163,7 +228,7 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({
       ...node,
       url: buildCanonicalUrl(node.path),
     }));
-  }, [currentPage, frameworkId, insightSlug]);
+  }, [currentPage, frameworkId, stageId, resourceSlug, insightSlug]);
 
   const breadcrumbSchema = useMemo(() => {
     if (items.length <= 1) return null;

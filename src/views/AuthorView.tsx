@@ -3,6 +3,7 @@ import { PageId } from '../types';
 import { SITE_CONFIG } from '../config/siteConfig';
 import { updatePageSeo, PAGE_OG_IMAGES } from '../utils/seo';
 import { BOOK_DETAILS } from '../data/bookData';
+import { SourceNote } from '../components/SourceNote';
 import { ExternalLink, BookOpen, ArrowRight, CheckCircle2, ChevronRight } from 'lucide-react';
 
 interface AuthorViewProps {
@@ -423,14 +424,19 @@ export const AuthorView: React.FC<AuthorViewProps> = ({
           ))}
         </div>
 
-        <div className="mt-12 text-center space-y-3">
+        <div className="mt-8 max-w-3xl mx-auto space-y-4">
+          <SourceNote sourceId="harsh-verma-about" compact />
+          <SourceNote sourceId="harsh-forbes-curation" compact />
+        </div>
+
+        <div className="mt-10 text-center space-y-3">
           <a
             href={BOOK_DETAILS.authorAboutUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs font-semibold text-blue-900 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline underline-offset-4 inline-flex items-center gap-1.5"
           >
-            <span>Visit {SITE_CONFIG.author.name}'s Complete Biography on harshverma.me</span>
+            <span>Visit {SITE_CONFIG.author.name}&apos;s Complete Biography on harshverma.me</span>
             <ExternalLink className="w-3.5 h-3.5" />
           </a>
         </div>

@@ -180,7 +180,7 @@ export const SITE_CONFIG = {
         url: 'https://www.harshverma.me/page-about',
       },
       {
-        name: 'Stanford GSB LEAD · IEEE · BCS · RSA',
+        name: 'Stanford GSB · IEEE · BCS · RSA',
         category: 'Institutional Fellowships',
         description: 'Cross-disciplinary fellowships spanning executive leadership, computing standards, and societal trust in autonomous systems.',
         url: 'https://www.harshverma.me/page-about',

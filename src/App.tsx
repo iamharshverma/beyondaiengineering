@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { PageId, LabResource, Article } from './types';
+import { PageId, CAOStageId, LabResource, Article } from './types';
 import { Navbar } from './components/Navbar';
 import { Breadcrumbs } from './components/Breadcrumbs';
 import { Footer } from './components/Footer';
@@ -12,13 +12,15 @@ import { HomeView } from './views/HomeView';
 import { BookView } from './views/BookView';
 import { FrameworksView } from './views/FrameworksView';
 import { CAOFrameworkView } from './views/CAOFrameworkView';
+import { CAOStageView } from './views/CAOStageView';
 import { FrameworkDetailView } from './views/FrameworkDetailView';
+import { AssessmentView } from './views/AssessmentView';
 import { SampleView } from './views/SampleView';
 import { TeamsView } from './views/TeamsView';
 import { ResourcesView } from './views/ResourcesView';
+import { ResourceWorkspaceView } from './views/ResourceWorkspaceView';
 import { ToolkitView } from './views/ToolkitView';
-import { EngineersView } from './views/EngineersView';
-import { StudentsView } from './views/StudentsView';
+import { JourneyView } from './views/JourneyView';
 import { ManifestoView } from './views/ManifestoView';
 import { AuthorView } from './views/AuthorView';
 import { SpeakingView } from './views/SpeakingView';
@@ -29,7 +31,6 @@ import { StoriesView } from './views/StoriesView';
 import { BuyView } from './views/BuyView';
 import { ContactView } from './views/ContactView';
 
-import { AssessmentModal } from './components/AssessmentModal';
 import { ChapterModal } from './components/ChapterModal';
 import { LabCanvasModal } from './components/LabCanvasModal';
 import { SpeakingInquiryModal } from './components/SpeakingInquiryModal';
@@ -48,6 +49,16 @@ export default function App() {
       ? currentRoute.param
       : 'trust-economy'
   );
+  const [currentStageId, setCurrentStageId] = useState<CAOStageId>(() =>
+    currentRoute.page === 'cao-stage' && currentRoute.param
+      ? (currentRoute.param as CAOStageId)
+      : 'creator'
+  );
+  const [currentResourceSlug, setCurrentResourceSlug] = useState<string>(() =>
+    currentRoute.page === 'resource-detail' && currentRoute.param
+      ? currentRoute.param
+      : 'cao-career-map'
+  );
   const [currentInsightSlug, setCurrentInsightSlug] = useState<string>(() => {
     if (
       (currentRoute.page === 'insight-detail' ||
@@ -61,7 +72,6 @@ export default function App() {
   });
 
   // Modals
-  const [isAssessmentOpen, setIsAssessmentOpen] = useState(false);
   const [isBuyModalOpen, setIsBuyModalOpen] = useState(false);
   const [sampleChapterNumber, setSampleChapterNumber] = useState<number | null>(null);
   const [activeCanvasResource, setActiveCanvasResource] = useState<LabResource | null>(null);
@@ -107,6 +117,12 @@ export default function App() {
       if (route.page === 'framework-detail' && route.param) {
         setCurrentFrameworkId(route.param);
       }
+      if (route.page === 'cao-stage' && route.param) {
+        setCurrentStageId(route.param as CAOStageId);
+      }
+      if (route.page === 'resource-detail' && route.param) {
+        setCurrentResourceSlug(route.param);
+      }
       if (
         (route.page === 'insight-detail' ||
           route.page === 'blog-detail' ||
@@ -141,9 +157,22 @@ export default function App() {
     }
 
     if (param) {
+      if (pageOrPath === 'cao-stage') {
+        setCurrentStageId(param as CAOStageId);
+        navigateTo(`/frameworks/${param}`);
+        return;
+      }
+      if (pageOrPath === 'resource-detail' || pageOrPath === 'resources') {
+        setCurrentResourceSlug(param);
+        navigateTo(`/resources/${param}`);
+        return;
+      }
       if (pageOrPath === 'frameworks' || pageOrPath === 'framework-detail') {
         if (param === 'cao-framework') {
           navigateTo('/cao-framework');
+        } else if (param === 'creator' || param === 'architect' || param === 'orchestrator') {
+          setCurrentStageId(param);
+          navigateTo(`/frameworks/${param}`);
         } else {
           setCurrentFrameworkId(param);
           navigateTo(`/frameworks/${param}`);
@@ -172,6 +201,16 @@ export default function App() {
       navigateTo('/book/sample');
     } else if (pageOrPath === 'buy') {
       navigateTo('/book/buy');
+    } else if (pageOrPath === 'assessment') {
+      navigateTo('/assessment');
+    } else if (pageOrPath === 'journey-working-engineers' || pageOrPath === 'engineers') {
+      navigateTo('/journeys/working-engineers');
+    } else if (pageOrPath === 'journey-ai-ml') {
+      navigateTo('/journeys/ai-ml-professionals');
+    } else if (pageOrPath === 'journey-technical-leaders') {
+      navigateTo('/journeys/technical-leaders');
+    } else if (pageOrPath === 'journey-students' || pageOrPath === 'students') {
+      navigateTo('/journeys/students');
     } else if (pageOrPath === 'teams' || pageOrPath === 'organizations') {
       navigateTo('/organizations');
     } else if (pageOrPath === 'cao-framework') {
@@ -219,7 +258,7 @@ export default function App() {
         currentPage={currentPage}
         onNavigate={handleNavigate}
         onOpenBuyModal={() => setIsBuyModalOpen(true)}
-        onOpenAssessment={() => setIsAssessmentOpen(true)}
+        onOpenAssessment={() => handleNavigate('/assessment')}
       />
 
       {/* 2. Main Page Views */}
@@ -228,6 +267,8 @@ export default function App() {
           <Breadcrumbs
             currentPage={currentPage}
             frameworkId={currentFrameworkId}
+            stageId={currentStageId}
+            resourceSlug={currentResourceSlug}
             insightSlug={currentInsightSlug}
             onNavigate={handleNavigate}
           />
@@ -237,7 +278,7 @@ export default function App() {
           <HomeView
             onNavigate={handleNavigate}
             onOpenBuyModal={() => setIsBuyModalOpen(true)}
-            onOpenAssessment={() => setIsAssessmentOpen(true)}
+            onOpenAssessment={() => handleNavigate('/assessment')}
             onOpenSample={() => handleOpenSample(1)}
             onOpenInfographicModal={handleOpenInfographic}
           />
@@ -255,7 +296,21 @@ export default function App() {
         {currentPage === 'cao-framework' && (
           <CAOFrameworkView
             onNavigate={handleNavigate}
-            onOpenAssessment={() => setIsAssessmentOpen(true)}
+            onOpenAssessment={() => handleNavigate('/assessment')}
+            onOpenBuyModal={() => setIsBuyModalOpen(true)}
+          />
+        )}
+
+        {currentPage === 'cao-stage' && (
+          <CAOStageView
+            stageId={currentStageId}
+            onNavigate={handleNavigate}
+          />
+        )}
+
+        {currentPage === 'assessment' && (
+          <AssessmentView
+            onNavigate={handleNavigate}
             onOpenBuyModal={() => setIsBuyModalOpen(true)}
           />
         )}
@@ -263,7 +318,7 @@ export default function App() {
         {currentPage === 'frameworks' && (
           <FrameworksView
             onNavigate={handleNavigate}
-            onOpenAssessment={() => setIsAssessmentOpen(true)}
+            onOpenAssessment={() => handleNavigate('/assessment')}
           />
         )}
 
@@ -293,7 +348,7 @@ export default function App() {
         {(currentPage === 'organizations' || currentPage === 'teams') && (
           <TeamsView
             onNavigate={handleNavigate}
-            onOpenAssessment={() => setIsAssessmentOpen(true)}
+            onOpenAssessment={() => handleNavigate('/assessment')}
           />
         )}
 
@@ -301,8 +356,15 @@ export default function App() {
           <ResourcesView
             onNavigate={handleNavigate}
             onOpenCanvas={(resource) => setActiveCanvasResource(resource)}
-            onOpenAssessment={() => setIsAssessmentOpen(true)}
+            onOpenAssessment={() => handleNavigate('/assessment')}
             onOpenInfographicModal={handleOpenInfographic}
+          />
+        )}
+
+        {currentPage === 'resource-detail' && (
+          <ResourceWorkspaceView
+            slug={currentResourceSlug}
+            onNavigate={handleNavigate}
           />
         )}
 
@@ -310,19 +372,35 @@ export default function App() {
           <ToolkitView onNavigate={handleNavigate} />
         )}
 
-        {currentPage === 'engineers' && (
-          <EngineersView
+        {(currentPage === 'journey-working-engineers' || currentPage === 'engineers') && (
+          <JourneyView
+            journeySlug="working-engineers"
             onNavigate={handleNavigate}
-            onOpenAssessment={() => setIsAssessmentOpen(true)}
-            onOpenSample={() => handleOpenSample(1)}
+            onOpenBuyModal={() => setIsBuyModalOpen(true)}
           />
         )}
 
-        {currentPage === 'students' && (
-          <StudentsView
+        {currentPage === 'journey-ai-ml' && (
+          <JourneyView
+            journeySlug="ai-ml-professionals"
             onNavigate={handleNavigate}
-            onOpenAssessment={() => setIsAssessmentOpen(true)}
-            onOpenInfographicModal={handleOpenInfographic}
+            onOpenBuyModal={() => setIsBuyModalOpen(true)}
+          />
+        )}
+
+        {currentPage === 'journey-technical-leaders' && (
+          <JourneyView
+            journeySlug="technical-leaders"
+            onNavigate={handleNavigate}
+            onOpenBuyModal={() => setIsBuyModalOpen(true)}
+          />
+        )}
+
+        {(currentPage === 'journey-students' || currentPage === 'students') && (
+          <JourneyView
+            journeySlug="students"
+            onNavigate={handleNavigate}
+            onOpenBuyModal={() => setIsBuyModalOpen(true)}
           />
         )}
 
@@ -383,7 +461,7 @@ export default function App() {
           <StoriesView
             onNavigate={handleNavigate}
             onOpenBuyModal={() => setIsBuyModalOpen(true)}
-            onOpenAssessment={() => setIsAssessmentOpen(true)}
+            onOpenAssessment={() => handleNavigate('/assessment')}
           />
         )}
 
@@ -403,15 +481,10 @@ export default function App() {
       <Footer
         onNavigate={handleNavigate}
         onOpenBuyModal={() => setIsBuyModalOpen(true)}
-        onOpenAssessment={() => setIsAssessmentOpen(true)}
+        onOpenAssessment={() => handleNavigate('/assessment')}
       />
 
       {/* 4. Global Interactive Modals */}
-      <AssessmentModal
-        isOpen={isAssessmentOpen}
-        onClose={() => setIsAssessmentOpen(false)}
-        onOpenBuyModal={() => setIsBuyModalOpen(true)}
-      />
 
       <ChapterModal
         isOpen={sampleChapterNumber !== null}

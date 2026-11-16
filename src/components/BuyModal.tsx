@@ -80,6 +80,10 @@ export const BuyModal: React.FC<BuyModalProps> = ({
       setDirectStatusMsg(res.message);
       setDirectStatus(res.success ? 'sent' : 'fallback');
       trackEvent('book_purchase_click', { edition: currentFmt.id, channel: 'direct_author', delivered: res.success });
+      trackEvent('book_cta_click', { location: 'buy_modal', edition: currentFmt.id });
+      if (res.success) {
+        trackEvent('waitlist_registration_success', { location: 'buy_modal', edition: currentFmt.id });
+      }
     } finally {
       setDirectSubmitting(false);
     }

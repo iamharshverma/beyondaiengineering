@@ -3,11 +3,17 @@ export type PageId =
   | 'book'
   | 'frameworks'
   | 'cao-framework'
+  | 'cao-stage'
   | 'framework-detail'
   | 'resources'
+  | 'resource-detail'
   | 'toolkit'
   | 'engineers'
   | 'students'
+  | 'journey-working-engineers'
+  | 'journey-ai-ml'
+  | 'journey-technical-leaders'
+  | 'journey-students'
   | 'organizations'
   | 'manifesto'
   | 'author'
@@ -25,6 +31,8 @@ export type PageId =
   | 'blog'
   | 'blog-detail'
   | 'contact';
+
+export type CAOStageId = 'creator' | 'architect' | 'orchestrator';
 
 export interface CaseStudyItem {
   name: string;

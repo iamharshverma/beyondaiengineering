@@ -73,6 +73,7 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
     e.preventDefault();
     setDirectSubmitting(true);
     trackEvent('book_purchase_click', { format: currentFmt.format, source: 'buy_page_direct' });
+    trackEvent('book_cta_click', { location: 'buy_page', edition: currentFmt.id });
     try {
       const res = await sendBookInquiryToAuthor({
         formType: 'Book Order (Direct Author Copy)',
@@ -85,6 +86,9 @@ export const BuyView: React.FC<BuyViewProps> = ({ onNavigate, onOpenSample }) =>
       setDirectMailtoUrl(res.mailtoUrl);
       setDirectMessage(res.message);
       setDirectStatus(res.success ? 'sent' : 'fallback');
+      if (res.success) {
+        trackEvent('waitlist_registration_success', { location: 'buy_page', edition: currentFmt.id });
+      }
     } finally {
       setDirectSubmitting(false);
     }

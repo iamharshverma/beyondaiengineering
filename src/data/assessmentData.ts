@@ -385,3 +385,468 @@ export function calculateAssessmentResult(
     };
   }
 }
+
+/* ============================================================================
+ * V2 15-STATEMENT, 5-POINT SCALE C.A.O. SELF-ASSESSMENT ENGINE (/assessment)
+ * ========================================================================== */
+
+export type ScaleScore = 1 | 2 | 3 | 4 | 5;
+export type CAODimension = 'creator' | 'architect' | 'orchestrator';
+
+export interface ScaleAssessmentQuestion {
+  id: number;
+  dimension: CAODimension;
+  statement: string;
+  contextHint: string;
+}
+
+export const LIKERT_SCALE_OPTIONS: {
+  value: ScaleScore;
+  label: string;
+  shortLabel: string;
+}[] = [
+  { value: 1, label: 'Rarely or never true of my current work', shortLabel: '1 · Never' },
+  { value: 2, label: 'Occasionally true', shortLabel: '2 · Rarely' },
+  { value: 3, label: 'Sometimes true, depending on context', shortLabel: '3 · Sometimes' },
+  { value: 4, label: 'Often true in my weekly practice', shortLabel: '4 · Often' },
+  { value: 5, label: 'Consistently true across nearly all projects', shortLabel: '5 · Always' },
+];
+
+export const SCALE_ASSESSMENT_QUESTIONS: ScaleAssessmentQuestion[] = [
+  // CREATOR (1-5): Execution, Verification, Debugging, Spec-First AI Pairing
+  {
+    id: 1,
+    dimension: 'creator',
+    statement:
+      'I build quick vertical prototypes or spikes early to test technical feasibility before locking into heavy abstractions.',
+    contextHint: 'Prototyping velocity & empirical validation',
+  },
+  {
+    id: 2,
+    dimension: 'creator',
+    statement:
+      'Whenever I use AI coding assistants, I write or verify failing edge-case tests rather than trusting plausible generated code.',
+    contextHint: 'Deterministic verification over vibe coding',
+  },
+  {
+    id: 3,
+    dimension: 'creator',
+    statement:
+      'When latency spikes or bugs appear in production, I can trace logs, memory, queries, and stack frames down to root mechanics.',
+    contextHint: 'First-principles debugging fluency',
+  },
+  {
+    id: 4,
+    dimension: 'creator',
+    statement:
+      'I keep AI-assisted pull requests focused, small, and free of redundant generated abstractions or dead helper functions.',
+    contextHint: 'Diff hygiene & complexity restraint',
+  },
+  {
+    id: 5,
+    dimension: 'creator',
+    statement:
+      'I actively benchmark alternative prompts, libraries, or model contexts rather than accepting the first working snippet.',
+    contextHint: 'Empirical craft & iteration discipline',
+  },
+
+  // ARCHITECT (6-10): Problem Definition, Boundaries, Trade-offs, AI Product Sense
+  {
+    id: 6,
+    dimension: 'architect',
+    statement:
+      'Before writing implementation specs, I routinely question whether a deterministic workflow or non-AI fix solves the problem better.',
+    contextHint: 'AI Product Sense & What-over-How judgment',
+  },
+  {
+    id: 7,
+    dimension: 'architect',
+    statement:
+      'I explicitly separate deterministic system state (schemas, transactions, auth) from probabilistic model inference at the edges.',
+    contextHint: 'Boundary & invariant isolation',
+  },
+  {
+    id: 8,
+    dimension: 'architect',
+    statement:
+      'I define token budgets, latency SLOs, rollback paths, and failure modes upfront in written Architecture Decision Records (ADRs).',
+    contextHint: 'Recorded trade-off & blast-radius planning',
+  },
+  {
+    id: 9,
+    dimension: 'architect',
+    statement:
+      'I maintain versioned evaluation harnesses or golden test datasets to catch quality drift before deploying model or prompt changes.',
+    contextHint: 'Systematic evaluation architecture',
+  },
+  {
+    id: 10,
+    dimension: 'architect',
+    statement:
+      'I regularly turn complex production trade-offs and incident root causes into clear written teardowns that raise team clarity.',
+    contextHint: 'Technical design synthesis & paper trail',
+  },
+
+  // ORCHESTRATOR (11-15): Agentic Governance, Ethics, Human API, Cross-Team Trust
+  {
+    id: 11,
+    dimension: 'orchestrator',
+    statement:
+      'For workflows using autonomous tools or agents, I establish explicit least-privilege permissions and human sign-off thresholds.',
+    contextHint: 'Agentic Diplomacy & authority matrices',
+  },
+  {
+    id: 12,
+    dimension: 'orchestrator',
+    statement:
+      'I proactively audit automated outputs and pipelines for privacy leakage, prompt injection, bias, and regulatory liability.',
+    contextHint: 'Ethical Curation & Trust Economy ownership',
+  },
+  {
+    id: 13,
+    dimension: 'orchestrator',
+    statement:
+      'I translate probabilistic model risks, verification standards, and accountability clearly across product, security, legal, and leadership peers.',
+    contextHint: 'The Human API across functions',
+  },
+  {
+    id: 14,
+    dimension: 'orchestrator',
+    statement:
+      'I coach teammates on shifting time away from boilerplate keystrokes toward review rigor, evals, and durable systems judgment.',
+    contextHint: 'Force multiplication & mentorship',
+  },
+  {
+    id: 15,
+    dimension: 'orchestrator',
+    statement:
+      'I build inspectable proof of work and exchange candid architectural critique within a trusted circle of domain peers.',
+    contextHint: 'Proof of work & micro-community stewardship',
+  },
+];
+
+export interface ScaleAssessmentResult {
+  scores: Record<CAODimension, number>; // Independent 0-100 scores per stage
+  averages: Record<CAODimension, number>; // 1.0 - 5.0 raw mean per stage
+  relativeBalance: Record<CAODimension, number>; // Normalized percentage (sums to 100)
+  strongestDimension: CAODimension;
+  growthDimension: CAODimension;
+  archetypeTitle: string;
+  headline: string;
+  narrative: string;
+  strengths: string[];
+  developmentGaps: string[];
+  plan7Day: string[];
+  plan30Day: string[];
+  plan90Day: string[];
+  recommendedStagePath: `/frameworks/${CAODimension}`;
+  recommendedResources: { slug: string; title: string; reason: string }[];
+  recommendedChapters: { chapter: number; title: string; reason: string }[];
+}
+
+export function computeDimensionScore(values: ScaleScore[]): { average: number; score: number } {
+  if (!values.length) return { average: 1, score: 0 };
+  const sum = values.reduce((acc, v) => acc + v, 0);
+  const average = sum / values.length;
+  const score = Math.max(0, Math.min(100, Math.round(((average - 1) / 4) * 100)));
+  return { average: Number(average.toFixed(2)), score };
+}
+
+export function calculateScaleAssessmentResult(
+  answers: Record<number, ScaleScore>
+): ScaleAssessmentResult {
+  const byDim: Record<CAODimension, ScaleScore[]> = {
+    creator: [],
+    architect: [],
+    orchestrator: [],
+  };
+
+  for (const q of SCALE_ASSESSMENT_QUESTIONS) {
+    const val = answers[q.id];
+    if (val >= 1 && val <= 5) {
+      byDim[q.dimension].push(val);
+    } else {
+      byDim[q.dimension].push(1);
+    }
+  }
+
+  const creatorCalc = computeDimensionScore(byDim.creator);
+  const architectCalc = computeDimensionScore(byDim.architect);
+  const orchestratorCalc = computeDimensionScore(byDim.orchestrator);
+
+  const scores: Record<CAODimension, number> = {
+    creator: creatorCalc.score,
+    architect: architectCalc.score,
+    orchestrator: orchestratorCalc.score,
+  };
+
+  const averages: Record<CAODimension, number> = {
+    creator: creatorCalc.average,
+    architect: architectCalc.average,
+    orchestrator: orchestratorCalc.average,
+  };
+
+  const scoreSum = scores.creator + scores.architect + scores.orchestrator;
+  let relativeBalance: Record<CAODimension, number>;
+  if (scoreSum === 0) {
+    relativeBalance = { creator: 34, architect: 33, orchestrator: 33 };
+  } else {
+    const creatorShare = Math.round((scores.creator / scoreSum) * 100);
+    const architectShare = Math.round((scores.architect / scoreSum) * 100);
+    const orchestratorShare = Math.max(0, 100 - creatorShare - architectShare);
+    relativeBalance = {
+      creator: creatorShare,
+      architect: architectShare,
+      orchestrator: orchestratorShare,
+    };
+  }
+
+  // Determine strongest & primary growth opportunity deterministically
+  const ordered: CAODimension[] = ['orchestrator', 'architect', 'creator'];
+  let strongestDimension: CAODimension = 'creator';
+  let bestVal = -1;
+  for (const dim of ordered) {
+    if (scores[dim] > bestVal) {
+      bestVal = scores[dim];
+      strongestDimension = dim;
+    }
+  }
+
+  let growthDimension: CAODimension = 'orchestrator';
+  let lowestVal = 101;
+  for (const dim of ['orchestrator', 'architect', 'creator'] as CAODimension[]) {
+    if (scores[dim] < lowestVal) {
+      lowestVal = scores[dim];
+      growthDimension = dim;
+    }
+  }
+  if (growthDimension === strongestDimension) {
+    growthDimension = strongestDimension === 'orchestrator' ? 'architect' : 'orchestrator';
+  }
+
+  const spread = Math.max(scores.creator, scores.architect, scores.orchestrator) - Math.min(scores.creator, scores.architect, scores.orchestrator);
+  const overallMean = Math.round((scores.creator + scores.architect + scores.orchestrator) / 3);
+
+  let archetypeTitle = 'Balanced Concentric Operator';
+  let headline = 'Strong fluency across execution, system design, and human-agent governance.';
+  let narrative =
+    'Your operating profile spans all three concentric layers of the C.A.O. model cleanly. Your highest leverage comes from tightening your lowest scoring dimension while codifying what already works into repeatable team standards.';
+
+  if (overallMean <= 25) {
+    archetypeTitle = 'Emerging Builder Entering the C.A.O. Transition';
+    headline = 'High upside ahead by anchoring verification habits alongside AI coding speed.';
+    narrative =
+      'Your baseline shows early-stage exposure to intentional C.A.O. practices across code verification, architecture framing, and governance. Focus first on disciplined Creator verification (testing what AI generates) before widening into system design and governance rituals.';
+  } else if (spread <= 12 && overallMean >= 65) {
+    archetypeTitle = 'Integrated Systems Orchestrator';
+    headline = 'Concentric mastery linking hands-on realism, system boundaries, and trusted governance.';
+    narrative =
+      'You demonstrate rare equilibrium across execution realism (Creator), invariant boundary design (Architect), and accountable governance (Orchestrator). Continue compounding authority by turning implicit standards into durable organizational artifacts.';
+  } else if (strongestDimension === 'creator') {
+    archetypeTitle = 'High-Velocity Creator Transitioning to Architecture';
+    headline = 'Strong build & debugging instincts ready to compound through explicit problem framing.';
+    narrative =
+      'You execute reliably and ship working code quickly. The biggest leverage jump over the next 90 days comes from pausing before prompt/code generation to define system invariants, write short ADRs, and own evaluation harnesses.';
+  } else if (strongestDimension === 'architect') {
+    archetypeTitle = 'Systems Architect Expanding Into Orchestration';
+    headline = 'Disciplined boundary and trade-off thinking anchored in technical realism.';
+    narrative =
+      'You already frame problems around invariants, cost/latency trade-offs, and deterministic boundaries. Next-stage leverage lies in Orchestrator stewardship: formalizing agent permission policies, ethical curation checks, and cross-functional trust alignment.';
+  } else {
+    archetypeTitle = 'Trust-Economy Orchestrator';
+    headline = 'High-leverage stewardship across multi-agent safety, accountability, and cross-team alignment.';
+    narrative =
+      'You prioritize governance, human escalation contracts, and organizational trust. Protect your credibility by keeping periodic Creator/Architect contact with real eval harnesses and hands-on failure inspection.';
+  }
+
+  const strengthCatalog: Record<CAODimension, string[]> = {
+    creator: [
+      'Hands-on debugging fluency and fast hypothesis validation under real runtime constraints.',
+      'Disciplined pairing with coding assistants anchored in edge-case verification and clean diffs.',
+    ],
+    architect: [
+      'Deliberate separation of deterministic system cores from probabilistic AI edges.',
+      'Clear trade-off reasoning across cost, latency SLOs, schema boundaries, and ADR clarity.',
+    ],
+    orchestrator: [
+      'Clear ownership of least-privilege agent boundaries, human sign-offs, and ethical curation.',
+      'Strong cross-functional translation across security, product, legal, and engineering peers.',
+    ],
+  };
+
+  const gapCatalog: Record<CAODimension, string> = {
+    creator:
+      'Verification depth at implementation time: ensure every AI-assisted diff is backed by failure-path tests and performance inspection.',
+    architect:
+      'Written design framing & evaluation harnesses: capture "what deserves to exist" and golden eval criteria before execution.',
+    orchestrator:
+      'Governance & externalized trust: establish explicit agent authority matrices, escalation policies, and public digital paper trails.',
+  };
+
+  const recommendedStagePath: `/frameworks/${CAODimension}` = `/frameworks/${growthDimension}`;
+
+  return {
+    scores,
+    averages,
+    relativeBalance,
+    strongestDimension,
+    growthDimension,
+    archetypeTitle,
+    headline,
+    narrative,
+    strengths: [
+      ...strengthCatalog[strongestDimension],
+      scores[growthDimension] >= 60
+        ? `Solid supporting baseline (${scores[growthDimension]}/100) in ${growthDimension.toUpperCase()} practices.`
+        : `Clear runway to raise your ${growthDimension.toUpperCase()} score (${scores[growthDimension]}/100) for higher system leverage.`,
+    ],
+    developmentGaps: [
+      gapCatalog[growthDimension],
+      strongestDimension === 'orchestrator' && scores.creator < 65
+        ? 'Maintain hands-on technical realism via monthly prototyping spikes so governance stays grounded.'
+        : 'Convert tacit weekly decisions into written artifacts others can inspect and reuse.',
+    ],
+    plan7Day: [
+      `Complete the ${growthDimension === 'creator' ? 'Human Advantage Inventory' : growthDimension === 'architect' ? 'AI Workflow Experiment' : 'Ethical AI Audit'} workspace inside Companion Resources.`,
+      'Audit your last 3 pull requests or design decisions to measure % time spent typing syntax vs. framing invariants and verifying edge cases.',
+    ],
+    plan30Day: [
+      growthDimension === 'creator'
+        ? 'Adopt spec-first pairing: write 3 failing boundary/invariant tests before asking an AI tool to implement code.'
+        : growthDimension === 'architect'
+        ? 'Author 2 structured Architecture Decision Records (ADRs) including rejected alternatives and failure budgets.'
+        : 'Publish a 1-page Agent Authority & Escalation Matrix distinguishing Autonomous, Co-Signed, and Human-Only actions.',
+      'Draft one concise War Story narrative documenting a failure prevented or diagnosed cleanly.',
+    ],
+    plan90Day: [
+      'Execute a complete 30/60/90-Day Plan aligned to your target C.A.O. balance and track 3 visible proof artifacts.',
+      'Build a 20-person peer Micro-Community exchange to review architecture notes and verification harnesses monthly.',
+    ],
+    recommendedStagePath,
+    recommendedResources: [
+      {
+        slug: 'cao-career-map',
+        title: 'C.A.O. Career Map',
+        reason: 'Translate these dimension scores into concrete weekly calendar shifts.',
+      },
+      ...(growthDimension === 'orchestrator'
+        ? [
+            {
+              slug: 'ethical-ai-audit',
+              title: 'Ethical AI Audit',
+              reason: 'Strengthen blast-radius controls, PII guardrails, and escalation clarity.',
+            },
+          ]
+        : growthDimension === 'architect'
+        ? [
+            {
+              slug: 'ai-workflow-experiment',
+              title: 'AI Workflow Experiment',
+              reason: 'Benchmark system designs and verification harnesses empirically.',
+            },
+          ]
+        : [
+            {
+              slug: 'human-advantage-inventory',
+              title: 'Human Advantage Inventory',
+              reason: 'Separate AI-assisted syntax tasks from irreplaceable debugging judgment.',
+            },
+          ]),
+      {
+        slug: '30-60-90-plan',
+        title: '30/60/90-Day Plan',
+        reason: 'Turn your 7, 30, and 90-day recommendations into an exportable action plan.',
+      },
+    ],
+    recommendedChapters: [
+      {
+        chapter: 3,
+        title: 'The Creator · Architect · Orchestrator Triad',
+        reason: 'Master how the three concentric operating modes reinforce one another.',
+      },
+      growthDimension === 'creator'
+        ? {
+            chapter: 1,
+            title: 'Escaping the Tyranny of Syntax',
+            reason: 'Anchor technical craft and fast verification when code is abundant.',
+          }
+        : growthDimension === 'architect'
+        ? {
+            chapter: 4,
+            title: 'From HOW to WHAT',
+            reason: 'Move cleanly from ticket execution to durable system framing.',
+          }
+        : {
+            chapter: 6,
+            title: 'Ethical Curation in Autonomous Systems',
+            reason: 'Institutionalize safety, liability ownership, and organizational trust.',
+          },
+      {
+        chapter: 11,
+        title: 'Your 30/60/90-Day C.A.O. Transition',
+        reason: 'Structured playbook for compounding judgment over the next quarter.',
+      },
+    ],
+  };
+}
+
+export function buildAssessmentReportMarkdown(result: ScaleAssessmentResult): string {
+  const dateStr = new Date().toISOString().split('T')[0];
+  return `# Beyond AI Engineering — C.A.O. Self-Assessment Report
+
+**Date:** ${dateStr}  
+**Profile Archetype:** ${result.archetypeTitle}  
+**Headline:** ${result.headline}
+
+> *Disclaimer: Structured self-reflection and career-planning exercise accompanying Beyond AI Engineering by Harsh Verma. Not a clinical or formal psychometric test.*
+
+---
+
+## 1. Independent Dimension Scores (0–100 Scale)
+
+| Dimension | Focus | Score (0–100) | Mean Rating (1–5) | Relative Operating Share |
+| :--- | :--- | :---: | :---: | :---: |
+| **Creator** | Build, Verify & Debug | ${result.scores.creator}/100 | ${result.averages.creator} / 5 | ${result.relativeBalance.creator}% |
+| **Architect** | Design, Boundaries & Trade-offs | ${result.scores.architect}/100 | ${result.averages.architect} / 5 | ${result.relativeBalance.architect}% |
+| **Orchestrator** | Govern, Align & Curate Trust | ${result.scores.orchestrator}/100 | ${result.averages.orchestrator} / 5 | ${result.relativeBalance.orchestrator}% |
+
+**Strongest Dimension:** ${result.strongestDimension.toUpperCase()}  
+**Highest-Leverage Growth Area:** ${result.growthDimension.toUpperCase()}
+
+---
+
+## 2. Diagnostic Summary
+
+${result.narrative}
+
+### Key Strengths
+${result.strengths.map((s) => `- ${s}`).join('\n')}
+
+### Development Opportunities
+${result.developmentGaps.map((g) => `- ${g}`).join('\n')}
+
+---
+
+## 3. Recommended 7 / 30 / 90-Day Transition Plan
+
+### Next 7 Days
+${result.plan7Day.map((step, i) => `${i + 1}. ${step}`).join('\n')}
+
+### Next 30 Days
+${result.plan30Day.map((step, i) => `${i + 1}. ${step}`).join('\n')}
+
+### Next 90 Days
+${result.plan90Day.map((step, i) => `${i + 1}. ${step}`).join('\n')}
+
+---
+
+## 4. Recommended Next Reading & Workspaces
+
+### Book Chapters
+${result.recommendedChapters.map((c) => `- **Chapter ${c.chapter}: ${c.title}** — ${c.reason}`).join('\n')}
+
+### Companion Workspaces
+${result.recommendedResources.map((r) => `- **${r.title}** (/resources/${r.slug}) — ${r.reason}`).join('\n')}
+`;
+}
+

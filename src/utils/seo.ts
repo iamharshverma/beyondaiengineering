@@ -6,6 +6,7 @@
 import { SITE_CONFIG } from '../config/siteConfig';
 import { Framework } from '../types';
 import { INSIGHTS, InsightItem } from '../data/insightsData';
+import { buildFrameworkCitationBundle } from './sourceNoteSchema';
 
 export interface PageSeoConfig {
   title: string;
@@ -364,24 +365,77 @@ export const PAGE_SEO_CONFIGS: Record<string, PageSeoConfig> = {
       { name: 'Get the Book', path: '/book/buy' },
     ],
   },
-  engineers: {
-    title: 'For Engineers | Build Your Next Chapter — Beyond AI Engineering',
+  assessment: {
+    title: '15-Item C.A.O. Self-Assessment | Beyond AI Engineering',
     description:
-      'Practical pathways for mid-to-senior software engineers moving from code output to systems design, judgment, and agent orchestration.',
-    canonicalPath: '/engineers',
+      'Self-assess your current engineering habits across Creator, Architect, and Orchestrator on a 5-point scale with a printable 7/30/90-day transition plan.',
+    canonicalPath: '/assessment',
     ogType: 'website',
-    ogImage: PAGE_OG_IMAGES.engineers,
-    breadcrumbs: [{ name: 'For Engineers', path: '/engineers' }],
+    ogImage: PAGE_OG_IMAGES.caoFramework,
+    schemaType: 'WebPage',
+    breadcrumbs: [
+      { name: 'C.A.O. Framework', path: '/cao-framework' },
+      { name: 'C.A.O. Self-Assessment', path: '/assessment' },
+    ],
   },
-  students: {
-    title: 'For Students & Early-Career Engineers | Beyond AI Engineering',
+  'journey-working-engineers': {
+    title: 'Journey for Working Software Engineers | Beyond AI Engineering',
     description:
-      'How CS students and early-career engineers build durable proof of work, systems fundamentals, and judgment when AI writes syntax.',
-    canonicalPath: '/students',
+      'Practical career operating pathway for mid-to-senior software engineers moving from code velocity to architectural boundaries, verification, and agent oversight.',
+    canonicalPath: '/journeys/working-engineers',
+    ogType: 'article',
+    ogImage: PAGE_OG_IMAGES.engineers,
+    schemaType: 'Article',
+    breadcrumbs: [{ name: 'Journey: Working Engineers', path: '/journeys/working-engineers' }],
+  },
+  'journey-ai-ml': {
+    title: 'Journey for AI / ML Professionals | Beyond AI Engineering',
+    description:
+      'Move beyond notebooks and model weights toward deterministic evaluation harnesses, agent guardrails, and production trust economics.',
+    canonicalPath: '/journeys/ai-ml-professionals',
+    ogType: 'article',
+    ogImage: PAGE_OG_IMAGES.frameworks,
+    schemaType: 'Article',
+    breadcrumbs: [{ name: 'Journey: AI / ML Professionals', path: '/journeys/ai-ml-professionals' }],
+  },
+  'journey-technical-leaders': {
+    title: 'Journey for Technical Leaders & CTOs | Beyond AI Engineering',
+    description:
+      'Design Human APIs, bounded agent permissions, evaluation accountability, and team structure for engineering organizations adopting AI.',
+    canonicalPath: '/journeys/technical-leaders',
+    ogType: 'article',
+    ogImage: PAGE_OG_IMAGES.organizations,
+    schemaType: 'Article',
+    breadcrumbs: [{ name: 'Journey: Technical Leaders', path: '/journeys/technical-leaders' }],
+  },
+  'journey-students': {
+    title: 'Journey for Students & New Graduates | Beyond AI Engineering',
+    description:
+      'Build verifiable proof of work, enduring computer science fundamentals, and inspectable judgment rather than AI-generated resume trivia.',
+    canonicalPath: '/journeys/students',
     ogType: 'article',
     ogImage: PAGE_OG_IMAGES.students,
     schemaType: 'Article',
-    breadcrumbs: [{ name: 'For Students', path: '/students' }],
+    breadcrumbs: [{ name: 'Journey: Students & New Grads', path: '/journeys/students' }],
+  },
+  engineers: {
+    title: 'Journey for Working Software Engineers | Beyond AI Engineering',
+    description:
+      'Practical pathways for mid-to-senior software engineers moving from code output to systems design, judgment, and agent orchestration.',
+    canonicalPath: '/journeys/working-engineers',
+    ogType: 'website',
+    ogImage: PAGE_OG_IMAGES.engineers,
+    breadcrumbs: [{ name: 'Journey: Working Engineers', path: '/journeys/working-engineers' }],
+  },
+  students: {
+    title: 'Journey for Students & New Graduates | Beyond AI Engineering',
+    description:
+      'How CS students and early-career engineers build durable proof of work, systems fundamentals, and judgment when AI writes syntax.',
+    canonicalPath: '/journeys/students',
+    ogType: 'article',
+    ogImage: PAGE_OG_IMAGES.students,
+    schemaType: 'Article',
+    breadcrumbs: [{ name: 'Journey: Students & New Grads', path: '/journeys/students' }],
   },
   organizations: {
     title: 'For Organizations & Engineering Teams | Beyond AI Engineering',
@@ -1002,6 +1056,15 @@ function updateSchemaGraph(config: PageSeoConfig, canonicalUrl: string) {
     graphItems.push(siteBreadcrumbList, insightsBlogEntity, ...articleNodes);
   }
 
+  const frameworkCitationBundle = config.frameworkData
+    ? buildFrameworkCitationBundle(config.frameworkData.id, {
+        entityId: `${canonicalUrl}#term`,
+        articleId: `${canonicalUrl}#article`,
+        entityName: config.frameworkData.name,
+        entityUrl: canonicalUrl,
+      })
+    : null;
+
   if (
     (config.schemaType === 'Article' || config.schemaType === 'TechArticle') &&
     config.articleData
@@ -1027,6 +1090,9 @@ function updateSchemaGraph(config: PageSeoConfig, canonicalUrl: string) {
       ...(config.articleData.keywords && config.articleData.keywords.length > 0
         ? { keywords: config.articleData.keywords.join(', ') }
         : {}),
+      ...(frameworkCitationBundle && frameworkCitationBundle.citationRefs.length > 0
+        ? { citation: frameworkCitationBundle.citationRefs }
+        : {}),
     });
   }
 
@@ -1038,7 +1104,13 @@ function updateSchemaGraph(config: PageSeoConfig, canonicalUrl: string) {
       description: config.frameworkData.definition,
       url: canonicalUrl,
       inDefinedTermSet: { '@id': `${CANONICAL_ORIGIN}/frameworks#terms` },
+      ...(frameworkCitationBundle && frameworkCitationBundle.citationRefs.length > 0
+        ? { citation: frameworkCitationBundle.citationRefs }
+        : {}),
     });
+    if (frameworkCitationBundle && frameworkCitationBundle.citationNodes.length > 0) {
+      graphItems.push(...frameworkCitationBundle.citationNodes);
+    }
   }
 
   scriptEl.textContent = JSON.stringify(

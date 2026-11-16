@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PageId } from '../types';
 import { READER_STORIES, STORY_ARCHETYPE_DISCLAIMER } from '../data/storiesData';
+import { SourceNote } from '../components/SourceNote';
 import { updatePageSeo, PAGE_OG_IMAGES } from '../utils/seo';
 import { Send, CheckCircle2, Quote, Loader2, Mail, AlertCircle, Info } from 'lucide-react';
 import { sendBookInquiryToAuthor, AUTHOR_EMAIL } from '../utils/emailService';
@@ -210,11 +211,14 @@ export const StoriesView: React.FC<StoriesViewProps> = ({
 
       {/* 2. ARCHETYPE DISCLAIMER + CASE STUDY CARDS */}
       <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        <div className="p-5 bg-[#FAF9F5] dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-xl flex items-start gap-3">
-          <Info className="w-4 h-4 text-blue-900 dark:text-blue-400 shrink-0 mt-0.5" />
-          <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed">
-            {STORY_ARCHETYPE_DISCLAIMER}
-          </p>
+        <div className="space-y-4">
+          <div className="p-5 bg-[#FAF9F5] dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-xl flex items-start gap-3">
+            <Info className="w-4 h-4 text-blue-900 dark:text-blue-400 shrink-0 mt-0.5" />
+            <p className="text-xs sm:text-sm text-[#475467] dark:text-slate-300 leading-relaxed">
+              {STORY_ARCHETYPE_DISCLAIMER}
+            </p>
+          </div>
+          <SourceNote sourceId="archetype-stories-disclaimer" compact />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

@@ -4,6 +4,8 @@ import { SITE_CONFIG } from '../config/siteConfig';
 import { FRAMEWORKS } from '../data/frameworksData';
 import { updatePageSeo, CANONICAL_ORIGIN, buildDynamicFrameworkSeo } from '../utils/seo';
 import { CiteThisFramework } from '../components/CiteThisFramework';
+import { SourceNote } from '../components/SourceNote';
+import { getFrameworkSourceIds } from '../utils/sourceNoteSchema';
 import { trackEvent } from '../utils/analytics';
 import {
   ArrowRight,
@@ -18,7 +20,7 @@ import {
 
 interface FrameworkDetailViewProps {
   frameworkId: string;
-  onNavigate: (page: PageId) => void;
+  onNavigate: (pageOrPath: PageId | string) => void;
   onSelectFramework: (id: string) => void;
   onOpenBuyModal: () => void;
 }
@@ -45,6 +47,10 @@ export const FrameworkDetailView: React.FC<FrameworkDetailViewProps> = ({
   }, [framework]);
 
   const relatedFrameworks = FRAMEWORKS.filter((f) => f.id !== framework.id).slice(0, 3);
+  const frameworkCanonicalPath =
+    framework.id === 'cao-framework' ? '/cao-framework' : `/frameworks/${framework.id}`;
+  const frameworkEntityUrl = `${CANONICAL_ORIGIN}${frameworkCanonicalPath}`;
+  const frameworkSourceIds = getFrameworkSourceIds(framework.id);
   const trustScore = trustChecklist.filter(Boolean).length;
   const ethicalScore = ethicalChecks.filter(Boolean).length;
 
@@ -417,6 +423,43 @@ Reference: ${SITE_CONFIG.book.title} by ${SITE_CONFIG.author.name} (${CANONICAL_
           </h2>
           <div className="p-6 bg-emerald-50/50 dark:bg-emerald-950/30 border border-emerald-200/60 dark:border-emerald-800/40 rounded-xl text-sm sm:text-base text-[#101828] dark:text-slate-100 font-medium leading-relaxed">
             {framework.tryItYourself}
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          {frameworkSourceIds.map((srcId) => (
+            <SourceNote
+              key={srcId}
+              sourceId={srcId}
+              entityId={`${frameworkEntityUrl}#term`}
+              articleId={`${frameworkEntityUrl}#article`}
+              entityName={framework.title}
+              entityUrl={frameworkEntityUrl}
+            />
+          ))}
+        </div>
+
+        <div className="p-5 rounded-xl border border-[#101828]/10 dark:border-white/10 bg-[#FAF9F5] dark:bg-[#11192E] flex flex-wrap items-center justify-between gap-3">
+          <div className="text-xs text-[#475467] dark:text-slate-300">
+            See how this concept operates inside the C.A.O. stages or benchmark your own habits:
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {framework.caoPhase !== 'All' && (
+              <button
+                type="button"
+                onClick={() => onNavigate(`/frameworks/${framework.caoPhase.toLowerCase()}`)}
+                className="px-3 py-1.5 rounded-md border border-[#101828]/15 dark:border-white/15 bg-white dark:bg-[#0D1527] text-xs font-semibold text-[#101828] dark:text-white cursor-pointer"
+              >
+                Open {framework.caoPhase} Stage →
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => onNavigate('/assessment')}
+              className="px-3 py-1.5 rounded-md bg-blue-900 dark:bg-blue-500 text-white dark:text-[#070B14] text-xs font-semibold cursor-pointer"
+            >
+              Take C.A.O. Assessment →
+            </button>
           </div>
         </div>
 

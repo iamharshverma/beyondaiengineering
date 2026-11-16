@@ -31,6 +31,11 @@ import {
   Pause,
 } from 'lucide-react';
 import { sendBookInquiryToAuthor } from '../utils/emailService';
+import agenticAiThumb from '../assets/images/insights_agentic_ai_1794789371938.jpg';
+import governanceTrustThumb from '../assets/images/insights_governance_trust_1794789374345.jpg';
+import systemsArchThumb from '../assets/images/insights_systems_arch_1794789372486.jpg';
+import careersCodeThumb from '../assets/images/insights_careers_code_1794789372869.jpg';
+import forbesExecThumb from '../assets/images/insights_forbes_executive_1794789373863.jpg';
 
 interface HomeViewProps {
   onNavigate: (page: PageId, slug?: string) => void;
@@ -73,7 +78,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
     e.preventDefault();
     if (!emailInput.trim()) return;
     setEmailSubmitting(true);
-    trackEvent('newsletter_signup', { location: 'home_footer', recipient: SITE_CONFIG.author.directRecipientEmail });
+    trackEvent('newsletter_signup', { location: 'home_footer' });
     try {
       const res = await sendBookInquiryToAuthor({
         formType: 'Newsletter Subscription',
@@ -86,6 +91,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       if (res.success) {
         setEmailStatus('sent');
         setEmailMessage(res.message);
+        trackEvent('waitlist_registration_success', { location: 'home_footer', channel: 'newsletter' });
       } else {
         setEmailStatus('fallback');
         setEmailMessage(res.message);
@@ -108,7 +114,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       role: 'Staff & Senior Developers',
       icon: Layers,
       description: 'You already know how to build. Move your leverage from syntax generation to system invariants and architecture.',
-      targetPage: 'engineers',
+      targetPage: 'journey-working-engineers',
       ctaLabel: 'Pathway for Engineers',
     },
     {
@@ -116,7 +122,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       role: 'Machine Learning & Data Engineers',
       icon: Cpu,
       description: 'Move beyond model weights toward production systems, evaluation harnesses, deterministic guardrails, and trust.',
-      targetPage: 'frameworks',
+      targetPage: 'journey-ai-ml',
       ctaLabel: 'Explore Frameworks',
     },
     {
@@ -124,7 +130,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       role: 'CTOs, VPs & Engineering Directors',
       icon: Shield,
       description: 'Align teams, autonomous agents, authority boundaries, risk, and accountability into one durable operating system.',
-      targetPage: 'organizations',
+      targetPage: 'journey-technical-leaders',
       ctaLabel: 'For Organizations',
     },
     {
@@ -132,7 +138,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       role: 'Future Engineering Talent',
       icon: GraduationCap,
       description: 'Enter engineering with an AI-native mindset while building verifiable evidence of judgment—not just framework trivia.',
-      targetPage: 'students',
+      targetPage: 'journey-students',
       ctaLabel: 'Pathway for Students',
     },
   ];
@@ -232,6 +238,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       code: '01 · BACKBONE',
       name: 'The C.A.O. Framework',
       summary: 'Progression from Creator (build) to Architect (design) to Orchestrator (govern).',
+      thumb: agenticAiThumb,
     },
     {
       slug: 'trust-economy',
@@ -239,6 +246,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       code: '02 · ECONOMICS',
       name: 'The Trust Economy',
       summary: 'Why abundant AI output makes verified human judgment the highest-value asset.',
+      thumb: governanceTrustThumb,
     },
     {
       slug: 'how-to-what',
@@ -246,6 +254,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       code: '03 · STRATEGY',
       name: 'From HOW to WHAT',
       summary: 'Shifting engineering focus from implementation mechanics to problem specification.',
+      thumb: systemsArchThumb,
     },
     {
       slug: 'human-api',
@@ -253,6 +262,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
       code: '04 · COLLABORATION',
       name: 'The Human API',
       summary: 'Structured interfaces, reliability guarantees, and clarity between people and agents.',
+      thumb: careersCodeThumb,
     },
     {
       slug: 'ethical-curation',
@@ -260,7 +270,15 @@ export const HomeView: React.FC<HomeViewProps> = ({
       code: '05 · GOVERNANCE',
       name: 'Ethical Curation',
       summary: 'Production risk audits, drift observability, and refusing unverified AI output.',
+      thumb: forbesExecThumb,
     },
+  ];
+
+  const mediaVenueThumbnails = [
+    forbesExecThumb,
+    systemsArchThumb,
+    agenticAiThumb,
+    governanceTrustThumb,
   ];
 
   return (
@@ -303,6 +321,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 type="button"
                 onClick={() => {
                   trackEvent('book_purchase_click', { source: 'home_hero' });
+                  trackEvent('book_cta_click', { location: 'home_hero', destination: 'buy_modal' });
                   onOpenBuyModal();
                 }}
                 className="px-6 py-3.5 text-sm font-semibold tracking-wide text-white bg-[#101828] dark:bg-white dark:text-[#070B14] rounded-md hover:bg-blue-950 dark:hover:bg-slate-100 transition-all shadow-sm flex items-center gap-2 cursor-pointer"
@@ -326,6 +345,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 transition={{ duration: 0.5, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
                 onClick={() => {
                   trackEvent('cao_assessment_start', { source: 'home_hero' });
+                  trackEvent('assessment_started', { source: 'home_hero' });
                   onOpenAssessment();
                 }}
                 className="px-5 py-3.5 text-sm font-semibold text-blue-900 dark:text-blue-300 bg-blue-50/80 dark:bg-blue-950/50 border border-blue-900/20 dark:border-blue-400/30 rounded-md hover:bg-blue-100/80 dark:hover:bg-blue-900/50 transition-colors cursor-pointer inline-flex items-center gap-2"
@@ -1043,22 +1063,35 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     ? onNavigate('cao-framework')
                     : onNavigate('frameworks', fw.slug)
                 }
-                className="text-left p-5 rounded-xl bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 hover:border-blue-900 dark:hover:border-blue-400 transition-all flex flex-col justify-between cursor-pointer group"
+                className="text-left p-4 rounded-xl bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 hover:border-blue-900/60 dark:hover:border-blue-400/60 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between cursor-pointer group shadow-2xs"
               >
                 <div>
-                  <span className="text-[10px] font-mono tabular-nums text-blue-900 dark:text-blue-400 font-bold block mb-2">
-                    {fw.code}
-                  </span>
-                  <h3 className="font-serif text-lg font-bold text-[#101828] dark:text-white mb-2 group-hover:text-blue-900 dark:group-hover:text-blue-400">
+                  <div className="relative w-full aspect-[16/10] rounded-lg overflow-hidden border border-[#101828]/10 dark:border-white/15 bg-[#0F172A] mb-3.5 shadow-2xs">
+                    <img
+                      src={fw.thumb}
+                      alt={`${fw.name} framework visual`}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div
+                      aria-hidden="true"
+                      className="absolute inset-0 bg-gradient-to-t from-[#070B14]/80 via-[#070B14]/15 to-transparent pointer-events-none"
+                    />
+                    <span className="absolute bottom-2 left-2.5 text-[10px] font-mono tabular-nums text-white font-bold tracking-wider">
+                      {fw.code}
+                    </span>
+                  </div>
+                  <h3 className="font-serif text-lg font-bold text-[#101828] dark:text-white mb-2 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">
                     {fw.name}
                   </h3>
                   <p className="text-xs text-[#475467] dark:text-slate-300 leading-relaxed">
                     {fw.summary}
                   </p>
                 </div>
-                <span className="pt-4 text-[11px] font-semibold text-blue-900 dark:text-blue-400 inline-flex items-center gap-1">
+                <span className="pt-4 text-[11px] font-semibold text-blue-900 dark:text-blue-400 inline-flex items-center gap-1 group-hover:underline">
                   <span>Open Guide</span>
-                  <ArrowRight className="w-3 h-3" />
+                  <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-0.5" />
                 </span>
               </button>
             ))}
@@ -1179,16 +1212,29 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            {SITE_CONFIG.author.mediaVenues.map((venue) => (
+            {SITE_CONFIG.author.mediaVenues.map((venue, idx) => (
               <div
                 key={venue.name}
-                className="p-6 bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-xl flex flex-col justify-between"
+                className="group p-6 bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 hover:border-blue-900/50 dark:hover:border-blue-400/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 rounded-xl flex flex-col justify-between shadow-2xs"
               >
                 <div>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-blue-900 dark:text-blue-400 font-bold block mb-2">
-                    {venue.category}
-                  </span>
-                  <h3 className="font-serif text-lg font-bold text-[#101828] dark:text-white mb-2">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-blue-900 dark:text-blue-400 font-bold leading-snug pt-0.5">
+                      {venue.category}
+                    </span>
+                    <div className="w-12 h-12 rounded-lg overflow-hidden border border-[#101828]/10 dark:border-white/15 bg-[#0F172A] shadow-2xs shrink-0 relative">
+                      <img
+                        src={mediaVenueThumbnails[idx % mediaVenueThumbnails.length]}
+                        alt=""
+                        aria-hidden="true"
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 ring-1 ring-inset ring-black/5 dark:ring-white/10 rounded-lg pointer-events-none" />
+                    </div>
+                  </div>
+                  <h3 className="font-serif text-lg font-bold text-[#101828] dark:text-white mb-2 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">
                     {venue.name}
                   </h3>
                   <p className="text-xs text-[#475467] dark:text-slate-300 leading-relaxed">
@@ -1203,7 +1249,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                     className="pt-4 text-xs font-semibold text-blue-900 dark:text-blue-400 inline-flex items-center gap-1 hover:underline"
                   >
                     <span>Verify Profile</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
+                    <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </a>
                 )}
               </div>

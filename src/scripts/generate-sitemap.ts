@@ -3,6 +3,9 @@ import path from 'path';
 import glob from 'fast-glob';
 import { FRAMEWORKS } from '../data/frameworksData';
 import { INSIGHTS } from '../data/insightsData';
+import { CAO_STAGE_ORDER } from '../data/caoStagesData';
+import { RESOURCE_WORKSPACES } from '../data/resourceWorkspacesData';
+import { AUDIENCE_JOURNEY_ORDER } from '../data/journeysData';
 import {
   CANONICAL_ORIGIN,
   DEFAULT_OG_IMAGE,
@@ -236,11 +239,18 @@ export async function generateSitemap(): Promise<number> {
       case 'BuyView.tsx':
         urls.push({ loc: '/book/buy', lastmod, changefreq: 'monthly', priority: '0.90' });
         break;
-      case 'EngineersView.tsx':
-        urls.push({ loc: '/engineers', lastmod, changefreq: 'monthly', priority: '0.90' });
+      case 'AssessmentView.tsx':
+        urls.push({ loc: '/assessment', lastmod, changefreq: 'weekly', priority: '0.95' });
         break;
-      case 'StudentsView.tsx':
-        urls.push({ loc: '/students', lastmod, changefreq: 'monthly', priority: '0.85' });
+      case 'JourneyView.tsx':
+        for (const journeySlug of AUDIENCE_JOURNEY_ORDER) {
+          urls.push({
+            loc: `/journeys/${journeySlug}`,
+            lastmod,
+            changefreq: 'monthly',
+            priority: '0.90',
+          });
+        }
         break;
       case 'TeamsView.tsx':
         urls.push({ loc: '/organizations', lastmod, changefreq: 'monthly', priority: '0.85' });
@@ -250,6 +260,16 @@ export async function generateSitemap(): Promise<number> {
         break;
       case 'CAOFrameworkView.tsx':
         urls.push({ loc: '/cao-framework', lastmod, changefreq: 'weekly', priority: '0.95' });
+        break;
+      case 'CAOStageView.tsx':
+        for (const stageId of CAO_STAGE_ORDER) {
+          urls.push({
+            loc: `/frameworks/${stageId}`,
+            lastmod,
+            changefreq: 'weekly',
+            priority: '0.90',
+          });
+        }
         break;
       case 'FrameworksView.tsx':
         urls.push({ loc: '/frameworks', lastmod, changefreq: 'weekly', priority: '0.90' });
@@ -271,6 +291,16 @@ export async function generateSitemap(): Promise<number> {
         break;
       case 'ResourcesView.tsx':
         urls.push({ loc: '/resources', lastmod, changefreq: 'weekly', priority: '0.85' });
+        break;
+      case 'ResourceWorkspaceView.tsx':
+        for (const ws of RESOURCE_WORKSPACES) {
+          urls.push({
+            loc: `/resources/${ws.slug}`,
+            lastmod,
+            changefreq: 'monthly',
+            priority: '0.85',
+          });
+        }
         break;
       case 'ToolkitView.tsx':
         urls.push({ loc: '/toolkit', lastmod, changefreq: 'weekly', priority: '0.85' });

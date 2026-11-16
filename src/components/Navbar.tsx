@@ -173,9 +173,13 @@ export const Navbar: React.FC<NavbarProps> = ({
     if (page === 'cao-framework') {
       return (
         currentPage === 'cao-framework' ||
+        currentPage === 'cao-stage' ||
         currentPage === 'frameworks' ||
         currentPage === 'framework-detail'
       );
+    }
+    if (page === 'resources') {
+      return currentPage === 'resources' || currentPage === 'resource-detail';
     }
     if (page === 'book') {
       return currentPage === 'book' || currentPage === 'sample' || currentPage === 'buy';
@@ -200,20 +204,23 @@ export const Navbar: React.FC<NavbarProps> = ({
           { label: 'Home', page: 'home' as PageId, icon: Sparkles, desc: 'Beyond AI Engineering: From Creator to Curator' },
           { label: 'The Book', page: 'book' as PageId, icon: BookOpen, desc: '11 chapters, 4 parts & 15 visual blueprints' },
           { label: 'Read a Sample Chapter', page: 'sample' as PageId, icon: BookOpen, desc: 'Excerpt: Escaping the Tyranny of Syntax' },
-          { label: 'C.A.O. Framework', page: 'cao-framework' as PageId, icon: Compass, desc: 'Creator → Architect → Orchestrator & 12-Scenario Assessment' },
+          { label: 'C.A.O. Framework', page: 'cao-framework' as PageId, icon: Compass, desc: 'Creator, Architect & Orchestrator deep-dive architecture' },
+          { label: '15-Item C.A.O. Assessment', page: 'assessment' as PageId, icon: Sparkles, desc: 'Self-diagnostic across Creator, Architect & Orchestrator' },
           { label: '12 Signature Frameworks', page: 'frameworks' as PageId, icon: Layers, desc: 'Trust Economy, How → What, Human API, Ethical Curation' },
           { label: 'The Manifesto', page: 'manifesto' as PageId, icon: ScrollText, desc: '8 founding axioms for engineering in the AI era' },
           { label: 'Get the Book', page: 'buy' as PageId, icon: ArrowUpRight, desc: 'Editions, direct author copies & inquiry options' },
         ],
       },
       {
-        title: 'Audience Pathways & Implementation Lab',
+        title: 'Audience Journeys & Implementation Lab',
         meta: 'Applied Practice',
         items: [
-          { label: 'For Engineers', page: 'engineers' as PageId, icon: Briefcase, desc: 'Build your next chapter beyond syntax generation' },
-          { label: 'For Students', page: 'students' as PageId, icon: GraduationCap, desc: 'Build 3 projects, fundamentals & early-career roadmap' },
+          { label: 'Working Engineers', page: 'journey-working-engineers' as PageId, icon: Briefcase, desc: 'Move from syntax output to system invariants & authority' },
+          { label: 'AI / ML Professionals', page: 'journey-ai-ml' as PageId, icon: Sparkles, desc: 'Deterministic evals, trust budgets & production reliability' },
+          { label: 'Technical Leaders', page: 'journey-technical-leaders' as PageId, icon: ShieldCheck, desc: 'Human APIs, authority boundaries & multi-agent governance' },
+          { label: 'Students & New Grads', page: 'journey-students' as PageId, icon: GraduationCap, desc: '3 real proof-of-work projects, CS fundamentals & outreach' },
           { label: 'For Organizations', page: 'organizations' as PageId, icon: Users, desc: 'Bulk copies, reading groups, workshops & keynotes' },
-          { label: 'Implementation Lab (15 Tools)', page: 'resources' as PageId, icon: FlaskConical, desc: 'Interactive canvases, checklists & 30/60/90 plans' },
+          { label: 'Companion Workspaces (9+ Tools)', page: 'resources' as PageId, icon: FlaskConical, desc: 'Browser-saved interactive tools, audits & 30/60/90 plans' },
           { label: 'Living AI Toolkit', page: 'toolkit' as PageId, icon: Wrench, desc: 'Curated agent, evaluation, observability & security tools' },
         ],
       },
@@ -468,7 +475,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="w-full py-2.5 px-4 text-xs font-semibold rounded-md border border-[#101828]/20 dark:border-white/20 text-[#101828] dark:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5 text-blue-900 dark:text-blue-400" />
-                <span>Take 12-Scenario C.A.O. Assessment</span>
+                <span>Take 15-Item C.A.O. Assessment</span>
               </motion.button>
 
               <button

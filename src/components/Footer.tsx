@@ -122,18 +122,33 @@ export const Footer: React.FC<FooterProps> = ({
               </h3>
               <ul className="space-y-2.5 text-slate-300">
                 <li>
-                  <a href={getPagePath('insights')} onClick={(e) => { e.preventDefault(); handleNavigate('insights'); }} className="hover:text-white transition-colors cursor-pointer text-blue-300 font-medium">
+                  <a href={getPagePath('assessment')} onClick={(e) => { e.preventDefault(); handleNavigate('assessment'); }} className="hover:text-white transition-colors cursor-pointer text-blue-300 font-medium">
+                    15-Item C.A.O. Assessment
+                  </a>
+                </li>
+                <li>
+                  <a href={getPagePath('insights')} onClick={(e) => { e.preventDefault(); handleNavigate('insights'); }} className="hover:text-white transition-colors cursor-pointer">
                     Insights &amp; Dispatches
                   </a>
                 </li>
                 <li>
-                  <a href={getPagePath('engineers')} onClick={(e) => { e.preventDefault(); handleNavigate('engineers'); }} className="hover:text-white transition-colors cursor-pointer">
-                    For Engineers
+                  <a href={getPagePath('journey-working-engineers')} onClick={(e) => { e.preventDefault(); handleNavigate('journey-working-engineers'); }} className="hover:text-white transition-colors cursor-pointer">
+                    Working Engineers
                   </a>
                 </li>
                 <li>
-                  <a href={getPagePath('students')} onClick={(e) => { e.preventDefault(); handleNavigate('students'); }} className="hover:text-white transition-colors cursor-pointer">
-                    For Students
+                  <a href={getPagePath('journey-ai-ml')} onClick={(e) => { e.preventDefault(); handleNavigate('journey-ai-ml'); }} className="hover:text-white transition-colors cursor-pointer">
+                    AI / ML Professionals
+                  </a>
+                </li>
+                <li>
+                  <a href={getPagePath('journey-technical-leaders')} onClick={(e) => { e.preventDefault(); handleNavigate('journey-technical-leaders'); }} className="hover:text-white transition-colors cursor-pointer">
+                    Technical Leaders
+                  </a>
+                </li>
+                <li>
+                  <a href={getPagePath('journey-students')} onClick={(e) => { e.preventDefault(); handleNavigate('journey-students'); }} className="hover:text-white transition-colors cursor-pointer">
+                    Students &amp; Graduates
                   </a>
                 </li>
                 <li>

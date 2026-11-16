@@ -39,6 +39,124 @@ function loadTsArrayLiteral(relativePath, exportName) {
   return ctx.__OUT;
 }
 
+function loadSourceCitationConfig() {
+  const sourcesRaw = fs.readFileSync(path.resolve('src/data/sourcesData.ts'), 'utf-8');
+  const sourcesStart = sourcesRaw.indexOf('export const SOURCE_CATEGORY_LABELS');
+  const sourcesBody = sourcesRaw
+    .slice(sourcesStart)
+    .replace(/export\s+const\s+(\w+)\s*:\s*[^=]+=/g, 'const $1 =');
+  const sourcesCtx = {};
+  vm.runInNewContext(
+    `${sourcesBody}\nthis.__OUT = { SOURCE_CATEGORY_LABELS, VERIFICATION_STATUS_LABELS, EPISTEMIC_SOURCES };`,
+    sourcesCtx
+  );
+
+  const schemaRaw = fs.readFileSync(path.resolve('src/utils/sourceNoteSchema.ts'), 'utf-8');
+  const mapMatch = schemaRaw.match(
+    /export\s+const\s+FRAMEWORK_SOURCE_IDS\s*:\s*[^=]+=\s*(\{[\s\S]*?\n\});/
+  );
+  const mapCtx = {};
+  vm.runInNewContext(`this.__MAP = ${mapMatch ? mapMatch[1] : '{}'};`, mapCtx);
+
+  return {
+    ...sourcesCtx.__OUT,
+    FRAMEWORK_SOURCE_IDS: mapCtx.__MAP,
+  };
+}
+
+const { SOURCE_CATEGORY_LABELS, VERIFICATION_STATUS_LABELS, EPISTEMIC_SOURCES, FRAMEWORK_SOURCE_IDS } =
+  loadSourceCitationConfig();
+
+function resolveExternalOrigin(url) {
+  if (!url) return undefined;
+  try {
+    return new URL(url).origin;
+  } catch {
+    return undefined;
+  }
+}
+
+function buildPrerenderCitationBundle(frameworkId, canonicalUrl, frameworkTitle) {
+  const sourceIds = FRAMEWORK_SOURCE_IDS[frameworkId] || ['cao-evolution-thesis'];
+  const termId = `${canonicalUrl}#term`;
+  const articleId = `${canonicalUrl}#article`;
+
+  const citationNodes = sourceIds
+    .map((id) => EPISTEMIC_SOURCES[id])
+    .filter(Boolean)
+    .map((src) => {
+      const externalOrigin = resolveExternalOrigin(src.externalUrl);
+      const isHarshAuthor = src.authorOrOrg.toLowerCase().includes('harsh verma');
+      const isManuscript = src.publisher === 'Beyond AI Engineering Manuscript';
+
+      const node = {
+        '@type': ['Citation', 'CreativeWork'],
+        '@id': `${canonicalUrl}#citation-${src.id}`,
+        name: src.sourceTitle,
+        headline: src.sourceTitle,
+        description: src.claimSupported,
+        abstract: src.explanation,
+        creativeWorkStatus: VERIFICATION_STATUS_LABELS[src.verificationStatus],
+        genre: SOURCE_CATEGORY_LABELS[src.category],
+        inLanguage: 'en-US',
+        author: isHarshAuthor
+          ? {
+              '@type': 'Person',
+              '@id': `${ORIGIN}/author#harsh-verma`,
+              name: 'Harsh Verma',
+              url: `${ORIGIN}/author`,
+              sameAs: 'https://www.harshverma.me/',
+            }
+          : {
+              '@type': 'Organization',
+              name: src.authorOrOrg,
+              ...(externalOrigin ? { url: externalOrigin } : {}),
+            },
+        identifier: [
+          { '@type': 'PropertyValue', propertyID: 'source-id', value: src.id },
+          { '@type': 'PropertyValue', propertyID: 'epistemic-category', value: src.category },
+          { '@type': 'PropertyValue', propertyID: 'verification-status', value: src.verificationStatus },
+        ],
+      };
+
+      if (src.date) {
+        node.datePublished = src.date;
+      }
+      if (src.externalUrl) {
+        node.url = src.externalUrl;
+        node.sameAs = src.externalUrl;
+        node.isAccessibleForFree = true;
+      } else if (isManuscript) {
+        node.url = `${ORIGIN}/book`;
+      }
+      if (isManuscript) {
+        node.publisher = {
+          '@type': 'Organization',
+          name: 'Beyond AI Engineering',
+          url: ORIGIN,
+          founder: { '@id': `${ORIGIN}/author#harsh-verma` },
+        };
+        node.isPartOf = { '@id': `${ORIGIN}/book#book` };
+      } else if (src.publisher) {
+        node.publisher = {
+          '@type': 'Organization',
+          name: src.publisher,
+          ...(externalOrigin ? { url: externalOrigin } : {}),
+        };
+      }
+      node.about = [{ '@id': termId }, { '@id': articleId }];
+      if (frameworkTitle) {
+        node.mentions = { '@id': termId };
+      }
+      return node;
+    });
+
+  return {
+    citationRefs: citationNodes.map((n) => ({ '@id': n['@id'] })),
+    citationNodes,
+  };
+}
+
 function escapeAttr(val) {
   return String(val || '')
     .replace(/&/g, '&amp;')
@@ -195,16 +313,101 @@ const staticRoutes = [
     ],
   },
   {
-    path: '/engineers',
-    title: 'For Engineers | Build Your Next Chapter — Beyond AI Engineering',
+    path: '/assessment',
+    title: '15-Item C.A.O. Self-Assessment | Beyond AI Engineering',
     description:
-      'Practical pathways for mid-to-senior software engineers moving from code output to systems design, judgment, and agent orchestration.',
+      'Self-assess your current engineering habits across Creator, Architect, and Orchestrator on a 5-point scale with a printable 7/30/90-day transition plan.',
     ogType: 'website',
-    ogImage: FRAMEWORKS_DEFAULT_IMAGE,
+    ogImage: FRAMEWORK_OG_IMAGES['cao-framework'],
     webPageType: 'WebPage',
     breadcrumbs: [
       { name: 'Home', path: '/' },
-      { name: 'For Engineers', path: '/engineers' },
+      { name: 'C.A.O. Framework', path: '/cao-framework' },
+      { name: 'C.A.O. Self-Assessment', path: '/assessment' },
+    ],
+  },
+  {
+    path: '/journeys/working-engineers',
+    title: 'Journey for Working Software Engineers | Beyond AI Engineering',
+    description:
+      'Practical career operating pathway for mid-to-senior software engineers moving from code velocity to architectural boundaries, verification, and agent oversight.',
+    ogType: 'article',
+    ogImage: FRAMEWORKS_DEFAULT_IMAGE,
+    webPageType: 'WebPage',
+    article: {
+      type: 'Article',
+      headline: 'From Feature Ticket Output to Durable Systems Authority',
+      datePublished: '2026-10-15',
+      dateModified: '2026-11-15',
+      section: 'Working Engineers',
+      keywords: ['Working Engineers', 'Staff Engineering', 'C.A.O. Framework'],
+    },
+    breadcrumbs: [
+      { name: 'Home', path: '/' },
+      { name: 'Journey: Working Engineers', path: '/journeys/working-engineers' },
+    ],
+  },
+  {
+    path: '/journeys/ai-ml-professionals',
+    title: 'Journey for AI / ML Professionals | Beyond AI Engineering',
+    description:
+      'Move beyond notebooks and model weights toward deterministic evaluation harnesses, agent guardrails, and production trust economics.',
+    ogType: 'article',
+    ogImage: FRAMEWORKS_DEFAULT_IMAGE,
+    webPageType: 'WebPage',
+    article: {
+      type: 'Article',
+      headline: 'From Model Prototyping to Trusted Autonomous Production Systems',
+      datePublished: '2026-10-15',
+      dateModified: '2026-11-15',
+      section: 'AI / ML Professionals',
+      keywords: ['AI Engineers', 'LLM Evals', 'Trust Economy'],
+    },
+    breadcrumbs: [
+      { name: 'Home', path: '/' },
+      { name: 'Journey: AI / ML Professionals', path: '/journeys/ai-ml-professionals' },
+    ],
+  },
+  {
+    path: '/journeys/technical-leaders',
+    title: 'Journey for Technical Leaders & CTOs | Beyond AI Engineering',
+    description:
+      'Design Human APIs, bounded agent permissions, evaluation accountability, and team structure for engineering organizations adopting AI.',
+    ogType: 'article',
+    ogImage: `${ORIGIN}/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_07_PM-8_c9db1dc2.png`,
+    webPageType: 'WebPage',
+    article: {
+      type: 'Article',
+      headline: 'Governing Engineering Velocity, Risk, and Authority in AI-Native Teams',
+      datePublished: '2026-10-15',
+      dateModified: '2026-11-15',
+      section: 'Technical Leaders',
+      keywords: ['Engineering Leadership', 'Agentic Diplomacy', 'Human API'],
+    },
+    breadcrumbs: [
+      { name: 'Home', path: '/' },
+      { name: 'Journey: Technical Leaders', path: '/journeys/technical-leaders' },
+    ],
+  },
+  {
+    path: '/journeys/students',
+    title: 'Journey for Students & New Graduates | Beyond AI Engineering',
+    description:
+      'Build verifiable proof of work, enduring computer science fundamentals, and inspectable judgment rather than AI-generated resume trivia.',
+    ogType: 'article',
+    ogImage: `${ORIGIN}/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_06_PM-6_eb2b1261.png`,
+    webPageType: 'WebPage',
+    article: {
+      type: 'Article',
+      headline: 'Entering Engineering With Judgment When Entry-Level Syntax Is Automated',
+      datePublished: '2026-10-15',
+      dateModified: '2026-11-15',
+      section: 'Students & New Grads',
+      keywords: ['CS Students', 'Proof of Work', 'Early-Career Engineering'],
+    },
+    breadcrumbs: [
+      { name: 'Home', path: '/' },
+      { name: 'Journey: Students & New Grads', path: '/journeys/students' },
     ],
   },
   {
@@ -294,24 +497,142 @@ const staticRoutes = [
     ],
   },
   {
-    path: '/students',
-    title: 'For Students & Early-Career Engineers | Beyond AI Engineering',
+    path: '/frameworks/creator',
+    title: 'Creator Stage (C.A.O. Framework) | Beyond AI Engineering',
     description:
-      'How computer science students build verifiable proof of work, core CS fundamentals, and engineering judgment when AI writes syntax.',
+      'Master the Creator mode in Beyond AI Engineering: rapid prototyping, AI-assisted implementation, deterministic testing, and debugging discipline.',
     ogType: 'article',
-    ogImage: `${ORIGIN}/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_06_PM-6_eb2b1261.png`,
+    ogImage: FRAMEWORK_OG_IMAGES['cao-framework'],
+    webPageType: 'WebPage',
+    frameworkId: 'creator',
+    frameworkTitle: 'Creator Stage (C.A.O. Framework)',
+    frameworkDefinition:
+      'The Creator stage is the execution foundation of software engineering: writing implementations, assembling prototypes, debugging failures, and validating functionality.',
     article: {
-      type: 'Article',
-      headline: 'For Students & Early-Career Engineers in the Age of AI',
-      datePublished: '2026-10-01',
-      section: 'Early-Career Engineering',
-      keywords: ['CS Students', 'Proof of Work', 'AI Engineering Careers'],
+      type: 'TechArticle',
+      headline: 'The Creator Stage — Technical Execution & Verification Fluency',
+      datePublished: '2026-10-15',
+      dateModified: '2026-11-15',
+      section: 'C.A.O. Framework · Stage 01',
+      keywords: ['C.A.O. Framework', 'Creator Stage', 'AI Assisted Coding'],
     },
     breadcrumbs: [
       { name: 'Home', path: '/' },
-      { name: 'For Students', path: '/students' },
+      { name: 'C.A.O. Framework', path: '/cao-framework' },
+      { name: '01. Creator (Build)', path: '/frameworks/creator' },
     ],
   },
+  {
+    path: '/frameworks/architect',
+    title: 'Architect Stage (C.A.O. Framework) | Beyond AI Engineering',
+    description:
+      'Master the Architect mode in Beyond AI Engineering: problem framing, system invariants, AI Product Sense, risk modeling, and durable trade-offs.',
+    ogType: 'article',
+    ogImage: FRAMEWORK_OG_IMAGES['cao-framework'],
+    webPageType: 'WebPage',
+    frameworkId: 'architect',
+    frameworkTitle: 'Architect Stage (C.A.O. Framework)',
+    frameworkDefinition:
+      'The Architect stage is the systems-design layer of engineering: defining what deserves to be built, bounding failure modes, structuring data invariants, and making durable trade-offs before implementation.',
+    article: {
+      type: 'TechArticle',
+      headline: 'The Architect Stage — Problem Framing, System Design & Trade-Offs',
+      datePublished: '2026-10-15',
+      dateModified: '2026-11-15',
+      section: 'C.A.O. Framework · Stage 02',
+      keywords: ['C.A.O. Framework', 'Architect Stage', 'Systems Architecture'],
+    },
+    breadcrumbs: [
+      { name: 'Home', path: '/' },
+      { name: 'C.A.O. Framework', path: '/cao-framework' },
+      { name: '02. Architect (Design)', path: '/frameworks/architect' },
+    ],
+  },
+  {
+    path: '/frameworks/orchestrator',
+    title: 'Orchestrator Stage (C.A.O. Framework) | Beyond AI Engineering',
+    description:
+      'Master the Orchestrator mode in Beyond AI Engineering: coordinating AI agents and humans, governance boundaries, Ethical Curation, and trust.',
+    ogType: 'article',
+    ogImage: FRAMEWORK_OG_IMAGES['cao-framework'],
+    webPageType: 'WebPage',
+    frameworkId: 'orchestrator',
+    frameworkTitle: 'Orchestrator Stage (C.A.O. Framework)',
+    frameworkDefinition:
+      'The Orchestrator stage is the governance and alignment mode of engineering: coordinating teams, AI agents, evaluation gates, and organizational accountability inside the Trust Economy.',
+    article: {
+      type: 'TechArticle',
+      headline: 'The Orchestrator Stage — Agentic Governance, Alignment & Trust',
+      datePublished: '2026-10-15',
+      dateModified: '2026-11-15',
+      section: 'C.A.O. Framework · Stage 03',
+      keywords: ['C.A.O. Framework', 'Orchestrator Stage', 'Agentic Governance'],
+    },
+    breadcrumbs: [
+      { name: 'Home', path: '/' },
+      { name: 'C.A.O. Framework', path: '/cao-framework' },
+      { name: '03. Orchestrator (Coordinate & Govern)', path: '/frameworks/orchestrator' },
+    ],
+  },
+  ...[
+    {
+      slug: 'cao-career-map',
+      title: 'C.A.O. Career Map — Interactive Companion Workspace | Beyond AI Engineering',
+      description: 'Map how your weekly hours distribute across Creator, Architect, and Orchestrator work. Browser-saved worksheet producing your Personal C.A.O. Rebalancing Plan.',
+    },
+    {
+      slug: 'human-advantage-inventory',
+      title: 'Human Advantage Inventory — Interactive Companion Workspace | Beyond AI Engineering',
+      description: 'Separate tasks where AI accelerates volume from judgment where human accountability stays critical. Exportable 4-Quadrant Engineering Defensibility Inventory.',
+    },
+    {
+      slug: 'ai-workflow-experiment',
+      title: 'AI Workflow Experiment — Interactive Companion Workspace | Beyond AI Engineering',
+      description: 'Design a verifiable, time-boxed agentic experiment with deterministic success metrics and failure guardrails.',
+    },
+    {
+      slug: 'ethical-ai-audit',
+      title: 'Ethical AI Audit — Interactive Companion Workspace | Beyond AI Engineering',
+      description: 'Pre-production risk, blast-radius, privacy, and accountability sign-off gate for AI-enabled systems.',
+    },
+    {
+      slug: 'professional-positioning',
+      title: 'Professional Positioning — Interactive Companion Workspace | Beyond AI Engineering',
+      description: 'Reposition your narrative from language-specific syntax generator to trusted domain systems curator.',
+    },
+    {
+      slug: 'war-story-narrative',
+      title: 'War Story Narrative — Interactive Companion Workspace | Beyond AI Engineering',
+      description: 'Turn real production incidents or hard architecture calls into verifiable leadership case studies.',
+    },
+    {
+      slug: 'digital-paper-trail',
+      title: 'Digital Paper Trail — Interactive Companion Workspace | Beyond AI Engineering',
+      description: 'Design inspectable engineering evidence—Architecture Decision Records, benchmarks, and technical notes—instead of generic resumes.',
+    },
+    {
+      slug: 'micro-community-map',
+      title: 'Micro-Community Map — Interactive Companion Workspace | Beyond AI Engineering',
+      description: 'Build a focused 20–30 practitioner peer trust circle rather than chasing broad shallow feeds.',
+    },
+    {
+      slug: '30-60-90-plan',
+      title: '30/60/90-Day Plan — Interactive Companion Workspace | Beyond AI Engineering',
+      description: 'Translate insight into three consecutive 30-day execution sprints with concrete shipped proof.',
+    },
+  ].map((ws) => ({
+    path: `/resources/${ws.slug}`,
+    title: ws.title,
+    description: ws.description,
+    ogType: 'website',
+    ogImage: `${ORIGIN}/assets/aistudio/ChatGPT_Image_Nov_4__2026__06_16_05_PM-4_ef9211f1.png`,
+    webPageType: 'WebPage',
+    breadcrumbs: [
+      { name: 'Home', path: '/' },
+      { name: 'Implementation Lab', path: '/resources' },
+      { name: ws.title.split(' — ')[0], path: `/resources/${ws.slug}` },
+    ],
+  })),
   {
     path: '/speaking',
     title: 'Keynotes & Speaking | Harsh Verma — Beyond AI Engineering',
@@ -429,6 +750,7 @@ for (const fw of frameworks) {
     imageAlt: `${fw.title} — ${fw.subtitle} | Beyond AI Engineering`,
     webPageType: 'WebPage',
     keywords: keywordsList.join(', '),
+    frameworkId: fw.id,
     frameworkTitle: fw.title,
     frameworkDefinition: fw.definition,
     article: {
@@ -708,6 +1030,10 @@ for (const r of routes) {
   ];
 
   if (r.frameworkTitle) {
+    const citationBundle = r.frameworkId
+      ? buildPrerenderCitationBundle(r.frameworkId, canonicalUrl, r.frameworkTitle)
+      : { citationRefs: [], citationNodes: [] };
+
     extraGraphNodes.push(
       {
         '@type': 'TechArticle',
@@ -728,6 +1054,7 @@ for (const r of routes) {
         articleSection: r.article?.section,
         keywords: (r.article?.keywords || []).join(', '),
         image: ogImg,
+        ...(citationBundle.citationRefs.length > 0 ? { citation: citationBundle.citationRefs } : {}),
       },
       {
         '@type': 'DefinedTerm',
@@ -736,7 +1063,9 @@ for (const r of routes) {
         description: r.frameworkDefinition || r.description,
         url: canonicalUrl,
         inDefinedTermSet: { '@id': `${ORIGIN}/frameworks#terms` },
-      }
+        ...(citationBundle.citationRefs.length > 0 ? { citation: citationBundle.citationRefs } : {}),
+      },
+      ...citationBundle.citationNodes
     );
   } else if (r.article) {
     extraGraphNodes.push({
