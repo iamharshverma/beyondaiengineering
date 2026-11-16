@@ -355,7 +355,7 @@ export const AuthorView: React.FC<AuthorViewProps> = ({
             "I watched AI begin performing tasks engineers had spent years learning to do. Instead of asking how engineers could compete with machines, I began asking where human value moves when implementation becomes cheaper. Beyond AI Engineering is my answer."
           </p>
           <p>
-            At Palo Alto Networks and across distributed systems, autonomous security, and machine learning, I witnessed a recurring trap: engineers doubling down on raw typing velocity rather than cultivating systems discernment.
+            While architecting large-scale distributed systems, autonomous cybersecurity defenses, and production machine learning platforms, I witnessed a recurring trap: engineers doubling down on raw typing velocity rather than cultivating systems discernment.
           </p>
           <p>
             In the modern era, the highest-leverage practitioners bridge architecture, AI product sense, autonomous multi-agent governance, and security invariants. They do not just write tickets; they decide what deserves to exist.
