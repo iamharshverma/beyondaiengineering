@@ -21,6 +21,62 @@ import {
   Wrench,
   Check,
 } from 'lucide-react';
+import agenticAiThumb from '../assets/images/insights_agentic_ai_1794789371938.jpg';
+import governanceTrustThumb from '../assets/images/insights_governance_trust_1794789374345.jpg';
+import systemsArchThumb from '../assets/images/insights_systems_arch_1794789372486.jpg';
+import careersCodeThumb from '../assets/images/insights_careers_code_1794789372869.jpg';
+import forbesExecThumb from '../assets/images/insights_forbes_executive_1794789373863.jpg';
+
+const FRAMEWORK_THUMBNAILS: Record<string, { src: string; alt: string }> = {
+  'cao-framework': {
+    src: agenticAiThumb,
+    alt: 'Concentric brass and cobalt orbital framework sculpture',
+  },
+  'how-to-what': {
+    src: systemsArchThumb,
+    alt: 'Isometric architectural blueprint showing system boundaries',
+  },
+  'trust-economy': {
+    src: governanceTrustThumb,
+    alt: 'Minimalist geometric balance and structural trust motif',
+  },
+  'prompt-empathy': {
+    src: careersCodeThumb,
+    alt: 'Ascending architectural columns illustrating structural clarity',
+  },
+  'agentic-diplomacy': {
+    src: forbesExecThumb,
+    alt: 'Executive editorial composition representing multi-agent diplomacy',
+  },
+  'human-api': {
+    src: agenticAiThumb,
+    alt: 'Interlocking orbital interface representing Human API boundaries',
+  },
+  'ai-product-sense': {
+    src: systemsArchThumb,
+    alt: 'Systems blueprint illustrating AI product architecture decisions',
+  },
+  'ethical-curation': {
+    src: governanceTrustThumb,
+    alt: 'Precision governance architecture emblem',
+  },
+  'unlearn-relearn': {
+    src: careersCodeThumb,
+    alt: 'Progressive stepped form representing deliberate skill renewal',
+  },
+  'digital-paper-trail': {
+    src: forbesExecThumb,
+    alt: 'Archival ledger aesthetic representing inspectable decision logs',
+  },
+  'micro-community': {
+    src: governanceTrustThumb,
+    alt: 'Curated trust network architectural form',
+  },
+  'proof-of-work': {
+    src: systemsArchThumb,
+    alt: 'Verifiable architectural artifact blueprint',
+  },
+};
 
 interface FrameworksViewProps {
   onNavigate: (page: PageId | string) => void;
@@ -640,6 +696,10 @@ export const FrameworksView: React.FC<FrameworksViewProps> = ({
                 const selected = fw.id === activeDeckFw.id;
                 const done = practicedIds.includes(fw.id);
                 const theme = PHASE_THEME[fw.caoPhase];
+                const thumb = FRAMEWORK_THUMBNAILS[fw.id] || {
+                  src: agenticAiThumb,
+                  alt: fw.title,
+                };
 
                 return (
                   <button
@@ -647,30 +707,41 @@ export const FrameworksView: React.FC<FrameworksViewProps> = ({
                     id={fw.id}
                     type="button"
                     onClick={() => setActiveDeckId(fw.id)}
-                    className={`w-full text-left p-3.5 rounded-xl border transition-all flex items-start justify-between gap-3 cursor-pointer ${
+                    className={`w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between gap-3 cursor-pointer group ${
                       selected
                         ? 'bg-white dark:bg-[#0D1527] border-blue-900 dark:border-blue-400 shadow-sm ring-1 ring-blue-900/10 dark:ring-blue-400/20'
                         : 'bg-white/60 dark:bg-[#0D1527]/60 border-[#101828]/10 dark:border-white/10 hover:bg-white dark:hover:bg-[#0D1527]'
                     }`}
                   >
-                    <div className="min-w-0 space-y-0.5">
-                      <div className="flex items-center gap-2 text-[10px] font-mono">
-                        <span className="tabular-nums text-[#667085] dark:text-slate-400">
-                          {String(idx + 1).padStart(2, '0')}
-                        </span>
-                        <span className="uppercase tracking-wider font-semibold text-blue-900 dark:text-blue-400">
-                          {theme.label}
-                        </span>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="relative w-12 h-9 rounded-md overflow-hidden border border-[#101828]/10 dark:border-white/15 bg-[#0F172A] shrink-0">
+                        <img
+                          src={thumb.src}
+                          alt={thumb.alt}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
                       </div>
-                      <div className="font-serif text-base font-bold text-[#101828] dark:text-white truncate">
-                        {fw.title}
+                      <div className="min-w-0 space-y-0.5">
+                        <div className="flex items-center gap-2 text-[10px] font-mono">
+                          <span className="tabular-nums text-[#667085] dark:text-slate-400">
+                            {String(idx + 1).padStart(2, '0')}
+                          </span>
+                          <span className="uppercase tracking-wider font-semibold text-blue-900 dark:text-blue-400 truncate">
+                            {theme.label}
+                          </span>
+                        </div>
+                        <div className="font-serif text-base font-bold text-[#101828] dark:text-white truncate">
+                          {fw.title}
+                        </div>
                       </div>
                     </div>
                     {done ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-1" />
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                     ) : (
                       <ChevronRight
-                        className={`w-4 h-4 shrink-0 mt-1 transition-transform ${
+                        className={`w-4 h-4 shrink-0 transition-transform ${
                           selected ? 'text-blue-900 dark:text-blue-400 translate-x-0.5' : 'text-slate-400'
                         }`}
                       />
@@ -682,25 +753,35 @@ export const FrameworksView: React.FC<FrameworksViewProps> = ({
 
             {/* Right Interactive Canvas */}
             <div className="lg:col-span-8 bg-white dark:bg-[#0D1527] border border-blue-900/30 dark:border-blue-400/30 rounded-2xl shadow-md overflow-hidden">
-              <div className="p-6 sm:p-8 space-y-2 border-b border-[#101828]/[0.08] dark:border-white/10">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 text-[11px] font-mono font-semibold uppercase tracking-wider rounded-sm border ${
-                      PHASE_THEME[activeDeckFw.caoPhase].badge
-                    }`}
-                  >
-                    {PHASE_THEME[activeDeckFw.caoPhase].label}
-                  </span>
-                  <span className="text-xs font-mono text-[#667085] dark:text-slate-400 tabular-nums">
-                    Framework {String(filteredFrameworks.findIndex((f) => f.id === activeDeckFw.id) + 1).padStart(2, '0')} of {filteredFrameworks.length}
-                  </span>
+              <div className="p-6 sm:p-8 border-b border-[#101828]/[0.08] dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+                <div className="space-y-2 min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 text-[11px] font-mono font-semibold uppercase tracking-wider rounded-sm border ${
+                        PHASE_THEME[activeDeckFw.caoPhase].badge
+                      }`}
+                    >
+                      {PHASE_THEME[activeDeckFw.caoPhase].label}
+                    </span>
+                    <span className="text-xs font-mono text-[#667085] dark:text-slate-400 tabular-nums">
+                      Framework {String(filteredFrameworks.findIndex((f) => f.id === activeDeckFw.id) + 1).padStart(2, '0')} of {filteredFrameworks.length}
+                    </span>
+                  </div>
+                  <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#101828] dark:text-white">
+                    {activeDeckFw.title}
+                  </h2>
+                  <p className="text-sm text-[#475467] dark:text-blue-300/90 font-medium">
+                    {activeDeckFw.subtitle}
+                  </p>
                 </div>
-                <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#101828] dark:text-white">
-                  {activeDeckFw.title}
-                </h2>
-                <p className="text-sm text-[#475467] dark:text-blue-300/90 font-medium">
-                  {activeDeckFw.subtitle}
-                </p>
+
+                <div className="w-full sm:w-36 aspect-[16/10] rounded-xl overflow-hidden border border-[#101828]/12 dark:border-white/15 bg-[#0F172A] shadow-xs shrink-0">
+                  <img
+                    src={(FRAMEWORK_THUMBNAILS[activeDeckFw.id] || { src: agenticAiThumb }).src}
+                    alt={(FRAMEWORK_THUMBNAILS[activeDeckFw.id] || { alt: activeDeckFw.title }).alt}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
               </div>
 
               {renderExpandedBody(
@@ -715,6 +796,10 @@ export const FrameworksView: React.FC<FrameworksViewProps> = ({
               const isExpanded = expandAll || expandedFrameworkId === fw.id;
               const isDone = practicedIds.includes(fw.id);
               const theme = PHASE_THEME[fw.caoPhase];
+              const thumb = FRAMEWORK_THUMBNAILS[fw.id] || {
+                src: agenticAiThumb,
+                alt: fw.title,
+              };
 
               return (
                 <div
@@ -737,17 +822,30 @@ export const FrameworksView: React.FC<FrameworksViewProps> = ({
                       }
                     }}
                     aria-expanded={isExpanded}
-                    className="w-full text-left p-5 sm:p-6 cursor-pointer flex items-start justify-between gap-4 group"
+                    className="w-full text-left p-4 sm:p-6 cursor-pointer flex items-center justify-between gap-4 group"
                   >
-                    <div className="flex items-start gap-4 min-w-0">
-                      <div
-                        className={`hidden sm:flex w-10 h-10 rounded-lg items-center justify-center font-mono text-xs font-bold tabular-nums shrink-0 border transition-colors ${
-                          isExpanded
-                            ? 'bg-[#101828] dark:bg-white text-white dark:text-[#070B14] border-transparent'
-                            : 'bg-[#FAFAF7] dark:bg-[#11192E] text-[#475467] dark:text-slate-300 border-[#101828]/10 dark:border-white/10 group-hover:border-blue-900/30'
-                        }`}
-                      >
-                        {String(idx + 1).padStart(2, '0')}
+                    <div className="flex items-start sm:items-center gap-4 min-w-0">
+                      <div className="relative w-20 h-14 sm:w-28 sm:h-[74px] rounded-lg overflow-hidden border border-[#101828]/12 dark:border-white/15 bg-[#0F172A] shadow-2xs shrink-0">
+                        <img
+                          src={thumb.src}
+                          alt={thumb.alt}
+                          loading={idx < 4 ? 'eager' : 'lazy'}
+                          decoding="async"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div
+                          aria-hidden="true"
+                          className="absolute inset-0 bg-gradient-to-t from-[#070B14]/75 via-transparent to-transparent pointer-events-none"
+                        />
+                        <span
+                          className={`absolute bottom-1.5 left-2 font-mono text-[11px] font-bold tabular-nums px-1.5 py-0.5 rounded-xs ${
+                            isExpanded
+                              ? 'bg-white text-[#101828]'
+                              : 'bg-[#070B14]/75 text-white'
+                          }`}
+                        >
+                          {String(idx + 1).padStart(2, '0')}
+                        </span>
                       </div>
 
                       <div className="space-y-1 min-w-0">
@@ -774,13 +872,13 @@ export const FrameworksView: React.FC<FrameworksViewProps> = ({
                         <h2 className="font-serif text-xl sm:text-2xl font-bold text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-300 transition-colors">
                           {fw.title}
                         </h2>
-                        <div className="text-xs sm:text-sm text-[#475467] dark:text-blue-300/80 font-medium font-sans">
+                        <div className="text-xs sm:text-sm text-[#475467] dark:text-blue-300/80 font-medium font-sans line-clamp-2 sm:line-clamp-none">
                           {fw.subtitle}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 pt-1 text-[#475467] dark:text-slate-400 shrink-0">
+                    <div className="flex items-center gap-2 text-[#475467] dark:text-slate-400 shrink-0">
                       <span className="text-xs font-mono hidden sm:inline">
                         {isExpanded ? 'Close' : 'Explore'}
                       </span>
