@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { PageId } from '../types';
 import { SITE_CONFIG } from '../config/siteConfig';
 import { updatePageSeo, CANONICAL_ORIGIN, buildDynamicFrameworkSeo } from '../utils/seo';
@@ -60,15 +61,59 @@ const STAGE_DETAILS = {
   },
 };
 
+const STAGE_META = {
+  creator: {
+    code: '01 · CREATOR',
+    subtitle: 'Build & Verify',
+    radius: 48,
+    hex: '#2563EB',
+    hexDark: '#60A5FA',
+    dotClass: 'bg-blue-600 dark:bg-blue-400',
+    badgeClass:
+      'text-blue-900 dark:text-blue-300 bg-blue-50/90 dark:bg-blue-950/50 border-blue-900/20 dark:border-blue-400/30',
+    activeTabClass:
+      'bg-blue-950 dark:bg-blue-500 text-white dark:text-[#070B14] border-blue-950 dark:border-blue-400 shadow-sm -translate-y-0.5',
+    panelBorderClass: 'border-t-blue-600 dark:border-t-blue-400',
+  },
+  architect: {
+    code: '02 · ARCHITECT',
+    subtitle: 'Frame & Design',
+    radius: 88,
+    hex: '#7C3AED',
+    hexDark: '#A78BFA',
+    dotClass: 'bg-purple-600 dark:bg-purple-400',
+    badgeClass:
+      'text-purple-900 dark:text-purple-300 bg-purple-50/90 dark:bg-purple-950/50 border-purple-900/20 dark:border-purple-400/30',
+    activeTabClass:
+      'bg-purple-950 dark:bg-purple-500 text-white dark:text-[#070B14] border-purple-950 dark:border-purple-400 shadow-sm -translate-y-0.5',
+    panelBorderClass: 'border-t-purple-600 dark:border-t-purple-400',
+  },
+  orchestrator: {
+    code: '03 · ORCHESTRATOR',
+    subtitle: 'Govern & Lead',
+    radius: 128,
+    hex: '#059669',
+    hexDark: '#34D399',
+    dotClass: 'bg-emerald-600 dark:bg-emerald-400',
+    badgeClass:
+      'text-emerald-900 dark:text-emerald-300 bg-emerald-50/90 dark:bg-emerald-950/50 border-emerald-900/20 dark:border-emerald-400/30',
+    activeTabClass:
+      'bg-emerald-900 dark:bg-emerald-500 text-white dark:text-[#070B14] border-emerald-900 dark:border-emerald-400 shadow-sm -translate-y-0.5',
+    panelBorderClass: 'border-t-emerald-600 dark:border-t-emerald-400',
+  },
+} as const;
+
 export const CAOFrameworkView: React.FC<CAOFrameworkViewProps> = ({
   onNavigate,
   onOpenAssessment,
   onOpenBuyModal,
 }) => {
   const [activeConsoleStage, setActiveConsoleStage] = useState<'creator' | 'architect' | 'orchestrator'>('architect');
+  const [hoveredRing, setHoveredRing] = useState<'creator' | 'architect' | 'orchestrator' | null>(null);
   const [downloadedGuide, setDownloadedGuide] = useState(false);
   const [isTriadAutoPlaying, setIsTriadAutoPlaying] = useState(true);
   const [isTriadHovered, setIsTriadHovered] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   const handleSelectTier = (stage: 'creator' | 'architect' | 'orchestrator') => {
     setActiveConsoleStage(stage);
@@ -212,21 +257,34 @@ CORE INVARIANTS:
       <section
         className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-b border-[#101828]/[0.08] dark:border-white/10"
         onMouseEnter={() => setIsTriadHovered(true)}
-        onMouseLeave={() => setIsTriadHovered(false)}
+        onMouseLeave={() => {
+          setIsTriadHovered(false);
+          setHoveredRing(null);
+        }}
       >
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          {/* Left: Interactive Animated Triad Diagram */}
-          <div className="lg:col-span-5 bg-white dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-2xl p-6 text-center shadow-xs relative overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+          {/* Left: Interactive Animated Concentric Triad Diagram */}
+          <div className="lg:col-span-5 bg-white dark:bg-[#0D1527] border border-[#101828]/12 dark:border-white/12 rounded-2xl p-6 text-center shadow-sm relative overflow-hidden">
             <div className="flex items-center justify-between gap-2 mb-3">
-              <span className="inline-flex items-center gap-2 text-xs font-mono text-[#475467] dark:text-slate-400">
-                <span>Interactive Triad · Select any ring</span>
-              </span>
+              <div className="inline-flex items-center gap-2 text-xs font-mono text-[#475467] dark:text-slate-300">
+                <span className="relative flex h-2 w-2" aria-hidden="true">
+                  {!prefersReducedMotion && isTriadAutoPlaying && !isTriadHovered && (
+                    <span
+                      className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${STAGE_META[activeConsoleStage].dotClass}`}
+                    />
+                  )}
+                  <span
+                    className={`relative inline-flex rounded-full h-2 w-2 transition-colors duration-300 ${STAGE_META[activeConsoleStage].dotClass}`}
+                  />
+                </span>
+                <span>Interactive Triad · Select a ring</span>
+              </div>
 
               <button
                 type="button"
                 onClick={() => setIsTriadAutoPlaying((prev) => !prev)}
                 aria-label={isTriadAutoPlaying ? 'Pause concentric triad cycle' : 'Play concentric triad cycle'}
-                className="inline-flex items-center gap-1 px-2 py-1 rounded border border-[#101828]/10 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#11192E] text-[10px] font-mono uppercase text-[#475467] dark:text-slate-300 hover:text-[#101828] dark:hover:text-white transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-[#101828]/12 dark:border-white/15 bg-[#FAFAF7] dark:bg-[#11192E] text-[10px] font-mono uppercase tracking-wider text-[#475467] dark:text-slate-300 hover:text-[#101828] dark:hover:text-white hover:border-blue-900/30 dark:hover:border-blue-400/30 transition-colors cursor-pointer"
               >
                 {isTriadAutoPlaying ? (
                   <>
@@ -242,255 +300,453 @@ CORE INVARIANTS:
               </button>
             </div>
 
-            <svg
-              viewBox="0 0 320 278"
-              className="w-full max-w-[330px] mx-auto select-none"
-              role="img"
-              aria-label="Animated Interactive Creator Architect Orchestrator Triad"
-            >
-              <defs>
-                <radialGradient id="caoAmbientGlow" cx="50%" cy="54%" r="50%">
-                  <stop
-                    offset="0%"
-                    stopColor={
-                      activeConsoleStage === 'creator'
-                        ? '#2563EB'
-                        : activeConsoleStage === 'architect'
-                        ? '#9333EA'
-                        : '#059669'
-                    }
-                    stopOpacity="0.18"
+            <div className="relative py-1">
+              <svg
+                viewBox="0 0 340 316"
+                className="w-full max-w-[348px] mx-auto select-none overflow-visible"
+                role="group"
+                aria-label="Interactive Creator Architect Orchestrator Concentric Rings"
+              >
+                <defs>
+                  <radialGradient id="caoAmbientGlow" cx="50%" cy="50%" r="50%">
+                    <stop
+                      offset="0%"
+                      stopColor={STAGE_META[activeConsoleStage].hex}
+                      stopOpacity="0.22"
+                    />
+                    <stop
+                      offset="65%"
+                      stopColor={STAGE_META[activeConsoleStage].hex}
+                      stopOpacity="0.06"
+                    />
+                    <stop offset="100%" stopColor={STAGE_META[activeConsoleStage].hex} stopOpacity="0" />
+                  </radialGradient>
+                </defs>
+
+                {/* Ambient Radial Glow Anchored to Selected Ring Stage */}
+                <circle
+                  cx="170"
+                  cy="158"
+                  r="146"
+                  fill="url(#caoAmbientGlow)"
+                  className="transition-all duration-500 pointer-events-none"
+                />
+
+                {/* Outer Telemetry Compass Ring */}
+                <g className="animate-spin-slow pointer-events-none">
+                  <circle cx="170" cy="158" r="144" fill="none" stroke="transparent" strokeWidth="1" />
+                  <circle
+                    cx="170"
+                    cy="158"
+                    r="142"
+                    fill="none"
+                    strokeDasharray="3 9"
+                    className="stroke-slate-300/75 dark:stroke-slate-700/75"
+                    strokeWidth="1"
                   />
-                  <stop offset="100%" stopColor="#1E40AF" stopOpacity="0" />
-                </radialGradient>
-              </defs>
+                  <circle cx="170" cy="16" r="2" className="fill-slate-400/70 dark:fill-slate-500/70" />
+                  <circle cx="170" cy="300" r="2" className="fill-slate-400/70 dark:fill-slate-500/70" />
+                </g>
 
-              {/* Soft Dynamic Ambient Halo */}
-              <circle cx="160" cy="142" r="130" fill="url(#caoAmbientGlow)" className="transition-all duration-500" />
-
-              {/* Outer Rotating Orbital Telemetry Track */}
-              <circle
-                cx="160"
-                cy="138"
-                r="128"
-                fill="none"
-                strokeDasharray="4 8"
-                className="stroke-slate-300/80 dark:stroke-slate-700/80 animate-spin-slow"
-                strokeWidth="1"
-              />
-
-              {/* Outer Ring: Orchestrator */}
-              <circle
-                cx="160"
-                cy="138"
-                r="116"
-                onClick={() => handleSelectTier('orchestrator')}
-                className={`cursor-pointer transition-all duration-300 ${
-                  activeConsoleStage === 'orchestrator'
-                    ? 'fill-emerald-500/15 stroke-emerald-600 dark:stroke-emerald-400'
-                    : 'fill-slate-100/60 dark:fill-slate-800/30 stroke-slate-300 dark:stroke-slate-700 hover:stroke-emerald-500/70'
-                }`}
-                strokeWidth={activeConsoleStage === 'orchestrator' ? 2.5 : 1.2}
-              />
-              {activeConsoleStage === 'orchestrator' && (
-                <circle
-                  cx="160"
-                  cy="138"
-                  r="116"
-                  fill="none"
-                  className="stroke-emerald-500/50 animate-pulse pointer-events-none"
-                  strokeWidth="6"
+                {/* Radial Axis Guides (Subtle Architectural Crosshair) */}
+                <line
+                  x1="170"
+                  y1="22"
+                  x2="170"
+                  y2="294"
+                  strokeDasharray="2 6"
+                  className="stroke-slate-300/50 dark:stroke-slate-700/50 pointer-events-none"
+                  strokeWidth="1"
                 />
-              )}
-              <text
-                x="160"
-                y="40"
-                textAnchor="middle"
-                className={`text-[11px] font-mono font-bold pointer-events-none transition-opacity duration-300 ${
-                  activeConsoleStage === 'orchestrator'
-                    ? 'fill-emerald-800 dark:fill-emerald-300 opacity-100'
-                    : 'fill-emerald-800/70 dark:fill-emerald-300/60 opacity-80'
-                }`}
-              >
-                03 · ORCHESTRATOR
-              </text>
-
-              {/* Middle Counter-Rotating Orbital Marker */}
-              <circle
-                cx="160"
-                cy="148"
-                r="92"
-                fill="none"
-                strokeDasharray="2 7"
-                className="stroke-purple-400/30 dark:stroke-purple-500/25 animate-spin-reverse-slow pointer-events-none"
-                strokeWidth="1"
-              />
-
-              {/* Middle Ring: Architect */}
-              <circle
-                cx="160"
-                cy="148"
-                r="82"
-                onClick={() => handleSelectTier('architect')}
-                className={`cursor-pointer transition-all duration-300 ${
-                  activeConsoleStage === 'architect'
-                    ? 'fill-purple-500/20 stroke-purple-600 dark:stroke-purple-400'
-                    : 'fill-white/85 dark:fill-[#11192E]/85 stroke-slate-300 dark:stroke-slate-700 hover:stroke-purple-500/70'
-                }`}
-                strokeWidth={activeConsoleStage === 'architect' ? 2.5 : 1.2}
-              />
-              {activeConsoleStage === 'architect' && (
-                <circle
-                  cx="160"
-                  cy="148"
-                  r="82"
-                  fill="none"
-                  className="stroke-purple-500/45 animate-pulse pointer-events-none"
-                  strokeWidth="5"
+                <line
+                  x1="34"
+                  y1="158"
+                  x2="306"
+                  y2="158"
+                  strokeDasharray="2 6"
+                  className="stroke-slate-300/40 dark:stroke-slate-700/40 pointer-events-none"
+                  strokeWidth="1"
                 />
-              )}
-              <text
-                x="160"
-                y="90"
-                textAnchor="middle"
-                className={`text-[11px] font-mono font-bold pointer-events-none transition-opacity duration-300 ${
-                  activeConsoleStage === 'architect'
-                    ? 'fill-purple-900 dark:fill-purple-300 opacity-100'
-                    : 'fill-purple-800/70 dark:fill-purple-300/60 opacity-80'
-                }`}
-              >
-                02 · ARCHITECT
-              </text>
 
-              {/* Animated Upward Progression Signal Path (Creator -> Architect -> Orchestrator) */}
-              <line
-                x1="160"
-                y1="142"
-                x2="160"
-                y2="52"
-                className="stroke-blue-600/40 dark:stroke-blue-400/40 animate-flow-dash pointer-events-none"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-              />
-
-              {/* Inner Core: Creator */}
-              <circle
-                cx="160"
-                cy="160"
-                r="46"
-                onClick={() => handleSelectTier('creator')}
-                className={`cursor-pointer transition-all duration-300 ${
-                  activeConsoleStage === 'creator'
-                    ? 'fill-blue-500/25 stroke-blue-600 dark:stroke-blue-400'
-                    : 'fill-slate-50 dark:fill-[#0D1527] stroke-slate-300 dark:stroke-slate-600 hover:stroke-blue-500/70'
-                }`}
-                strokeWidth={activeConsoleStage === 'creator' ? 2.5 : 1.2}
-              />
-              {activeConsoleStage === 'creator' && (
-                <circle
-                  cx="160"
-                  cy="160"
-                  r="46"
-                  fill="none"
-                  className="stroke-blue-500/50 animate-pulse pointer-events-none"
-                  strokeWidth="5"
-                />
-              )}
-              <text
-                x="160"
-                y="164"
-                textAnchor="middle"
-                className={`text-[11px] font-mono font-bold pointer-events-none transition-opacity duration-300 ${
-                  activeConsoleStage === 'creator'
-                    ? 'fill-blue-950 dark:fill-blue-200 opacity-100'
-                    : 'fill-blue-900/75 dark:fill-blue-300/70 opacity-80'
-                }`}
-              >
-                01 · CREATOR
-              </text>
-            </svg>
-
-            <div className="flex justify-center gap-2 mt-4">
-              {(['creator', 'architect', 'orchestrator'] as const).map((stage) => (
-                <button
-                  type="button"
-                  key={stage}
-                  onClick={() => handleSelectTier(stage)}
-                  className={`px-3 py-1.5 text-xs font-mono uppercase rounded-md cursor-pointer transition-all duration-200 ${
-                    activeConsoleStage === stage
-                      ? 'bg-[#101828] dark:bg-white text-white dark:text-[#070B14] font-bold shadow-xs -translate-y-0.5'
-                      : 'bg-[#FAFAF7] dark:bg-[#11192E] border border-[#101828]/15 dark:border-white/15 text-[#475467] dark:text-slate-300 hover:border-blue-900/40 dark:hover:border-blue-400/40'
-                  }`}
+                {/* 03. OUTER RING — ORCHESTRATOR (r = 128) */}
+                <g
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={activeConsoleStage === 'orchestrator'}
+                  aria-label="Select Stage 03: Orchestrator ring"
+                  onClick={() => handleSelectTier('orchestrator')}
+                  onMouseEnter={() => setHoveredRing('orchestrator')}
+                  onMouseLeave={() => setHoveredRing(null)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleSelectTier('orchestrator');
+                    }
+                  }}
+                  className="cursor-pointer outline-none"
                 >
-                  {stage}
-                </button>
-              ))}
+                  {activeConsoleStage === 'orchestrator' && (
+                    <circle
+                      cx="170"
+                      cy="158"
+                      r="128"
+                      fill="none"
+                      className="stroke-emerald-500/35 dark:stroke-emerald-400/35 pointer-events-none transition-all duration-300"
+                      strokeWidth="10"
+                    />
+                  )}
+                  <circle
+                    cx="170"
+                    cy="158"
+                    r="128"
+                    className={`transition-all duration-300 ${
+                      activeConsoleStage === 'orchestrator'
+                        ? 'fill-emerald-500/[0.14] dark:fill-emerald-400/[0.16] stroke-emerald-600 dark:stroke-emerald-400'
+                        : hoveredRing === 'orchestrator'
+                        ? 'fill-emerald-500/[0.08] stroke-emerald-500/80 dark:stroke-emerald-400/80'
+                        : 'fill-slate-100/70 dark:fill-[#11192E]/70 stroke-slate-300/90 dark:stroke-slate-700'
+                    }`}
+                    strokeWidth={activeConsoleStage === 'orchestrator' ? 2.75 : hoveredRing === 'orchestrator' ? 2 : 1.25}
+                  />
+                  <text
+                    x="170"
+                    y="49"
+                    textAnchor="middle"
+                    className={`text-[10.5px] font-mono font-bold tracking-wider pointer-events-none transition-all duration-300 ${
+                      activeConsoleStage === 'orchestrator'
+                        ? 'fill-emerald-800 dark:fill-emerald-300 opacity-100'
+                        : hoveredRing === 'orchestrator'
+                        ? 'fill-emerald-700 dark:fill-emerald-300 opacity-95'
+                        : 'fill-slate-500 dark:fill-slate-400 opacity-75'
+                    }`}
+                  >
+                    03 · ORCHESTRATOR
+                  </text>
+                  <text
+                    x="170"
+                    y="273"
+                    textAnchor="middle"
+                    className={`text-[9.5px] font-sans font-medium pointer-events-none transition-opacity duration-300 ${
+                      activeConsoleStage === 'orchestrator'
+                        ? 'fill-emerald-800/90 dark:fill-emerald-200/90 opacity-100'
+                        : 'fill-slate-500 dark:fill-slate-400 opacity-65'
+                    }`}
+                  >
+                    Govern &amp; Lead
+                  </text>
+                </g>
+
+                {/* 02. MIDDLE RING — ARCHITECT (r = 88) */}
+                <g
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={activeConsoleStage === 'architect'}
+                  aria-label="Select Stage 02: Architect ring"
+                  onClick={() => handleSelectTier('architect')}
+                  onMouseEnter={() => setHoveredRing('architect')}
+                  onMouseLeave={() => setHoveredRing(null)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleSelectTier('architect');
+                    }
+                  }}
+                  className="cursor-pointer outline-none"
+                >
+                  {activeConsoleStage === 'architect' && (
+                    <circle
+                      cx="170"
+                      cy="158"
+                      r="88"
+                      fill="none"
+                      className="stroke-purple-500/35 dark:stroke-purple-400/35 pointer-events-none transition-all duration-300"
+                      strokeWidth="9"
+                    />
+                  )}
+                  <circle
+                    cx="170"
+                    cy="158"
+                    r="88"
+                    className={`transition-all duration-300 ${
+                      activeConsoleStage === 'architect'
+                        ? 'fill-purple-500/[0.16] dark:fill-purple-400/[0.18] stroke-purple-600 dark:stroke-purple-400'
+                        : hoveredRing === 'architect'
+                        ? 'fill-purple-500/[0.08] stroke-purple-500/80 dark:stroke-purple-400/80'
+                        : 'fill-white/95 dark:fill-[#0F172A]/95 stroke-slate-300/90 dark:stroke-slate-700'
+                    }`}
+                    strokeWidth={activeConsoleStage === 'architect' ? 2.75 : hoveredRing === 'architect' ? 2 : 1.25}
+                  />
+                  <text
+                    x="170"
+                    y="92"
+                    textAnchor="middle"
+                    className={`text-[10.5px] font-mono font-bold tracking-wider pointer-events-none transition-all duration-300 ${
+                      activeConsoleStage === 'architect'
+                        ? 'fill-purple-900 dark:fill-purple-300 opacity-100'
+                        : hoveredRing === 'architect'
+                        ? 'fill-purple-800 dark:fill-purple-300 opacity-95'
+                        : 'fill-slate-500 dark:fill-slate-400 opacity-75'
+                    }`}
+                  >
+                    02 · ARCHITECT
+                  </text>
+                  <text
+                    x="170"
+                    y="231"
+                    textAnchor="middle"
+                    className={`text-[9.5px] font-sans font-medium pointer-events-none transition-opacity duration-300 ${
+                      activeConsoleStage === 'architect'
+                        ? 'fill-purple-900/90 dark:fill-purple-200/90 opacity-100'
+                        : 'fill-slate-500 dark:fill-slate-400 opacity-65'
+                    }`}
+                  >
+                    Frame &amp; Design
+                  </text>
+                </g>
+
+                {/* 01. INNER CORE — CREATOR (r = 48) */}
+                <g
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={activeConsoleStage === 'creator'}
+                  aria-label="Select Stage 01: Creator core ring"
+                  onClick={() => handleSelectTier('creator')}
+                  onMouseEnter={() => setHoveredRing('creator')}
+                  onMouseLeave={() => setHoveredRing(null)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleSelectTier('creator');
+                    }
+                  }}
+                  className="cursor-pointer outline-none"
+                >
+                  {activeConsoleStage === 'creator' && (
+                    <circle
+                      cx="170"
+                      cy="158"
+                      r="48"
+                      fill="none"
+                      className="stroke-blue-500/35 dark:stroke-blue-400/35 pointer-events-none transition-all duration-300"
+                      strokeWidth="9"
+                    />
+                  )}
+                  <circle
+                    cx="170"
+                    cy="158"
+                    r="48"
+                    className={`transition-all duration-300 ${
+                      activeConsoleStage === 'creator'
+                        ? 'fill-blue-500/[0.18] dark:fill-blue-400/[0.2] stroke-blue-600 dark:stroke-blue-400'
+                        : hoveredRing === 'creator'
+                        ? 'fill-blue-500/[0.08] stroke-blue-500/80 dark:stroke-blue-400/80'
+                        : 'fill-[#FAFAF7] dark:fill-[#0B1222] stroke-slate-300/90 dark:stroke-slate-600'
+                    }`}
+                    strokeWidth={activeConsoleStage === 'creator' ? 2.75 : hoveredRing === 'creator' ? 2 : 1.25}
+                  />
+                  <text
+                    x="170"
+                    y="153"
+                    textAnchor="middle"
+                    className={`text-[10.5px] font-mono font-bold tracking-wider pointer-events-none transition-all duration-300 ${
+                      activeConsoleStage === 'creator'
+                        ? 'fill-blue-950 dark:fill-blue-200 opacity-100'
+                        : hoveredRing === 'creator'
+                        ? 'fill-blue-900 dark:fill-blue-300 opacity-95'
+                        : 'fill-slate-600 dark:fill-slate-400 opacity-80'
+                    }`}
+                  >
+                    01 · CREATOR
+                  </text>
+                  <text
+                    x="170"
+                    y="170"
+                    textAnchor="middle"
+                    className={`text-[9.5px] font-sans font-medium pointer-events-none transition-opacity duration-300 ${
+                      activeConsoleStage === 'creator'
+                        ? 'fill-blue-900 dark:fill-blue-200/90 opacity-100'
+                        : 'fill-slate-500 dark:fill-slate-400 opacity-65'
+                    }`}
+                  >
+                    Build &amp; Verify
+                  </text>
+                </g>
+
+                {/* Active Highlight Selection Ring: Expanding Selection Pulse + Orbiting Highlight Comet */}
+                {!prefersReducedMotion && (
+                  <motion.circle
+                    key={`pulse-${activeConsoleStage}`}
+                    cx="170"
+                    cy="158"
+                    fill="none"
+                    stroke={STAGE_META[activeConsoleStage].hex}
+                    strokeWidth="2.5"
+                    initial={{ r: STAGE_META[activeConsoleStage].radius, opacity: 0.75 }}
+                    animate={{ r: STAGE_META[activeConsoleStage].radius + 14, opacity: 0 }}
+                    transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                    className="pointer-events-none"
+                  />
+                )}
+
+                <g className={`${prefersReducedMotion ? '' : 'animate-spin-reverse-slow'} pointer-events-none`}>
+                  {/* Hidden centering circle guarantees SVG fill-box stays anchored at (170, 158) */}
+                  <circle
+                    cx="170"
+                    cy="158"
+                    r={STAGE_META[activeConsoleStage].radius + 4}
+                    fill="none"
+                    stroke="transparent"
+                    strokeWidth="1"
+                  />
+                  {/* Sweeping Highlight Arc Along Selected Ring */}
+                  <circle
+                    cx="170"
+                    cy="158"
+                    r={STAGE_META[activeConsoleStage].radius}
+                    fill="none"
+                    stroke={STAGE_META[activeConsoleStage].hex}
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                    strokeDasharray={`${Math.round(STAGE_META[activeConsoleStage].radius * 0.85)} 999`}
+                    className="opacity-95"
+                  />
+                  {/* Orbiting Highlight Beacon Node */}
+                  <circle
+                    cx={170 + STAGE_META[activeConsoleStage].radius}
+                    cy="158"
+                    r="7.5"
+                    fill={STAGE_META[activeConsoleStage].hex}
+                    fillOpacity="0.22"
+                  />
+                  <circle
+                    cx={170 + STAGE_META[activeConsoleStage].radius}
+                    cy="158"
+                    r="3.8"
+                    fill={STAGE_META[activeConsoleStage].hex}
+                    stroke="#FFFFFF"
+                    strokeWidth="1.5"
+                  />
+                </g>
+              </svg>
+            </div>
+
+            {/* Active Ring Telemetry Caption */}
+            <div className="mt-1 mb-3 flex items-center justify-center gap-2 text-[11px] font-mono text-[#475467] dark:text-slate-400">
+              <span className="uppercase tracking-wider">Selected Ring:</span>
+              <span
+                className={`px-2 py-0.5 rounded border font-semibold ${STAGE_META[activeConsoleStage].badgeClass}`}
+              >
+                {STAGE_META[activeConsoleStage].code} · {STAGE_META[activeConsoleStage].subtitle}
+              </span>
+            </div>
+
+            {/* Synchronized Ring Selector Controls */}
+            <div className="grid grid-cols-3 gap-2">
+              {(['creator', 'architect', 'orchestrator'] as const).map((stage) => {
+                const isSelected = activeConsoleStage === stage;
+                const meta = STAGE_META[stage];
+                return (
+                  <button
+                    type="button"
+                    key={stage}
+                    onClick={() => handleSelectTier(stage)}
+                    aria-pressed={isSelected}
+                    className={`px-2.5 py-2 text-[11px] font-mono uppercase rounded-lg border cursor-pointer transition-all duration-200 flex items-center justify-center gap-1.5 ${
+                      isSelected
+                        ? `${meta.activeTabClass} font-bold`
+                        : 'bg-[#FAFAF7] dark:bg-[#11192E] border-[#101828]/12 dark:border-white/15 text-[#475467] dark:text-slate-300 hover:border-blue-900/40 dark:hover:border-blue-400/40 hover:text-[#101828] dark:hover:text-white'
+                    }`}
+                  >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                        isSelected ? 'bg-white dark:bg-[#070B14]' : meta.dotClass
+                      }`}
+                      aria-hidden="true"
+                    />
+                    <span>{stage}</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* Right: Active Stage Deep Detail */}
-          <div
-            key={activeConsoleStage}
-            className="lg:col-span-7 bg-[#FAFAF7] dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 rounded-2xl p-6 sm:p-8 space-y-5 animate-stage-enter"
-          >
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-blue-900 dark:text-blue-400">
-                {selectedStageInfo.label}
-              </span>
-              <span className="text-xs font-mono text-[#475467] dark:text-slate-400">
-                Book Alignment: {selectedStageInfo.chapters}
-              </span>
-            </div>
-
-            <h2 className="font-serif text-3xl font-bold text-[#101828] dark:text-white">
-              {selectedStageInfo.title}
-            </h2>
-
-            <p className="font-serif text-lg italic text-blue-950 dark:text-blue-300">
-              {selectedStageInfo.question}
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
-              <div className="p-4 bg-white dark:bg-[#11192E] rounded-xl border border-[#101828]/[0.08] dark:border-white/10">
-                <strong className="font-mono text-[10px] uppercase tracking-wider text-[#475467] dark:text-slate-400 block mb-1">
-                  Primary Engineering Focus
-                </strong>
-                <p className="text-[#101828] dark:text-slate-200 leading-relaxed">{selectedStageInfo.focus}</p>
-              </div>
-              <div className="p-4 bg-white dark:bg-[#11192E] rounded-xl border border-[#101828]/[0.08] dark:border-white/10">
-                <strong className="font-mono text-[10px] uppercase tracking-wider text-[#475467] dark:text-slate-400 block mb-1">
-                  Leverage Shift in AI Era
-                </strong>
-                <p className="text-[#101828] dark:text-slate-200 leading-relaxed">{selectedStageInfo.leverageShift}</p>
-              </div>
-              <div className="p-4 bg-white dark:bg-[#11192E] rounded-xl border border-[#101828]/[0.08] dark:border-white/10">
-                <strong className="font-mono text-[10px] uppercase tracking-wider text-[#475467] dark:text-slate-400 block mb-1">
-                  Tangible Proof Artifacts
-                </strong>
-                <p className="text-[#101828] dark:text-slate-200 leading-relaxed">{selectedStageInfo.artifacts}</p>
-              </div>
-              <div className="p-4 bg-white dark:bg-[#11192E] rounded-xl border border-[#101828]/[0.08] dark:border-white/10">
-                <strong className="font-mono text-[10px] uppercase tracking-wider text-amber-800 dark:text-amber-400 flex items-center gap-1 mb-1">
-                  <AlertTriangle className="w-3 h-3" />
-                  <span>Common Pitfall to Avoid</span>
-                </strong>
-                <p className="text-[#101828] dark:text-slate-200 leading-relaxed">{selectedStageInfo.commonMistake}</p>
-              </div>
-            </div>
-
-            <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-[#101828]/10 dark:border-white/10">
-              <span className="text-xs text-[#475467] dark:text-slate-400">
-                Full field guide, practical scenarios & exercises:
-              </span>
-              <button
-                type="button"
-                onClick={() => onNavigate(`/frameworks/${activeConsoleStage}`)}
-                className="px-4 py-2 rounded-lg bg-[#101828] dark:bg-white text-white dark:text-[#070B14] text-xs font-semibold hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+          {/* Right: Active Stage Deep Detail (Animated Stage Transition) */}
+          <div className="lg:col-span-7">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeConsoleStage}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={prefersReducedMotion ? undefined : { opacity: 0, y: -6 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className={`bg-[#FAFAF7] dark:bg-[#0D1527] border border-[#101828]/10 dark:border-white/10 border-t-[3px] ${STAGE_META[activeConsoleStage].panelBorderClass} rounded-2xl p-6 sm:p-8 space-y-5 shadow-xs`}
               >
-                <span>Explore {selectedStageInfo.title} Deep Dive</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded border text-[11px] font-mono font-bold uppercase tracking-wider ${STAGE_META[activeConsoleStage].badgeClass}`}
+                  >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${STAGE_META[activeConsoleStage].dotClass}`}
+                      aria-hidden="true"
+                    />
+                    {selectedStageInfo.label}
+                  </span>
+                  <span className="text-xs font-mono text-[#475467] dark:text-slate-400">
+                    Book Alignment: {selectedStageInfo.chapters}
+                  </span>
+                </div>
+
+                <h2 className="font-serif text-3xl font-bold text-[#101828] dark:text-white">
+                  {selectedStageInfo.title}
+                </h2>
+
+                <p className="font-serif text-lg italic text-blue-950 dark:text-blue-300">
+                  {selectedStageInfo.question}
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
+                  <div className="p-4 bg-white dark:bg-[#11192E] rounded-xl border border-[#101828]/[0.08] dark:border-white/10">
+                    <strong className="font-mono text-[10px] uppercase tracking-wider text-[#475467] dark:text-slate-400 block mb-1">
+                      Primary Engineering Focus
+                    </strong>
+                    <p className="text-[#101828] dark:text-slate-200 leading-relaxed">{selectedStageInfo.focus}</p>
+                  </div>
+                  <div className="p-4 bg-white dark:bg-[#11192E] rounded-xl border border-[#101828]/[0.08] dark:border-white/10">
+                    <strong className="font-mono text-[10px] uppercase tracking-wider text-[#475467] dark:text-slate-400 block mb-1">
+                      Leverage Shift in AI Era
+                    </strong>
+                    <p className="text-[#101828] dark:text-slate-200 leading-relaxed">{selectedStageInfo.leverageShift}</p>
+                  </div>
+                  <div className="p-4 bg-white dark:bg-[#11192E] rounded-xl border border-[#101828]/[0.08] dark:border-white/10">
+                    <strong className="font-mono text-[10px] uppercase tracking-wider text-[#475467] dark:text-slate-400 block mb-1">
+                      Tangible Proof Artifacts
+                    </strong>
+                    <p className="text-[#101828] dark:text-slate-200 leading-relaxed">{selectedStageInfo.artifacts}</p>
+                  </div>
+                  <div className="p-4 bg-white dark:bg-[#11192E] rounded-xl border border-[#101828]/[0.08] dark:border-white/10">
+                    <strong className="font-mono text-[10px] uppercase tracking-wider text-amber-800 dark:text-amber-400 flex items-center gap-1 mb-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      <span>Common Pitfall to Avoid</span>
+                    </strong>
+                    <p className="text-[#101828] dark:text-slate-200 leading-relaxed">{selectedStageInfo.commonMistake}</p>
+                  </div>
+                </div>
+
+                <div className="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-[#101828]/10 dark:border-white/10">
+                  <span className="text-xs text-[#475467] dark:text-slate-400">
+                    Full field guide, practical scenarios & exercises:
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate(`/frameworks/${activeConsoleStage}`)}
+                    className="px-4 py-2 rounded-lg bg-[#101828] dark:bg-white text-white dark:text-[#070B14] text-xs font-semibold hover:bg-blue-950 dark:hover:bg-slate-100 transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <span>Explore {selectedStageInfo.title} Deep Dive</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
 
