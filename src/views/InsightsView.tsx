@@ -13,6 +13,7 @@ import { sendBookInquiryToAuthor, AUTHOR_EMAIL } from '../utils/emailService';
 import { trackEvent } from '../utils/analytics';
 import { updatePageSeo, PAGE_OG_IMAGES } from '../utils/seo';
 import { InsightThumbnail } from '../components/InsightThumbnail';
+import { estimateInsightReadTime } from '../utils/readTime';
 import {
   Search,
   ArrowRight,
@@ -510,10 +511,19 @@ export const InsightsView: React.FC<InsightsViewProps> = ({
                         <span aria-hidden="true">·</span>
                         <span className="tabular-nums">{leadItem.publishDate}</span>
                         <span aria-hidden="true">·</span>
-                        <span className="inline-flex items-center gap-1 tabular-nums">
-                          <Clock className="w-3 h-3" />
-                          {leadItem.readTime}
-                        </span>
+                        {(() => {
+                          const leadReadTime = estimateInsightReadTime(leadItem);
+                          return (
+                            <span
+                              title={`Estimated read time from ~${leadReadTime.wordCount.toLocaleString()} words`}
+                              aria-label={`Read Time: ${leadReadTime.label} (about ${leadReadTime.wordCount} words)`}
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-[#101828]/12 dark:border-white/15 bg-[#FAF9F5] dark:bg-[#111C35] text-[11px] font-mono text-[#475467] dark:text-slate-300 tabular-nums shrink-0"
+                            >
+                              <Clock className="w-3 h-3 text-blue-800 dark:text-blue-400 shrink-0" />
+                              <span>{leadReadTime.label}</span>
+                            </span>
+                          );
+                        })()}
                       </div>
 
                       <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#101828] dark:text-white group-hover:text-blue-900 dark:group-hover:text-blue-300 transition-colors mb-3 leading-tight text-balance">
@@ -660,15 +670,30 @@ export const InsightsView: React.FC<InsightsViewProps> = ({
                           )}
 
                           {/* Footer Metadata */}
-                          <div className="pt-3 border-t border-[#101828]/[0.06] dark:border-white/10 flex items-center justify-between gap-2 text-xs">
-                            <span className="text-[11px] font-mono text-[#475467] dark:text-slate-400 tabular-nums truncate">
-                              {item.publishDate} · {item.readTime}
-                            </span>
-                            <span className="font-semibold text-blue-900 dark:text-blue-400 inline-flex items-center gap-1 group-hover:underline whitespace-nowrap shrink-0">
-                              <span>Read</span>
-                              <ArrowRight className="w-3 h-3" />
-                            </span>
-                          </div>
+                          {(() => {
+                            const cardReadTime = estimateInsightReadTime(item);
+                            return (
+                              <div className="pt-3 border-t border-[#101828]/[0.06] dark:border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs">
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <span className="text-[11px] font-mono text-[#475467] dark:text-slate-400 tabular-nums truncate">
+                                    {item.publishDate}
+                                  </span>
+                                  <span
+                                    title={`Estimated read time from ~${cardReadTime.wordCount.toLocaleString()} words`}
+                                    aria-label={`Read Time: ${cardReadTime.label} (about ${cardReadTime.wordCount} words)`}
+                                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md border border-[#101828]/12 dark:border-white/15 bg-[#FAF9F5] dark:bg-[#111C35] text-[11px] font-mono text-[#475467] dark:text-slate-300 tabular-nums shrink-0"
+                                  >
+                                    <Clock className="w-3 h-3 text-blue-800 dark:text-blue-400 shrink-0" />
+                                    <span>{cardReadTime.label}</span>
+                                  </span>
+                                </div>
+                                <span className="font-semibold text-blue-900 dark:text-blue-400 inline-flex items-center gap-1 group-hover:underline whitespace-nowrap shrink-0">
+                                  <span>Read</span>
+                                  <ArrowRight className="w-3 h-3" />
+                                </span>
+                              </div>
+                            );
+                          })()}
                         </button>
                       </article>
                     );

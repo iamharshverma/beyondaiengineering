@@ -781,7 +781,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
       </section>
 
       {/* 3. C.A.O. FRAMEWORK INTERACTIVE SECTION */}
-      <CAOInteractiveFramework onOpenAssessment={onOpenAssessment} />
+      <CAOInteractiveFramework
+        enableAltitudeRoadmap
+        onOpenAssessment={onOpenAssessment}
+      />
 
       {/* 4. WHO THIS BOOK IS FOR */}
       <section className="py-24 bg-white dark:bg-[#070B14] border-b border-[#101828]/[0.08] dark:border-white/10 transition-colors">
